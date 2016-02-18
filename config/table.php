@@ -6,6 +6,7 @@ $config['table_setup_user'] = 'setup_user';
 $config['table_setup_user_info'] = 'setup_user_info';
 $config['table_setup_users_other_sites'] = 'setup_users_other_sites';
 $config['table_system_other_sites'] = 'system_other_sites';
+$config['table_other_sites_visit'] = 'other_sites_visit';
 
 //ems site
 $config['table_system_assigned_group'] = 'system_assigned_group';
