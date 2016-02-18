@@ -11,9 +11,14 @@ class Sys_user_role_model extends CI_Model
     public function get_roles_count()
     {
         $CI = & get_instance();
+        $user = User_helper::get_user();
         $this->db->from($CI->config->item('table_system_user_group').' ug');
         $this->db->select('ug.id,ug.name');
         $this->db->where('ug.status',$CI->config->item('system_status_active'));
+        if($user->user_group!=1)
+        {
+            $this->db->where('ug.id !=1');
+        }
         $user_groups=$this->db->get()->result_array();
 
         $this->db->from($CI->config->item('table_system_user_group_role').' ugr');

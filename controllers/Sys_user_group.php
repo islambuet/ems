@@ -209,7 +209,15 @@ class Sys_user_group extends Root_Controller
     }
     public function get_items()
     {
-        $items=Query_helper::get_info($this->config->item('table_system_user_group'),array('id','name','status','ordering'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $user = User_helper::get_user();
+        if($user->user_group==1)
+        {
+            $items=Query_helper::get_info($this->config->item('table_system_user_group'),array('id','name','status','ordering'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        }
+        else
+        {
+            $items=Query_helper::get_info($this->config->item('table_system_user_group'),array('id','name','status','ordering'),array('id !=1','status !="'.$this->config->item('system_status_delete').'"'));
+        }
         $this->jsonReturn($items);
 
     }
