@@ -15,4 +15,6 @@ $config['table_system_user_group'] = 'system_user_group';
 $config['table_system_task'] = 'system_task';
 $config['table_system_user_group_role'] = 'system_user_group_role';
 $config['table_history'] = 'history';
+//location setup
+$config['table_setup_location_divisions'] = 'divisions';
 
