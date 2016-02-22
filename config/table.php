@@ -17,4 +17,5 @@ $config['table_system_user_group_role'] = 'system_user_group_role';
 $config['table_history'] = 'history';
 //location setup
 $config['table_setup_location_divisions'] = 'divisions';
+$config['table_setup_location_zones'] = 'zones';
 
