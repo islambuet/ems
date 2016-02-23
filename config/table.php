@@ -19,4 +19,5 @@ $config['table_history'] = 'history';
 $config['table_setup_location_divisions'] = 'divisions';
 $config['table_setup_location_zones'] = 'zones';
 $config['table_setup_location_territories'] = 'territories';
+$config['table_setup_location_districts'] = 'districts';
 

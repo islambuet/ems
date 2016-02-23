@@ -18,6 +18,15 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_dropdown_territories_by_zoneid()
+    {
+        $zone_id = $this->input->post('zone_id');
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$zone_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#territory_id","html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
 
     /*public function get_dropdown_classifications_by_cropid()
     {
@@ -55,15 +64,7 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
-    public function get_dropdown_territories_by_zoneid()
-    {
-        $zone_id = $this->input->post('zone_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_territories'),array('id value','territory_name text'),array('zone_id ='.$zone_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#territory_id","html"=>$this->load->view("dropdown_with_select",$data,true));
 
-        $this->jsonReturn($ajax);
-    }
     public function get_dropdown_districts_by_territoryid()
     {
         $territory_id = $this->input->post('territory_id');
