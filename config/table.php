@@ -24,3 +24,4 @@ $config['table_setup_location_upazillas'] = 'upazillas';
 $config['table_setup_location_unions'] = 'unions';
 //crop classification
 $config['table_setup_classification_crops'] = 'crops';
+$config['table_setup_classification_crop_types'] = 'crop_types';

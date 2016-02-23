@@ -231,4 +231,36 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function crop_types()
+    {
+        $this->db->from('ait_product_type');
+        $this->db->order_by('id');
+        $types=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($types as $type)
+        {
+
+            {
+                $data=array();
+                $data['crop_id']=intval(substr($type['crop_id'],3));
+                $data['name']=$type['product_type'];
+                $data['description']=$type['description'];
+                $data['status']=$type['status'];
+                $data['ordering']=$type['order_type'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('crop_types',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
