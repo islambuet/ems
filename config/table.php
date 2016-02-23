@@ -20,4 +20,6 @@ $config['table_setup_location_divisions'] = 'divisions';
 $config['table_setup_location_zones'] = 'zones';
 $config['table_setup_location_territories'] = 'territories';
 $config['table_setup_location_districts'] = 'districts';
+$config['table_setup_location_upazillas'] = 'upazillas';
+$config['table_setup_location_unions'] = 'unions';
 

@@ -27,6 +27,24 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_dropdown_districts_by_territoryid()
+    {
+        $territory_id = $this->input->post('territory_id');
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#district_id","html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
+    public function get_dropdown_upazillas_by_districtid()
+    {
+        $district_id = $this->input->post('district_id');
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#upazilla_id","html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
 
     /*public function get_dropdown_classifications_by_cropid()
     {
@@ -65,24 +83,8 @@ class Common_controller extends Root_Controller
         $this->jsonReturn($ajax);
     }
 
-    public function get_dropdown_districts_by_territoryid()
-    {
-        $territory_id = $this->input->post('territory_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_districts'),array('id value','district_name text'),array('territory_id ='.$territory_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#district_id","html"=>$this->load->view("dropdown_with_select",$data,true));
 
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_upazilas_by_districtid()
-    {
-        $district_id = $this->input->post('district_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_upazilas'),array('id value','upazila_name text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#upazila_id","html"=>$this->load->view("dropdown_with_select",$data,true));
 
-        $this->jsonReturn($ajax);
-    }
     public function get_dropdown_unions_by_upazilaid()
     {
         $upazila_id = $this->input->post('upazila_id');

@@ -73,5 +73,5 @@ $lang['LABEL_DIVISION_NAME'] = 'Division';
 $lang['LABEL_ZONE_NAME'] = 'Zone';
 $lang['LABEL_TERRITORY_NAME'] = 'Territory';
 $lang['LABEL_DISTRICT_NAME'] = 'District';
-$lang['LABEL_UPAZILA_NAME'] = 'Upazila';
+$lang['LABEL_UPAZILLA_NAME'] = 'Upazila';
 $lang['LABEL_UNION_NAME'] = 'Union';
