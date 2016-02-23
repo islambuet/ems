@@ -64,6 +64,7 @@ if($user)
             // stop bootstrap.js to hide the parents
             if(target.attr('class')=='dropdown-toggle')
             {
+                event.preventDefault();
                 event.stopPropagation();
             }
             // hide the open children
