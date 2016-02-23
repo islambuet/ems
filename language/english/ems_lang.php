@@ -75,3 +75,9 @@ $lang['LABEL_TERRITORY_NAME'] = 'Territory';
 $lang['LABEL_DISTRICT_NAME'] = 'District';
 $lang['LABEL_UPAZILLA_NAME'] = 'Upazila';
 $lang['LABEL_UNION_NAME'] = 'Union';
+
+//crop classification
+$lang['LABEL_DESCRIPTION'] = 'Description';
+$lang['LABEL_CROP_NAME'] = 'Crop';
+$lang['LABEL_CROP_TYPE'] = 'Crop Type';
+$lang['LABEL_VARIETY_NAME'] = 'Variety';

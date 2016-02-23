@@ -22,4 +22,5 @@ $config['table_setup_location_territories'] = 'territories';
 $config['table_setup_location_districts'] = 'districts';
 $config['table_setup_location_upazillas'] = 'upazillas';
 $config['table_setup_location_unions'] = 'unions';
-
+//crop classification
+$config['table_setup_classification_crops'] = 'crops';

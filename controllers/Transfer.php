@@ -137,10 +137,7 @@ class Transfer extends CI_Controller {
         $this->db->join('districts d','d.old_zilla_id =un.zilla_id','LEFT');
         $this->db->order_by('un.upazilla_id');
         $upazillas=$this->db->get()->result_array();
-//        echo '<PRE>';
-//        print_r($upazillas);
-//        echo '</PRE>';
-//        return;
+
         $this->db->trans_start();  //DB Transaction Handle START
         foreach($upazillas as $i=>$upazilla)
         {
@@ -176,10 +173,6 @@ class Transfer extends CI_Controller {
         $this->db->join('upazillas up','up.old_upazilla_id =union.upazilla_id','LEFT');
         $this->db->order_by('union.union_id');
         $unions=$this->db->get()->result_array();
-//        echo '<PRE>';
-//        print_r($unions);
-//        echo '</PRE>';
-//        return;
         $this->db->trans_start();  //DB Transaction Handle START
         foreach($unions as $i=>$union)
         {
@@ -194,6 +187,37 @@ class Transfer extends CI_Controller {
                 $data['user_created']=1;
                 $data['old_union_id']=$union['old_union_id'];
                 $this->db->insert('unions',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
+    public function crops()
+    {
+        $this->db->from('ait_crop_info');
+        $this->db->order_by('id');
+        $crops=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($crops as $crop)
+        {
+
+            {
+                $data=array();
+                $data['name']=$crop['crop_name'];
+                $data['description']=$crop['description'];
+                $data['status']=$crop['status'];
+                $data['ordering']=$crop['order_crop'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('crops',$data);
             }
 
         }
