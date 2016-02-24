@@ -3,7 +3,7 @@ class System_helper
 {
     public static function display_date($time)
     {
-        if($time>0)
+        if(is_numeric($time))
         {
             return date('d-M-Y',$time);
         }
@@ -11,7 +11,6 @@ class System_helper
         {
             return '';
         }
-
     }
     public static function get_time($str)
     {
