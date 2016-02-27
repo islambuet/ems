@@ -445,4 +445,36 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function variety_price()
+    {
+        $this->db->from('ait_product_pricing');
+        $this->db->order_by('id');
+        $this->db->where('status','Active');
+        $variety_prices=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($variety_prices as $price)
+        {
+
+            {
+                $data=array();
+                $data['variety_id']=intval(substr($price['varriety_id'],3));
+                $data['pack_size_id']=intval(substr($price['pack_size'],3));
+                $data['price']=$price['selling_price'];
+                $data['revision']=1;
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('variety_price',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
