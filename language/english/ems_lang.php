@@ -83,3 +83,5 @@ $lang['LABEL_VARIETY_NAME'] = 'Variety';
 //basic setup
 $lang['LABEL_CAPACITY_KG'] = 'Capacity(kg)';
 $lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';
+$lang['LABEL_BANK_NAME'] = 'Bank';
+$lang['LABEL_BANK_BRANCH_NAME'] = 'Branch';

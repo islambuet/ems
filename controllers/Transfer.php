@@ -294,4 +294,36 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function branches()
+    {
+        $this->db->from('ait_bank_branch_info');
+        $this->db->order_by('id');
+        $branches=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($branches as $branch)
+        {
+
+            {
+                $data=array();
+                $data['bank_id']=intval(substr($branch['bank_id'],3));
+                $data['name']=$branch['branch_name'];
+                $data['description']=$branch['description'];
+                $data['status']=$branch['status'];
+                $data['ordering']=$branch['id'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('basic_setup_bank_branch',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }

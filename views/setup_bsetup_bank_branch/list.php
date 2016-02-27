@@ -38,8 +38,9 @@
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'name', type: 'string' },
-                { name: 'ordering', type: 'int' },
+                { name: 'bank_name', type: 'string' },
                 { name: 'description', type: 'string' },
+                { name: 'ordering', type: 'int' },
                 { name: 'status', type: 'string' }
             ],
             id: 'id',
@@ -64,10 +65,10 @@
                 autoheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
+                    { text: '<?php echo $CI->lang->line('LABEL_BANK_NAME'); ?>', dataField: 'bank_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DESCRIPTION'); ?>', dataField: 'description'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'150',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'150',cellsalign: 'right'}
-
                 ]
             });
     });

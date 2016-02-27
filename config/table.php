@@ -28,3 +28,4 @@ $config['table_setup_classification_crop_types'] = 'crop_types';
 //basic setup
 $config['table_basic_setup_warehouse'] = 'basic_setup_warehouse';
 $config['table_basic_setup_bank'] = 'basic_setup_bank';
+$config['table_basic_setup_bank_branch'] = 'basic_setup_bank_branch';

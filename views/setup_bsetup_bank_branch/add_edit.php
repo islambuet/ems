@@ -8,7 +8,7 @@
     $CI->load->view("action_buttons",$action_data);
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" id="id" name="id" value="<?php echo $bank['id']; ?>" />
+    <input type="hidden" id="id" name="id" value="<?php echo $branch['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
         <div class="widget-header">
@@ -18,20 +18,37 @@
             <div class="clearfix"></div>
         </div>
 
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_BANK_NAME');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="bank_id" name="branch[bank_id]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <?php
+                    foreach($banks as $bank)
+                    {?>
+                        <option value="<?php echo $bank['value']?>" <?php if($bank['value']==$branch['bank_id']){ echo "selected";}?>><?php echo $bank['text'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="bank[name]" id="name" class="form-control" value="<?php echo $bank['name'];?>"/>
+                <input type="text" name="branch[name]" id="name" class="form-control" value="<?php echo $branch['name'];?>"/>
             </div>
         </div>
-        <div class="row show-grid">
+        <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DESCRIPTION');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DESCRIPTION');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="bank[description]" class="form-control"><?php echo $bank['description']; ?></textarea>
+                <textarea name="branch[description]" id="description" class="form-control"><?php echo $branch['description'] ?></textarea>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -39,7 +56,7 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ORDER');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="bank[ordering]" id="ordering" class="form-control" value="<?php echo $bank['ordering'] ?>" >
+                <input type="text" name="branch[ordering]" id="ordering" class="form-control" value="<?php echo $branch['ordering'] ?>" >
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -47,18 +64,18 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('STATUS');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="status" name="bank[status]" class="form-control">
+                <select id="status" name="branch[status]" class="form-control">
                     <!--<option value=""></option>-->
                     <option value="<?php echo $CI->config->item('system_status_active'); ?>"
                         <?php
-                        if ($bank['status'] == $CI->config->item('system_status_active')) {
+                        if ($branch['status'] == $CI->config->item('system_status_active')) {
                             echo "selected='selected'";
                         }
                         ?> ><?php echo $CI->lang->line('ACTIVE') ?>
                     </option>
                     <option value="<?php echo $CI->config->item('system_status_inactive'); ?>"
                         <?php
-                        if ($bank['status'] == $CI->config->item('system_status_inactive')) {
+                        if ($branch['status'] == $CI->config->item('system_status_inactive')) {
                             echo "selected='selected'";
                         }
                         ?> ><?php echo $CI->lang->line('INACTIVE') ?></option>
