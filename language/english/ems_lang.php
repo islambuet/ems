@@ -60,8 +60,7 @@ $lang['LABEL_ADD_MORE'] = 'Add more';
 $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_TOTAL'] = 'Total';
 $lang['LABEL_SEARCH'] = 'Search';
-$lang['MSG_BOOKING_NOT_FOUND'] = 'No Booking available';
-
+$lang['LABEL_ADDRESS'] = 'address';
 //Assign User
 $lang['LABEL_USERNAME'] = 'User name';
 $lang['LABEL_EMPLOYEE_ID'] = 'Employee id';
@@ -81,3 +80,6 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_CROP_NAME'] = 'Crop';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY_NAME'] = 'Variety';
+//basic setup
+$lang['LABEL_CAPACITY_KG'] = 'Capacity(kg)';
+$lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';

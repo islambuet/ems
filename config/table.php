@@ -25,3 +25,5 @@ $config['table_setup_location_unions'] = 'unions';
 //crop classification
 $config['table_setup_classification_crops'] = 'crops';
 $config['table_setup_classification_crop_types'] = 'crop_types';
+//basic setup
+$config['table_basic_setup_warehouse'] = 'basic_setup_warehouse';
