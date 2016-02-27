@@ -30,3 +30,4 @@ $config['table_basic_setup_warehouse'] = 'basic_setup_warehouse';
 $config['table_basic_setup_bank'] = 'basic_setup_bank';
 $config['table_basic_setup_bank_branch'] = 'basic_setup_bank_branch';
 $config['table_basic_setup_fiscal_year'] = 'basic_setup_fiscal_year';
+$config['table_basic_setup_competitor'] = 'basic_setup_competitor';

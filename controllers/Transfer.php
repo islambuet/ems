@@ -326,4 +326,38 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function competitors()
+    {
+        $this->db->from('ait_varriety_info');
+        $this->db->order_by('id');
+        $this->db->group_by('company_name');
+        $competitors=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        $i=0;
+        foreach($competitors as $competitor)
+        {
+            if($competitor['company_name'])
+            {
+                $i++;
+                $data=array();
+                $data['name']=$competitor['company_name'];
+                $data['description']='';
+                $data['status']=$this->config->item('system_status_active');
+                $data['ordering']=$i;
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('basic_setup_competitor',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
