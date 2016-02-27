@@ -275,12 +275,13 @@ class Setup_cclassification_variety extends Root_Controller
         {
             $this->form_validation->set_rules('variety[competitor_id]',$this->lang->line('LABEL_COMPETITOR_NAME'),'required');
         }
-        $exists=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('name'),array('name ="'.$variety['name'].'"','id !='.$this->input->post('id'),'status ="'.$this->config->item('system_status_active').'"'),1);
+        //same name restriction withdraw
+        /*$exists=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('name'),array('name ="'.$variety['name'].'"','id !='.$this->input->post('id'),'status ="'.$this->config->item('system_status_active').'"'),1);
         if($exists)
         {
             $this->message="Same Variety Name already Exists";
             return false;
-        }
+        }*/
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
