@@ -9,6 +9,8 @@ class Common_controller extends Root_Controller
         $this->message="";
 
     }
+
+    //location setup
     public function get_dropdown_zones_by_divisionid()
     {
         $division_id = $this->input->post('division_id');
@@ -46,6 +48,18 @@ class Common_controller extends Root_Controller
         $this->jsonReturn($ajax);
     }
 
+    //crop classification
+
+    public function get_dropdown_croptypes_by_cropid()
+    {
+        $crop_id = $this->input->post('crop_id');
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$crop_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#crop_type_id","html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
+
     /*public function get_dropdown_classifications_by_cropid()
     {
         $crop_id = $this->input->post('crop_id');
@@ -55,15 +69,7 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
-    public function get_dropdown_types_by_classificationid()
-    {
-        $classification_id = $this->input->post('classification_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_types'),array('id value','type_name text'),array('classification_id ='.$classification_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#type_id","html"=>$this->load->view("dropdown_with_select",$data,true));
 
-        $this->jsonReturn($ajax);
-    }
     public function get_dropdown_skintypes_by_typeid()
     {
         $type_id = $this->input->post('type_id');

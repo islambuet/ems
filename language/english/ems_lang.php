@@ -80,6 +80,11 @@ $lang['LABEL_DESCRIPTION'] = 'Description';
 $lang['LABEL_CROP_NAME'] = 'Crop';
 $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY_NAME'] = 'Variety';
+$lang['LABEL_WHOSE'] = 'Whose variety';
+$lang['LABEL_COMPETITOR_NAME'] = 'Competitor';
+$lang['LABEL_STOCK_ID'] = 'Stock Id';
+$lang['LABEL_HYBRID'] = 'Hybrid';
+$lang['LABEL_DATE_CREATED'] = 'Creation date';
 //basic setup
 $lang['LABEL_CAPACITY_KG'] = 'Capacity(kg)';
 $lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';
@@ -87,3 +92,4 @@ $lang['LABEL_BANK_NAME'] = 'Bank';
 $lang['LABEL_BANK_BRANCH_NAME'] = 'Branch';
 $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
+

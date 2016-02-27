@@ -360,4 +360,59 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function varieties()
+    {
+        $this->db->from('ait_varriety_info avi');
+        $this->db->order_by('avi.id');
+        $this->db->select('avi.*');
+        $this->db->select('c.id competitor_id');
+        $this->db->join('basic_setup_competitor c','c.name = avi.company_name','LEFT');
+
+        $varieties=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($varieties as $variety)
+        {
+
+            {
+
+                $data=array();
+                $data['name']=$variety['varriety_name'];
+                $data['crop_type_id']=intval(substr($variety['product_type_id'],3));
+                $data['whose']='';
+                $data['competitor_id']='';
+                if($variety['type']==0)
+                {
+                    $data['whose']='ARM';
+                }
+                elseif($variety['type']==1)
+                {
+                    $data['whose']='Competitor';
+                    $data['competitor_id']=$variety['competitor_id'];
+                }
+                elseif($variety['type']==2)
+                {
+                    $data['whose']='Upcoming';
+                }
+
+                $data['stock_id']=$variety['stock_id'];
+                $data['hybrid']=$variety['hybrid'];
+                $data['description']=$variety['description'];
+                $data['status']=$variety['status'];
+                $data['ordering']=$variety['order_variety'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('varieties',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
