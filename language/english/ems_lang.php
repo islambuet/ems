@@ -85,6 +85,7 @@ $lang['LABEL_COMPETITOR_NAME'] = 'Competitor';
 $lang['LABEL_STOCK_ID'] = 'Stock Id';
 $lang['LABEL_HYBRID'] = 'Hybrid';
 $lang['LABEL_DATE_CREATED'] = 'Creation date';
+$lang['LABEL_PACK_NAME'] = 'Pack Size(gm)';
 //basic setup
 $lang['LABEL_CAPACITY_KG'] = 'Capacity(kg)';
 $lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';

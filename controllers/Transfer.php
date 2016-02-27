@@ -415,4 +415,34 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function pack_size()
+    {
+        $this->db->from('ait_product_pack_size');
+        $this->db->order_by('id');
+        $packs=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($packs as $pack)
+        {
+
+            {
+                $data=array();
+                $data['name']=$pack['pack_size_name'];
+                $data['description']=$pack['description'];
+                $data['status']=$pack['status'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('variety_pack_size',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
