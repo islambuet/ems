@@ -263,4 +263,35 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function banks()
+    {
+        $this->db->from('ait_bank_info');
+        $this->db->order_by('id');
+        $banks=$this->db->get()->result_array();
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($banks as $bank)
+        {
+
+            {
+                $data=array();
+                $data['name']=$bank['bank_name'];
+                $data['description']=$bank['description'];
+                $data['status']=$bank['status'];
+                $data['ordering']=$bank['id'];
+                $data['date_created']=time();
+                $data['user_created']=1;
+                $this->db->insert('basic_setup_bank',$data);
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }
