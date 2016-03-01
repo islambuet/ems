@@ -50,6 +50,24 @@
                 <input type="text" name="warehouse[ordering]" id="ordering" class="form-control" value="<?php echo $warehouse['ordering'] ?>" >
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                foreach($crops as $crop)
+                {
+                    ?>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="crops[]" <?php if(in_array($crop['value'],$warehouse_crops)){echo 'checked';} ?> value="<?php echo $crop['value']; ?>"><?php echo $crop['text']; ?></label>
+                    </div>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+
     </div>
 
     <div class="clearfix"></div>

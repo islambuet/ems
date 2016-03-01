@@ -74,6 +74,8 @@ class Setup_bsetup_warehouse extends Root_Controller
                 'address' => '',
                 'ordering' => 99
             );
+            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['warehouse_crops']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
@@ -105,6 +107,14 @@ class Setup_bsetup_warehouse extends Root_Controller
             }
 
             $data['warehouse']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),'*',array('id ='.$warehouse_id),1);
+            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['warehouse_crops']=array();
+            $warehouse_crops=Query_helper::get_info($this->config->item('table_basic_setup_warehouse_crops'),array('crop_id'),array('revision = 1','warehouse_id ='.$warehouse_id));
+            foreach($warehouse_crops as$wc)
+            {
+                $data['warehouse_crops'][]=$wc['crop_id'];
+            }
+
             $data['title']="Edit Warehouse (".$data['warehouse']['name'].')';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_warehouse/add_edit",$data,true));
@@ -156,23 +166,51 @@ class Setup_bsetup_warehouse extends Root_Controller
         }
         else
         {
+            $time=time();
             $data=$this->input->post('warehouse');
             $this->db->trans_start();  //DB Transaction Handle START
-            if($id>0)
+            if($id==0)
             {
-                $data['user_updated'] = $user->user_id;
-                $data['date_updated'] = time();
-
-                Query_helper::update($this->config->item('table_basic_setup_warehouse'),$data,array("id = ".$id));
-
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = $time;
+                $warehouse_id=Query_helper::add($this->config->item('table_basic_setup_warehouse'),$data);
+                if($warehouse_id===false)
+                {
+                    $this->db->trans_complete();
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                    $this->jsonReturn($ajax);
+                    die();
+                }
+                else
+                {
+                    $id=$warehouse_id;
+                }
             }
             else
             {
-
-                $data['user_created'] = $user->user_id;
-                $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_basic_setup_warehouse'),$data);
+                $data['user_updated'] = $user->user_id;
+                $data['date_updated'] = $time;
+                Query_helper::update($this->config->item('table_basic_setup_warehouse'),$data,array("id = ".$id));
             }
+            $crops=$this->input->post('crops');
+
+            $this->db->where('warehouse_id',$id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_basic_setup_warehouse_crops'));
+            if(is_array($crops))
+            {
+                foreach($crops as $crop)
+                {
+                    $crop_data=array();
+                    $crop_data['warehouse_id']=$id;
+                    $crop_data['crop_id']=$crop;
+                    $crop_data['user_created'] = $user->user_id;
+                    $crop_data['date_created'] = $time;
+                    Query_helper::add($this->config->item('table_basic_setup_warehouse_crops'),$crop_data);
+                }
+            }
+
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
