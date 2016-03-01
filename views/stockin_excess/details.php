@@ -138,22 +138,6 @@
                 <label class="control-label"><?php echo System_helper::display_date($stock_in['date_stock_in']);?></label>
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_MFG');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo System_helper::display_date($stock_in['date_mfg']);?></label>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_EXP');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo System_helper::display_date($stock_in['date_exp']);?></label>
-            </div>
-        </div>
 
     </div>
 

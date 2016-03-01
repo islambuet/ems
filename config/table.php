@@ -41,3 +41,4 @@ $config['table_basic_setup_competitor'] = 'basic_setup_competitor';
 //$config['table_csetup_other_customers'] = 'csetup_other_customers';
 //stock in
 $config['table_stockin_varieties'] = 'stockin_varieties';
+$config['table_stockin_excess_inventory'] = 'stockin_excess_inventory';

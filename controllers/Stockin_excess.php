@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Stockin_variety extends Root_Controller
+class Stockin_excess extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Stockin_variety extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Stockin_variety');
-        $this->controller_url='stockin_variety';
+        $this->permissions=User_helper::get_permission('Stockin_excess');
+        $this->controller_url='stockin_excess';
         //$this->load->model("sys_module_task_model");
     }
 
@@ -50,9 +50,9 @@ class Stockin_variety extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Purchase list";
+            $data['title']="Excess Inventory list";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_excess/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -74,7 +74,7 @@ class Stockin_variety extends Root_Controller
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
 
-            $data['title']="New Purchase";
+            $data['title']="New Excess Inventory";
             $data["stock_in"] = Array(
                 'id' => 0,
                 'fiscal_year_id' => '',
@@ -88,11 +88,10 @@ class Stockin_variety extends Root_Controller
             );
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_excess/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -118,15 +117,15 @@ class Stockin_variety extends Root_Controller
             {
                 $stock_id=$id;
             }
-            $this->db->from($this->config->item('table_stockin_varieties').' stv');
-            $this->db->select('stv.*');
+            $this->db->from($this->config->item('table_stockin_excess_inventory').' stei');
+            $this->db->select('stei.*');
             $this->db->select('v.crop_type_id crop_type_id');
             $this->db->select('type.crop_id crop_id');
 
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stv.variety_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stei.variety_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
-            $this->db->where('stv.id',$stock_id);
-            $this->db->where('stv.status',$this->config->item('system_status_active'));
+            $this->db->where('stei.id',$stock_id);
+            $this->db->where('stei.status',$this->config->item('system_status_active'));
 
             $data['stock_in']=$this->db->get()->row_array();
             if(!$data['stock_in'])
@@ -136,24 +135,16 @@ class Stockin_variety extends Root_Controller
                 $this->jsonReturn($ajax);
                 die();
             }
-            if($data['stock_in']['date_exp']==0)
-            {
-                $data['stock_in']['date_exp']='';
-            }
-            if($data['stock_in']['date_mfg']==0)
-            {
-                $data['stock_in']['date_mfg']='';
-            }
-            $data['title']="Edit Purchase";
+            $data['title']="Edit Excess Inventory";
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_in']['crop_id']));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['stock_in']['crop_type_id']));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array());
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_excess/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -180,15 +171,15 @@ class Stockin_variety extends Root_Controller
             {
                 $stock_id=$id;
             }
-            $this->db->from($this->config->item('table_stockin_varieties').' stv');
-            $this->db->select('stv.*');
+            $this->db->from($this->config->item('table_stockin_excess_inventory').' stei');
+            $this->db->select('stei.*');
             $this->db->select('v.crop_type_id crop_type_id');
             $this->db->select('type.crop_id crop_id');
 
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stv.variety_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stei.variety_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
-            $this->db->where('stv.id',$stock_id);
-            $this->db->where('stv.status',$this->config->item('system_status_active'));
+            $this->db->where('stei.id',$stock_id);
+            $this->db->where('stei.status',$this->config->item('system_status_active'));
 
             $data['stock_in']=$this->db->get()->row_array();
             if(!$data['stock_in'])
@@ -198,24 +189,16 @@ class Stockin_variety extends Root_Controller
                 $this->jsonReturn($ajax);
                 die();
             }
-            if($data['stock_in']['date_exp']==0)
-            {
-                $data['stock_in']['date_exp']='';
-            }
-            if($data['stock_in']['date_mfg']==0)
-            {
-                $data['stock_in']['date_mfg']='';
-            }
-            $data['title']="Detail of Purchase";
+            $data['title']="Detail of Excess Inventory";
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_in']['crop_id']));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['stock_in']['crop_type_id']));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array());
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_excess/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -240,7 +223,7 @@ class Stockin_variety extends Root_Controller
             $time=time();
             foreach($ids as $id)
             {
-                Query_helper::update($this->config->item('table_stockin_varieties'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
+                Query_helper::update($this->config->item('table_stockin_excess_inventory'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
             }
             $this->db->trans_complete();   //DB Transaction Handle END
 
@@ -300,23 +283,13 @@ class Stockin_variety extends Root_Controller
         {
             $data=$this->input->post('stock_in');
             $data['date_stock_in']=System_helper::get_time($data['date_stock_in']);
-            $data['date_exp']=System_helper::get_time($data['date_exp']);
-            if($data['date_exp']==0)
-            {
-                $data['date_exp']='';
-            }
-            $data['date_mfg']=System_helper::get_time($data['date_mfg']);
-            if($data['date_mfg']==0)
-            {
-                $data['date_mfg']='';
-            }
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
                 $data['user_updated'] = $user->user_id;
                 $data['date_updated'] = time();
 
-                Query_helper::update($this->config->item('table_stockin_varieties'),$data,array("id = ".$id));
+                Query_helper::update($this->config->item('table_stockin_excess_inventory'),$data,array("id = ".$id));
 
             }
             else
@@ -324,7 +297,7 @@ class Stockin_variety extends Root_Controller
 
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_stockin_varieties'),$data);
+                Query_helper::add($this->config->item('table_stockin_excess_inventory'),$data);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -383,8 +356,8 @@ class Stockin_variety extends Root_Controller
     }
     public function get_items()
     {
-        $this->db->from($this->config->item('table_stockin_varieties').' stv');
-        $this->db->select('stv.id,stv.quantity');
+        $this->db->from($this->config->item('table_stockin_excess_inventory').' stei');
+        $this->db->select('stei.id,stei.quantity');
         $this->db->select('v.name variety_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
@@ -392,14 +365,14 @@ class Stockin_variety extends Root_Controller
         $this->db->select('warehouse.name warehouse_name');
         $this->db->select('fy.name fiscal_year_name');
 
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stv.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stei.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = stv.pack_size_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = stv.warehouse_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stv.fiscal_year_id','INNER');
-        $this->db->where('stv.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('stv.id','DESC');
+        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = stei.pack_size_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = stei.warehouse_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stei.fiscal_year_id','INNER');
+        $this->db->where('stei.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('stei.id','DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
