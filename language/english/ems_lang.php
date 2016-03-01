@@ -52,6 +52,7 @@ $lang['LABEL_NO'] = 'No';
 
 
 $lang['LABEL_YEAR'] = 'Year';
+$lang['LABEL_FISCAL_YEAR'] = 'Fiscal Year';
 $lang['LABEL_NAME'] = 'Name';
 $lang['LABEL_ORDER'] = 'Ordering';
 $lang['LABEL_REMARKS'] = 'Remarks';
@@ -94,4 +95,11 @@ $lang['LABEL_BANK_NAME'] = 'Bank';
 $lang['LABEL_BANK_BRANCH_NAME'] = 'Branch';
 $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
+//stock in
+$lang['LABEL_QUANTITY_GM'] = 'Quantity(gm)';
+$lang['LABEL_QUANTITY_PIECES'] = 'Quantity(pieces)';
+$lang['LABEL_WEIGHT_KG'] = 'Weight(Kg)';
+$lang['LABEL_DATE_STOCK_IN'] = 'Stock In date';
+$lang['LABEL_DATE_MFG'] = 'Mfg Date';
+$lang['LABEL_DATE_EXP'] = 'Exp Date';
 

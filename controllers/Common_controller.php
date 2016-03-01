@@ -68,102 +68,20 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
-
-    /*public function get_dropdown_classifications_by_cropid()
+    //stock in
+    public function get_dropdown_crops_by_warehouseid()
     {
-        $crop_id = $this->input->post('crop_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_classifications'),array('id value','classification_name text'),array('crop_id ='.$crop_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $warehouse_id = $this->input->post('warehouse_id');
+        $this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
+        $this->db->select('wc.crop_id value,c.name text');
+        $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
+        $this->db->where('wc.warehouse_id',$warehouse_id);
+        $this->db->where('wc.revision',1);
+        $data['items']=$this->db->get()->result_array();
         $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#classification_id","html"=>$this->load->view("dropdown_with_select",$data,true));
+        $ajax['system_content'][]=array("id"=>"#crop_id","html"=>$this->load->view("dropdown_with_select",$data,true));
 
         $this->jsonReturn($ajax);
     }
 
-    public function get_dropdown_skintypes_by_typeid()
-    {
-        $type_id = $this->input->post('type_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_skin_types'),array('id value','skin_type_name text'),array('type_id ='.$type_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#skin_type_id","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-
-
-
-
-    public function get_dropdown_unions_by_upazilaid()
-    {
-        $upazila_id = $this->input->post('upazila_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_unions'),array('id value','union_name text'),array('upazila_id ='.$upazila_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#union_id","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_customers_by_unionid()
-    {
-        $union_id = $this->input->post('union_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_customers'),array('id value','customer_name text'),array('union_id ='.$union_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#customer_id","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_consignments_by_year()
-    {
-        $year = $this->input->post('year');
-        $data['items']=Query_helper::get_info($this->config->item('table_consignment'),array('id value','consignment_name text'),array('year ='.$year,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#consignment_id","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_containers_by_consignmentid()
-    {
-        $consignment_id = $this->input->post('consignment_id');
-        $data['items']=Query_helper::get_info($this->config->item('table_container'),array('id value','container_name text'),array('consignment_id ='.$consignment_id));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#container_id","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_container_nos_by_consignments_year()
-    {
-        $consignment_id = $this->input->post('consignment_id');
-        $container_variety_type = $this->input->post('container_variety_type');
-        $this->db->from($this->config->item('table_container_varieties').' cv');
-        $this->db->join($this->config->item('table_container').' container','container.id = cv.container_id','INNER');
-        $this->db->where('cv.variety_id',$container_variety_type);
-        $this->db->where('container.consignment_id',$consignment_id);
-        $this->db->where('cv.revision',1);
-        $total=$this->db->count_all_results();
-
-        $data['items']=array();
-        for($i=1;$i<=$total;$i++)
-        {
-            $data['items'][]=array('value'=>$i,'text'=>$i);
-        }
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#container_no","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }
-    public function get_dropdown_vehicles_by_consignmentid()
-    {
-        $consignment_id = $this->input->post('consignment_id');
-        $records=Query_helper::get_info($this->config->item('table_setup_vehicle_no'),array('no_of_vehicles'),array('consignment_id ='.$consignment_id,'revision =1'),1);
-        $data['items']=array();
-        if($records)
-        {
-            for($i=1;$i<=$records['no_of_vehicles'];$i++)
-            {
-                $data['items'][]=array('value'=>$i,'text'=>$i);
-            }
-        }
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#vehicle_no","html"=>$this->load->view("dropdown_with_select",$data,true));
-
-        $this->jsonReturn($ajax);
-    }*/
 }

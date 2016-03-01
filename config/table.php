@@ -36,3 +36,8 @@ $config['table_basic_setup_bank'] = 'basic_setup_bank';
 $config['table_basic_setup_bank_branch'] = 'basic_setup_bank_branch';
 $config['table_basic_setup_fiscal_year'] = 'basic_setup_fiscal_year';
 $config['table_basic_setup_competitor'] = 'basic_setup_competitor';
+//customer setup
+//$config['table_csetup_customers'] = 'csetup_customers';
+//$config['table_csetup_other_customers'] = 'csetup_other_customers';
+//stock in
+$config['table_stockin_varieties'] = 'stockin_varieties';
