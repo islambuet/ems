@@ -403,7 +403,7 @@ class Stockin_variety extends Root_Controller
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            $item['quantity_weight']=number_format($item['quantity']*$item['pack_size_name']/1000,3);
+            $item['quantity_weight']=number_format($item['quantity']*$item['pack_size_name']/1000,3, '.', '');
         }
         $this->jsonReturn($items);
 
