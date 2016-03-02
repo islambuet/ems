@@ -46,6 +46,7 @@
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'fiscal_year_name', type: 'string' },
+                { name: 'date_stock_in', type: 'string' },
                 { name: 'warehouse_name', type: 'string' },
                 { name: 'crop_name', type: 'string' },
                 { name: 'crop_type_name', type: 'string' },
@@ -76,6 +77,7 @@
                 autoheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_IN'); ?>', dataField: 'date_stock_in'},
                     { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?>', dataField: 'warehouse_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name'},

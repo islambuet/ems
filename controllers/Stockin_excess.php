@@ -357,7 +357,7 @@ class Stockin_excess extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_stockin_excess_inventory').' stei');
-        $this->db->select('stei.id,stei.quantity');
+        $this->db->select('stei.id,stei.quantity,stei.date_stock_in');
         $this->db->select('v.name variety_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
@@ -377,6 +377,7 @@ class Stockin_excess extends Root_Controller
         foreach($items as &$item)
         {
             $item['quantity_weight']=number_format($item['quantity']*$item['pack_size_name']/1000,3, '.', '');
+            $item['date_stock_in']=System_helper::display_date($item['date_stock_in']);
         }
         $this->jsonReturn($items);
 
