@@ -52,7 +52,7 @@
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size_name', type: 'string' },
                 { name: 'quantity', type: 'number' },
-                { name: 'quantity_weight', type: 'number' }
+                { name: 'quantity_weight', type: 'string' }
             ],
             id: 'id',
             url: url
