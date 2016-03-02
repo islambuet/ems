@@ -33,6 +33,7 @@ $config['table_setup_classification_variety_price'] = 'variety_price';
 $config['table_basic_setup_warehouse'] = 'basic_setup_warehouse';
 $config['table_basic_setup_warehouse_crops'] = 'basic_setup_warehouse_crops';
 $config['table_basic_setup_bank'] = 'basic_setup_bank';
+$config['table_basic_setup_arm_bank'] = 'basic_setup_arm_bank';
 $config['table_basic_setup_bank_branch'] = 'basic_setup_bank_branch';
 $config['table_basic_setup_fiscal_year'] = 'basic_setup_fiscal_year';
 $config['table_basic_setup_competitor'] = 'basic_setup_competitor';
