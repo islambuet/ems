@@ -82,6 +82,7 @@ class Stockin_variety extends Root_Controller
                 'variety_id' => '',
                 'pack_size_id' => '',
                 'quantity' => '0',
+                'remarks' => '',
                 'date_mfg' => '',
                 'date_exp' => '',
                 'date_stock_in' => time()

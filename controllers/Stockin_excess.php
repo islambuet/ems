@@ -82,8 +82,7 @@ class Stockin_excess extends Root_Controller
                 'variety_id' => '',
                 'pack_size_id' => '',
                 'quantity' => '0',
-                'date_mfg' => '',
-                'date_exp' => '',
+                'remarks' => '',
                 'date_stock_in' => time()
             );
             $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));

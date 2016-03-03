@@ -237,6 +237,14 @@
                 <input type="text" name="stock_in[date_stock_in]" id="date_stock_in" class="form-control datepicker" value="<?php echo System_helper::display_date($stock_in['date_stock_in']);?>"/>
             </div>
         </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea class="form-control" id="remarks" name="stock_in[remarks]"><?php echo $stock_in['remarks']; ?></textarea>
+            </div>
+        </div>
 
     </div>
 
