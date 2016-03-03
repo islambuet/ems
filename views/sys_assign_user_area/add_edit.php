@@ -71,6 +71,14 @@ if(isset($assigned_area['user_id']))
             <label class="control-label"><?php if($assigned_area['union_name']){echo $assigned_area['union_name']; }else{echo 'All';};?></label>
         </div>
     </div>
+    <div style="" class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo $assigned_area['remarks'];?></label>
+        </div>
+    </div>
 <?php
 
 }
@@ -151,6 +159,14 @@ if(isset($assigned_area['user_id']))
                 <select id="union_id" name="area[union_id]" class="form-control">
                     <option value=""><?php echo $this->lang->line('SELECT');?></option>
                 </select>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea class="form-control" id="remarks" name="area[remarks]"></textarea>
             </div>
         </div>
 
