@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Setup_bsetup_bank_branch extends Root_Controller
+class Setup_bsetup_arm_bank_accounts extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Setup_bsetup_bank_branch extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Setup_bsetup_bank_branch');
-        $this->controller_url='setup_bsetup_bank_branch';
+        $this->permissions=User_helper::get_permission('Setup_bsetup_arm_bank_accounts');
+        $this->controller_url='setup_bsetup_arm_bank_accounts';
         //$this->load->model("sys_module_task_model");
     }
 
@@ -42,9 +42,9 @@ class Setup_bsetup_bank_branch extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Bank Branches";
+            $data['title']="Bank Accounts";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_bank_branch/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -66,20 +66,20 @@ class Setup_bsetup_bank_branch extends Root_Controller
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
 
-            $data['title']="Create New Bank Branch";
-            $data["branch"] = Array(
+            $data['title']="Create New Bank Account";
+            $data["account"] = Array(
                 'id' => 0,
                 'bank_id'=>0,
-                'name' => '',
+                'account_no' => '',
                 'description' => '',
                 'ordering' => 99,
                 'status' => $this->config->item('system_status_active')
             );
-            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_bank_branch/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -99,23 +99,23 @@ class Setup_bsetup_bank_branch extends Root_Controller
         {
             if(($this->input->post('id')))
             {
-                $branch_id=$this->input->post('id');
+                $account_id=$this->input->post('id');
             }
             else
             {
-                $branch_id=$id;
+                $account_id=$id;
             }
 
-            $data['branch']=Query_helper::get_info($this->config->item('table_basic_setup_bank_branch'),'*',array('id ='.$branch_id),1);
-            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['title']="Edit Branch (".$data['branch']['name'].')';
+            $data['account']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank_accounts'),'*',array('id ='.$account_id),1);
+            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['title']="Edit Bank Account (".$data['account']['account_no'].')';
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_bank_branch/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$branch_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$account_id);
             $this->jsonReturn($ajax);
         }
         else
@@ -160,14 +160,14 @@ class Setup_bsetup_bank_branch extends Root_Controller
         }
         else
         {
-            $data=$this->input->post('branch');
+            $data=$this->input->post('account');
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
                 $data['user_updated'] = $user->user_id;
                 $data['date_updated'] = time();
 
-                Query_helper::update($this->config->item('table_basic_setup_bank_branch'),$data,array("id = ".$id));
+                Query_helper::update($this->config->item('table_basic_setup_arm_bank_accounts'),$data,array("id = ".$id));
 
             }
             else
@@ -175,7 +175,7 @@ class Setup_bsetup_bank_branch extends Root_Controller
 
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_basic_setup_bank_branch'),$data);
+                Query_helper::add($this->config->item('table_basic_setup_arm_bank_accounts'),$data);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -202,9 +202,9 @@ class Setup_bsetup_bank_branch extends Root_Controller
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('branch[name]',$this->lang->line('LABEL_NAME'),'required');
-        $this->form_validation->set_rules('branch[bank_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
-        $this->form_validation->set_rules('branch[status]',$this->lang->line('STATUS'),'required');
+        $this->form_validation->set_rules('account[account_no]',$this->lang->line('LABEL_ACCOUNT_NO'),'required');
+        $this->form_validation->set_rules('account[bank_id]',$this->lang->line('LABEL_BANK_NAME'),'required');
+        $this->form_validation->set_rules('account[status]',$this->lang->line('STATUS'),'required');
 
         if($this->form_validation->run() == FALSE)
         {
@@ -217,10 +217,10 @@ class Setup_bsetup_bank_branch extends Root_Controller
     {
         $user = User_helper::get_user();
 
-        $this->db->from($this->config->item('table_basic_setup_bank_branch').' bb');
-        $this->db->select('bb.id,bb.name,bb.status,bb.ordering,bb.description');
+        $this->db->from($this->config->item('table_basic_setup_arm_bank_accounts').' bb');
+        $this->db->select('bb.id,bb.account_no,bb.status,bb.ordering,bb.description');
         $this->db->select('b.name bank_name');
-        $this->db->join($this->config->item('table_basic_setup_bank').' b','b.id = bb.bank_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_arm_bank').' b','b.id = bb.bank_id','INNER');
         $this->db->order_by('bb.ordering','ASC');
         $this->db->where('bb.status !=',$this->config->item('system_status_delete'));
         $items=$this->db->get()->result_array();

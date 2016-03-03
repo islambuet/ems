@@ -93,6 +93,7 @@ $lang['LABEL_CAPACITY_KG'] = 'Capacity(kg)';
 $lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';
 $lang['LABEL_BANK_NAME'] = 'Bank';
 $lang['LABEL_BANK_BRANCH_NAME'] = 'Branch';
+$lang['LABEL_ACCOUNT_NO'] = 'Account Number';
 $lang['LABEL_DATE_START'] = 'Starting Date';
 $lang['LABEL_DATE_END'] = 'End Date';
 //stock in

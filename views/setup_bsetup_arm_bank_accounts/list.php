@@ -37,7 +37,7 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'name', type: 'string' },
+                { name: 'account_no', type: 'string' },
                 { name: 'bank_name', type: 'string' },
                 { name: 'description', type: 'string' },
                 { name: 'ordering', type: 'int' },
@@ -64,7 +64,7 @@
                 altrows: true,
                 autoheight: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
+                    { text: '<?php echo $CI->lang->line('LABEL_ACCOUNT_NO'); ?>', dataField: 'account_no'},
                     { text: '<?php echo $CI->lang->line('LABEL_BANK_NAME'); ?>', dataField: 'bank_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DESCRIPTION'); ?>', dataField: 'description'},
                     { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsalign: 'right'},
