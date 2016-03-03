@@ -10,6 +10,7 @@ $config['table_other_sites_visit'] = 'other_sites_visit';
 
 //ems site
 $config['table_system_assigned_group'] = 'system_assigned_group';
+$config['table_system_assigned_area'] = 'system_assigned_area';
 
 $config['table_system_user_group'] = 'system_user_group';
 $config['table_system_task'] = 'system_task';
