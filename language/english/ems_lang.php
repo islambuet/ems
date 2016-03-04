@@ -103,4 +103,13 @@ $lang['LABEL_WEIGHT_KG'] = 'Weight(Kg)';
 $lang['LABEL_DATE_STOCK_IN'] = 'Stock In date';
 $lang['LABEL_DATE_MFG'] = 'Mfg Date';
 $lang['LABEL_DATE_EXP'] = 'Exp Date';
+//customer
+$lang['LABEL_CUSTOMER_CODE'] = 'Customer Code';
+$lang['LABEL_PHONE'] = 'phone';
+$lang['LABEL_NAME_OWNER'] = 'Owner Name';
+$lang['LABEL_NAME_MARKET'] = 'Market Name';
+$lang['LABEL_EMAIL'] = 'Email';
+$lang['LABEL_AGREEMENT'] = 'Agreement';
+$lang['LABEL_OPENING_BALANCE'] = 'Opening Balance';
+
 

@@ -100,5 +100,20 @@ class System_helper
 
         return $uploaded_files;
     }
+    public static function invalid_try($action='',$action_id='',$other_info='')
+    {
+        $CI =& get_instance();
+        $user = User_helper::get_user();
+        $time=time();
+        $data=array();
+        $data['user_id']=$user->user_id;
+        $data['controller']=$CI->router->class;
+        $data['action']=$action;
+        $data['action_id']=$action_id;
+        $data['other_info']=$other_info;
+        $data['date_created']=$time;
+        $data['date_created_string']=System_helper::display_date($time);
+        $CI->db->insert('history_hack', $data);
+    }
 
 }

@@ -5,24 +5,24 @@ $config['system_status_active']='Active';
 $config['system_status_inactive']='In-Active';
 $config['system_status_delete']='Deleted';
 
-$config['start_year']='2015';
-$config['booking_status_preliminary']='Preliminary';
-$config['booking_status_permanent']='Permanent';
-$config['booking_status_other']='Other';
+$config['system_status_not_done']='Not Done';
+$config['system_status_done']='Done';
 
-$config['payment_method']['cheque']='Cheque';
-$config['payment_method']['pay_order']='Pay Order';
-$config['payment_method']['bank_guarantee']='Bank Guarantee';
-$config['payment_method']['online_payment']='Online Payment';
-$config['payment_method']['dd']='DD';
-$config['payment_method']['cash']='Cash';
-$config['payment_method']['mobile_banking']='Mobile Banking';
-$config['payment_method']['others']='Others';
+$config['system_edit_not_exists']='Edit Not Exists';
+$config['system_edit_others']='Edit Others';
+$config['system_view_not_exists']='View Not Exists';
+$config['system_view_others']='View Others';
+$config['system_save']='save';
 
-$config['consignment_status']['ready']='Ready';
-$config['consignment_status']['complete']='Completed';
-$config['consignment_status']['allocation']='Allocation';
+$config['system_payment_initial']='Initial';
+$config['system_payment_other']='Other';
 
+$config['system_payment_way_cash']='Cash';
+$config['system_payment_way_pay_order']='Pay Order';
+$config['system_payment_way_cheque']='Cheque';
+$config['system_payment_way_tt']='TT';
+$config['system_payment_way_dd']='DD';
+$config['system_payment_way_online_payment']='Online Payment';
 
 
 

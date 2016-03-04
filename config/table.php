@@ -39,8 +39,10 @@ $config['table_basic_setup_arm_bank_accounts'] = 'basic_setup_arm_bank_accounts'
 $config['table_basic_setup_fiscal_year'] = 'basic_setup_fiscal_year';
 $config['table_basic_setup_competitor'] = 'basic_setup_competitor';
 //customer setup
-//$config['table_csetup_customers'] = 'csetup_customers';
+$config['table_csetup_customers'] = 'csetup_customers';
 //$config['table_csetup_other_customers'] = 'csetup_other_customers';
 //stock in
 $config['table_stockin_varieties'] = 'stockin_varieties';
 $config['table_stockin_excess_inventory'] = 'stockin_excess_inventory';
+//payment
+$config['table_payment_payment'] = 'payment_payment';
