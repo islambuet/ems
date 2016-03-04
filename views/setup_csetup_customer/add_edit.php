@@ -1,8 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
-echo '<PRE>';
-print_r($CI->locations);
-echo '</PRE>';
     $action_data=array();
     $action_data["action_back"]=base_url($CI->controller_url);
     $action_data["action_save"]='#save_form';
