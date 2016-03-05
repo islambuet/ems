@@ -54,7 +54,8 @@
                 { name: 'district_name', type: 'string' },
                 { name: 'customer_code', type: 'string' },
                 { name: 'amount', type: 'string' },
-                { name: 'payment_way', type: 'string' }
+                { name: 'payment_way', type: 'string' },
+                { name: 'cheque_no', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -85,7 +86,8 @@
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_CODE'); ?>', dataField: 'customer_code'},
                     { text: '<?php echo $CI->lang->line('LABEL_AMOUNT'); ?>', dataField: 'amount',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_PAYMENT_WAY'); ?>', dataField: 'payment_way'}
+                    { text: '<?php echo $CI->lang->line('LABEL_PAYMENT_WAY'); ?>', dataField: 'payment_way'},
+                    { text: '<?php echo $CI->lang->line('LABEL_CHEQUE_NO'); ?>', dataField: 'cheque_no'}
                 ]
             });
     });

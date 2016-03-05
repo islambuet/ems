@@ -161,7 +161,7 @@ class Setup_bbasic_fyear extends Root_Controller
         {
             $data=$this->input->post('fyear');
             $data['date_start']=System_helper::get_time($data['date_start']);
-            $data['date_end']=System_helper::get_time($data['date_end']);
+            $data['date_end']=System_helper::get_time($data['date_end'])+24*60*60-1;
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {

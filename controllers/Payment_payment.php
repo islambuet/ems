@@ -226,6 +226,116 @@ class Payment_payment extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
+    private function system_details($id)
+    {
+        if(isset($this->permissions['view'])&&($this->permissions['view']==1))
+        {
+            if(($this->input->post('id')))
+            {
+                $payment_id=$this->input->post('id');
+            }
+            else
+            {
+                $payment_id=$id;
+            }
+
+            $this->db->from($this->config->item('table_payment_payment').' payment');
+            $this->db->select('payment.*');
+            $this->db->select('cus.name');
+            $this->db->select('d.name district_name,d.id district_id');
+            $this->db->select('t.name territory_name,t.id territory_id');
+            $this->db->select('zone.name zone_name,zone.id zone_id');
+            $this->db->select('division.name division_name,division.id division_id');
+            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = payment.customer_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+            $this->db->where('payment.id',$payment_id);
+            $this->db->where('payment.payment_type',$this->config->item('system_payment_other'));
+            $data['payment']=$this->db->get()->row_array();
+            if(!$data['payment'])
+            {
+                System_helper::invalid_try($this->config->item('system_view_not_exists'),$payment_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            if(!$this->check_my_editable($data['payment']))
+            {
+                System_helper::invalid_try($this->config->item('system_view_others'),$payment_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+
+
+            $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['payment']['division_id']));
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['payment']['zone_id']));
+            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['payment']['territory_id']));
+            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$data['payment']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
+
+            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['arm_banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['arm_bank_accounts']=array();
+            if($data['payment']['arm_bank_id']>0)
+            {
+                $data['arm_bank_accounts']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('bank_id'=>$data['payment']['arm_bank_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            }
+
+
+            $data['title']="Details of Payment";
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_payment/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$payment_id);
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+    }
+    private function system_delete()
+    {
+        if(isset($this->permissions['delete'])&&($this->permissions['delete']==1))
+        {
+            $ids = $this->input->post("ids");
+            $user = User_helper::get_user();
+            $this->db->trans_start();  //DB Transaction Handle START
+            $time=time();
+            foreach($ids as $id)
+            {
+                Query_helper::update($this->config->item('table_payment_payment'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
+            }
+            $this->db->trans_complete();   //DB Transaction Handle END
+
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+
+    }
 
 
     private function system_save()
@@ -393,7 +503,7 @@ class Payment_payment extends Root_Controller
     {
         //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
         $this->db->from($this->config->item('table_payment_payment').' payment');
-        $this->db->select('payment.id,payment.amount,payment.payment_way,payment.date_payment');
+        $this->db->select('payment.id,payment.amount,payment.payment_way,payment.date_payment,payment.cheque_no');
         $this->db->select('cus.name,cus.customer_code,cus.phone,cus.status,cus.ordering');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
