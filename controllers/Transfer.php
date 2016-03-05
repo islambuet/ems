@@ -477,4 +477,60 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function customers()
+    {
+        $this->db->from('ait_distributor_info di');
+        $this->db->select('di.*,d.id district_id');
+        $this->db->order_by('di.id');
+        $this->db->where('di.status','Active');
+        $this->db->join('districts d','d.old_zilla_id =di.zilla_id','INNER');
+        $customers=$this->db->get()->result_array();
+        $time=time();
+        $this->db->trans_start();  //DB Transaction Handle START
+
+        foreach($customers as $customer)
+        {
+
+
+            {
+                $data=array();
+                $data['name']=$customer['distributor_name'];
+                $data['district_id']=$customer['district_id'];
+                $data['customer_code']=$customer['customer_code'];
+                $data['name_owner']=$customer['owner_name'];
+                $data['name_market']=$customer['market_name'];
+                $data['address']=$customer['address'];
+                $data['phone']=$customer['phone'];
+                $data['email']=$customer['email'];
+                $data['status_agreement']=$customer['agreement_status'];
+                $data['status']=$customer['status'];
+                $data['ordering']=$customer['id'];
+                //$data['name']=intval(substr($price['varriety_id'],3));
+                $data['date_created']=$time;
+                $data['user_created']=1;
+                $data['old_cs_id']=$customer['id'];
+                $this->db->insert('csetup_customers',$data);
+
+                $customer_id = $this->db->insert_id();
+                $payment['amount'] = 0;
+                $payment['customer_id'] = $customer_id;
+                $payment['user_created'] = 1;
+                $payment['date_created'] = $time;
+                $payment['date_payment'] = $time;
+                $payment['payment_type'] = $this->config->item('system_payment_initial');
+                $this->db->insert('payment_payment',$payment);
+
+            }
+
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }

@@ -111,5 +111,12 @@ $lang['LABEL_NAME_MARKET'] = 'Market Name';
 $lang['LABEL_EMAIL'] = 'Email';
 $lang['LABEL_AGREEMENT'] = 'Agreement';
 $lang['LABEL_OPENING_BALANCE'] = 'Opening Balance';
+//payment
+$lang['LABEL_AMOUNT'] = 'Amount';
+$lang['LABEL_DATE_PAYMENT'] = 'Payment Date';
+$lang['LABEL_PAYMENT_WAY'] = 'Payment Type';
+$lang['LABEL_CUSTOMER_NAME'] = 'Customer';
+$lang['LABEL_CHEQUE_NO'] = 'Cheque/Payment NO';
+$lang['LABEL_ARM_BANK_NAME'] = 'ARM Bank';
 
 

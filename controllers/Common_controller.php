@@ -81,6 +81,34 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_dropdown_customers_by_districtid()
+    {
+        $district_id = $this->input->post('district_id');
+        $html_container_id='#customer_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
+    public function get_dropdown_armbankaccounts_by_armbankid()
+    {
+        $arm_bank_id = $this->input->post('arm_bank_id');
+        $html_container_id='#arm_bank_account_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank_accounts'),array('id value','account_no text'),array('bank_id ='.$arm_bank_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
 
     //crop classification
 
