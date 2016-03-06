@@ -17,13 +17,13 @@ class Setup_csetup_ocustomer extends Root_Controller
             if($this->locations=='wrong')
             {
                 $ajax['status']=false;
-                $ajax['system_message']="Your assigned Location is invalid.Please contact with admin.";
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_INVALID');
                 $this->jsonReturn($ajax);
             }
             else
             {
                 $ajax['status']=false;
-                $ajax['system_message']="No Location assigned for you.Please contact with admin.";
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED');
                 $this->jsonReturn($ajax);
             }
 

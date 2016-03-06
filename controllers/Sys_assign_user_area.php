@@ -258,10 +258,12 @@ class Sys_assign_user_area extends Root_Controller
         $db_login->from($this->config->item('table_setup_user').' user');
         $db_login->select('user.id,user.employee_id,user.user_name,user.status');
         $db_login->select('user_info.name,user_info.ordering');
+        $db_login->select('designation.name designation_name');
         //$db_login->select('ug.name group_name');
         $db_login->join($this->config->item('table_setup_user_info').' user_info','user.id = user_info.user_id','INNER');
         $db_login->join($this->config->item('table_setup_users_other_sites').' uos','uos.user_id = user.id','INNER');
         $db_login->join($this->config->item('table_system_other_sites').' os','os.id = uos.site_id','INNER');
+        $db_login->join($this->config->item('table_setup_designation').' designation','designation.id = user_info.designation','LEFT');
         $db_login->where('user_info.revision',1);
         $db_login->where('uos.revision',1);
         $db_login->where('os.short_name',$this->config->item('system_site_short_name'));

@@ -46,6 +46,7 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
+                { name: 'payment_id', type: 'string' },
                 { name: 'date_payment', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'division_name', type: 'string' },
@@ -79,6 +80,7 @@
                 autoheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_PAYMENT'); ?>', dataField: 'date_payment',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_PAYMENT_ID'); ?>', dataField: 'payment_id',width:'90'},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'300'},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name'},

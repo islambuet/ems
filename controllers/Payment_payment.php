@@ -17,13 +17,13 @@ class Payment_payment extends Root_Controller
             if($this->locations=='wrong')
             {
                 $ajax['status']=false;
-                $ajax['system_message']="Your assigned Location is invalid.Please contact with admin.";
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_INVALID');
                 $this->jsonReturn($ajax);
             }
             else
             {
                 $ajax['status']=false;
-                $ajax['system_message']="No Location assigned for you.Please contact with admin.";
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED');
                 $this->jsonReturn($ajax);
             }
 
@@ -538,6 +538,7 @@ class Payment_payment extends Root_Controller
         {
             $item['date_payment']=System_helper::display_date($item['date_payment']);
             $item['amount']=number_format($item['amount'],2);
+            $item['payment_id']=str_pad($item['id'],6,'0',STR_PAD_LEFT);
         }
         $this->jsonReturn($items);
     }

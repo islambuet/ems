@@ -4,6 +4,9 @@
 $lang['MSG_USERNAME_PASSWORD_INVALID'] = 'Username and Password did not match or Invalid';
 $lang['MSG_LOGIN_SUCCESS'] = 'Successfully Logged In';
 $lang['MSG_LOGOUT_SUCCESS'] = 'Successfully Logged out';
+$lang['MSG_NOT_ASSIGNED_GROUP'] = 'Please Contact with Admin(01777709208) to assign some task.';
+$lang['MSG_LOCATION_INVALID'] = 'Your assigned Location is invalid.Please contact with admin(01777709208).';
+$lang['MSG_LOCATION_NOT_ASSIGNED'] = 'No Location assigned for you.Please contact with admin(01777709208).';
 
 //Action buttons
 $lang['ACTION_DASHBOARD'] = 'Dashboard';
@@ -118,5 +121,7 @@ $lang['LABEL_PAYMENT_WAY'] = 'Payment Type';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer';
 $lang['LABEL_CHEQUE_NO'] = 'Cheque/Payment NO';
 $lang['LABEL_ARM_BANK_NAME'] = 'ARM Bank';
+$lang['LABEL_PAYMENT_ID'] = 'Payment Id';
+$lang['LABEL_DESIGNATION_NAME'] = 'Designation';
 
 

@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $user=User_helper::get_user();
+$CI = & get_instance();
 ?>
 <div class="row widget">
     <?php
@@ -7,7 +8,7 @@ $user=User_helper::get_user();
     {
         ?>
         <div class="col-sm-12 text-center">
-            <h3 class="alert alert-warning">Please Contact with Admin to assign some task.</h3>
+            <h3 class="alert alert-warning"><?php echo $CI->lang->line('MSG_NOT_ASSIGNED_GROUP');?></h3>
 
         </div>
         <?php
