@@ -126,7 +126,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $payment['amount'];?></label>
+                <label class="control-label"><?php echo number_format($payment['amount'],2);?></label>
             </div>
         </div>
         <div class="row show-grid">
