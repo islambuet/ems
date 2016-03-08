@@ -77,7 +77,6 @@ class Stockin_excess extends Root_Controller
             $data['title']="New Excess Inventory";
             $data["stock_in"] = Array(
                 'id' => 0,
-                'fiscal_year_id' => '',
                 'warehouse_id' => '',
                 'variety_id' => '',
                 'pack_size_id' => '',
@@ -85,7 +84,6 @@ class Stockin_excess extends Root_Controller
                 'remarks' => '',
                 'date_stock_in' => time()
             );
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
@@ -327,15 +325,9 @@ class Stockin_excess extends Root_Controller
         $this->load->library('form_validation');
         if($id==0)
         {
-            $this->form_validation->set_rules('stock_in[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
             $this->form_validation->set_rules('stock_in[warehouse_id]',$this->lang->line('LABEL_WAREHOUSE_NAME'),'required');
             $this->form_validation->set_rules('stock_in[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
             $this->form_validation->set_rules('stock_in[pack_size_id]',$this->lang->line('LABEL_PACK_NAME'),'required');
-        }
-        else
-        {
-            $info=Query_helper::get_info($this->config->item('table_stockin_varieties'),'*',array('id ='.$id),1);
-            $data['fiscal_year_id']=$info['fiscal_year_id'];
         }
         $this->form_validation->set_rules('stock_in[quantity]',$this->lang->line('LABEL_QUANTITY_PIECES'),'required|numeric');
         $this->form_validation->set_rules('stock_in[date_stock_in]',$this->lang->line('LABEL_DATE_STOCK_IN'),'required');
@@ -344,13 +336,7 @@ class Stockin_excess extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
-        $fiscal_info=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$data['fiscal_year_id']),1);
-        $stock_in_date=System_helper::get_time($data['date_stock_in']);
-        if($stock_in_date<$fiscal_info['date_start']||$stock_in_date>$fiscal_info['date_end'])
-        {
-            $this->message='Stock In date must be between fiscal year';
-            return false;
-        }
+
         return true;
     }
     public function get_items()
@@ -369,7 +355,8 @@ class Stockin_excess extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = stei.pack_size_id','INNER');
         $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = stei.warehouse_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stei.fiscal_year_id','INNER');
+        //$this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stei.fiscal_year_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= stei.date_stock_in and fy.date_end >= stei.date_stock_in','LEFT');
         $this->db->where('stei.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('stei.id','DESC');
         $items=$this->db->get()->result_array();

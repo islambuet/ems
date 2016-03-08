@@ -174,7 +174,7 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
-    public function get_dropdown_packsizes_by_variety_fyear_warehouse()
+    public function get_dropdown_packsizes_by_variety_warehouse()
     {
         $html_container_id='#pack_size_id';
         if($this->input->post('html_container_id'))
@@ -183,14 +183,13 @@ class Common_controller extends Root_Controller
         }
 
         $variety_id = $this->input->post('variety_id');
-        $fiscal_year_id = $this->input->post('fiscal_year_id');
         $warehouse_id = $this->input->post('warehouse_id');
 
         $this->db->from($this->config->item('table_stockin_varieties').' stv');
         //$this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
         $this->db->select('stv.pack_size_id value,pack.name text');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id =stv.pack_size_id','INNER');
-        $this->db->where('stv.fiscal_year_id',$fiscal_year_id);
+        
         $this->db->where('stv.warehouse_id',$warehouse_id);
         $this->db->where('stv.variety_id',$variety_id);
         $this->db->where('stv.status',$this->config->item('system_status_active'));

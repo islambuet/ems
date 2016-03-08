@@ -17,46 +17,7 @@
             </div>
             <div class="clearfix"></div>
         </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php
-                if($stock_in['id']>0)
-                {
-                    $fiscal_year_name='';
-                    foreach($fiscal_years as $fiscal_year)
-                    {
-                        if($fiscal_year['value']==$stock_in['fiscal_year_id'])
-                        {
-                            $fiscal_year_name=$fiscal_year['text'];
-                        }
-                    }
-                    ?>
-                    <label class="control-label"><?php echo $fiscal_year_name;;?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="fiscal_year_id" name="stock_in[fiscal_year_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($fiscal_years as $fiscal_year)
-                        {?>
-                            <option value="<?php echo $fiscal_year['value']?>"><?php echo $fiscal_year['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
-            </div>
-        </div>
-        <div style="<?php if(!($stock_in['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="warehouse_id_container">
+        <div style="" class="row show-grid" id="warehouse_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -257,32 +218,6 @@
         turn_off_triggers();
         $(".datepicker").datepicker({dateFormat : display_date_format});
         $(".datelarge").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "-20:+20"});
-        $(document).on("change","#fiscal_year_id",function()
-        {
-            $("#warehouse_id").val("");
-            $("#crop_id").val("");
-            $("#crop_type_id").val("");
-            $("#variety_id").val("");
-            $("#pack_size_id").val("");
-            var fiscal_year_id=$('#fiscal_year_id').val();
-            if(fiscal_year_id>0)
-            {
-
-                $('#warehouse_id_container').show();
-                $('#crop_id_container').hide();
-                $('#crop_type_id_container').hide();
-                $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
-            }
-            else
-            {
-                $('#warehouse_id_container').hide();
-                $('#crop_id_container').hide();
-                $('#crop_type_id_container').hide();
-                $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
-            }
-        });
         $(document).on("change","#warehouse_id",function()
         {
             $("#crop_id").val("");
@@ -391,15 +326,14 @@
             $("#pack_size_id").val("");
             var variety_id=$('#variety_id').val();
             var warehouse_id=$('#warehouse_id').val();
-            var fiscal_year_id=$('#fiscal_year_id').val();
             if(variety_id>0)
             {
                 $('#pack_size_id_container').show();
                 $.ajax({
-                    url: base_url+"common_controller/get_dropdown_packsizes_by_variety_fyear_warehouse/",
+                    url: base_url+"common_controller/get_dropdown_packsizes_by_variety_warehouse/",
                     type: 'POST',
                     datatype: "JSON",
-                    data:{variety_id:variety_id,fiscal_year_id:fiscal_year_id,warehouse_id:warehouse_id},
+                    data:{variety_id:variety_id,warehouse_id:warehouse_id},
                     success: function (data, status)
                     {
 
