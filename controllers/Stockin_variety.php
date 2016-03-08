@@ -77,7 +77,6 @@ class Stockin_variety extends Root_Controller
             $data['title']="New Purchase";
             $data["stock_in"] = Array(
                 'id' => 0,
-                'fiscal_year_id' => '',
                 'warehouse_id' => '',
                 'variety_id' => '',
                 'pack_size_id' => '',
@@ -87,9 +86,9 @@ class Stockin_variety extends Root_Controller
                 'date_exp' => '',
                 'date_stock_in' => time()
             );
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
@@ -146,12 +145,11 @@ class Stockin_variety extends Root_Controller
                 $data['stock_in']['date_mfg']='';
             }
             $data['title']="Edit Purchase";
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_in']['crop_id']));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['stock_in']['crop_type_id']));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/add_edit",$data,true));
@@ -208,12 +206,11 @@ class Stockin_variety extends Root_Controller
                 $data['stock_in']['date_mfg']='';
             }
             $data['title']="Detail of Purchase";
-            $data['fiscal_years']=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_in']['crop_id']));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['stock_in']['crop_type_id']));
-            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockin_variety/details",$data,true));
@@ -356,28 +353,15 @@ class Stockin_variety extends Root_Controller
         $this->load->library('form_validation');
         if($id==0)
         {
-            $this->form_validation->set_rules('stock_in[fiscal_year_id]',$this->lang->line('LABEL_FISCAL_YEAR'),'required');
             $this->form_validation->set_rules('stock_in[warehouse_id]',$this->lang->line('LABEL_WAREHOUSE_NAME'),'required');
             $this->form_validation->set_rules('stock_in[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
             $this->form_validation->set_rules('stock_in[pack_size_id]',$this->lang->line('LABEL_PACK_NAME'),'required');
-        }
-        else
-        {
-            $info=Query_helper::get_info($this->config->item('table_stockin_varieties'),'*',array('id ='.$id),1);
-            $data['fiscal_year_id']=$info['fiscal_year_id'];
         }
         $this->form_validation->set_rules('stock_in[quantity]',$this->lang->line('LABEL_QUANTITY_PIECES'),'required|numeric');
         $this->form_validation->set_rules('stock_in[date_stock_in]',$this->lang->line('LABEL_DATE_STOCK_IN'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
-            return false;
-        }
-        $fiscal_info=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array('status ="'.$this->config->item('system_status_active').'"','id ='.$data['fiscal_year_id']),1);
-        $stock_in_date=System_helper::get_time($data['date_stock_in']);
-        if($stock_in_date<$fiscal_info['date_start']||$stock_in_date>$fiscal_info['date_end'])
-        {
-            $this->message='Stock In date must be between fiscal year';
             return false;
         }
         return true;
@@ -398,10 +382,12 @@ class Stockin_variety extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = stv.pack_size_id','INNER');
         $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = stv.warehouse_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stv.fiscal_year_id','INNER');
+        //$this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stv.fiscal_year_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= stv.date_stock_in and fy.date_end >= stv.date_stock_in','LEFT');
         $this->db->where('stv.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('stv.id','DESC');
         $items=$this->db->get()->result_array();
+        //echo $this->db->last_query();
         foreach($items as &$item)
         {
             $item['quantity_weight']=number_format($item['quantity']*$item['pack_size_name']/1000,3, '.', '');

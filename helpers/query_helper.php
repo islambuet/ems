@@ -80,7 +80,7 @@ class Query_helper
 
     }
 
-    public static function get_info($tablename,$fieldnames,$conditions,$limit=0,$start=0)
+    public static function get_info($tablename,$fieldnames,$conditions,$limit=0,$start=0,$order_by=null)
     {
         $CI =& get_instance();
 
@@ -101,6 +101,14 @@ class Query_helper
         foreach($conditions as $condition)
         {
             $CI->db->where($condition);
+        }
+        if(is_array($order_by))
+        {
+            foreach($order_by as $order)
+            {
+                $CI->db->order_by($order);
+            }
+
         }
         if($limit==0)
         {

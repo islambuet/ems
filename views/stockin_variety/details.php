@@ -11,25 +11,6 @@
             </div>
             <div class="clearfix"></div>
         </div>
-
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <?php
-                $fiscal_year_name='';
-                foreach($fiscal_years as $fiscal_year)
-                {
-                    if($fiscal_year['value']==$stock_in['fiscal_year_id'])
-                    {
-                        $fiscal_year_name=$fiscal_year['text'];
-                    }
-                }
-                ?>
-                <label class="control-label"><?php echo $fiscal_year_name;;?></label>
-            </div>
-        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME');?></label>
