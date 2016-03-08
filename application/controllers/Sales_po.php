@@ -372,12 +372,27 @@ class Sales_po extends Root_Controller
         $pack_size_id=$this->input->post('pack_size_id');
         $quantity=$this->input->post('quantity');
         $active_id=$this->input->post('active_id');
+        $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
+        $this->db->select('vp.price');
+        $this->db->select('vp_size.name weight');
+        $this->db->join($this->config->item('table_setup_classification_vpack_size').' vp_size','vp_size.id = vp.pack_size_id','INNER');
+        $this->db->where('vp.variety_id',$variety_id);
+        $this->db->where('vp.pack_size_id',$pack_size_id);
+        $this->db->where('vp.revision',1);
+        $price_info=$this->db->get()->row_array();
+        if(!$price_info)
+        {
+            $ajax['status']=false;
+            $ajax['system_message']="Invalid Try";
+            $this->jsonReturn($ajax);
+            die();
+        }
         $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>"#total_weight_".$active_id,"html"=>$variety_id);
-        $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>$variety_id);
-        $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>$variety_id);
-        $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>$variety_id);
-        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>$variety_id);
+        $ajax['system_content'][]=array("id"=>"#total_weight_".$active_id,"html"=>number_format($quantity*$price_info['weight']/1000,3, '.', ''));
+        $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>number_format($quantity*$price_info['price'],2));
+        $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>0);
+        $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>0);
+        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>0);
 
             //$ajax['system_message']=$this->message;
 

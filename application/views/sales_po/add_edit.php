@@ -274,7 +274,7 @@
                     <label class="pack_size_price">&nbsp;</label>
                 </td>
                 <td class="text-right">
-                    <input type="text"class="quantity" value=""/>
+                    <input type="text"class="form-control text-right quantity" value=""/>
                 </td>
                 <td class="text-right">
                     <label class="total_weight">&nbsp;</label>
@@ -298,7 +298,14 @@
     </table>
 </div>
 <script type="text/javascript">
-
+    function set_rest_blank(active_id)
+    {
+        $('#total_weight_'+active_id).html('');
+        $('#total_price_'+active_id).html('');
+        $('#bonus_quantity_'+active_id).html('');
+        $('#bonus_pack_size_name_'+active_id).html('');
+        $('#bonus_total_weight_'+active_id).html('');
+    }
     jQuery(document).ready(function()
     {
         turn_off_triggers();
@@ -372,12 +379,14 @@
         });
         $(document).on("change",".crop_id",function()
         {
+
             var active_id=parseInt($(this).attr('data-current-id'));
             $("#crop_type_id_"+active_id).val("");
             $("#variety_id_"+active_id).val("");
             $("#pack_size_id"+active_id).val("");
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
+            set_rest_blank(active_id);
             var crop_id=$('#crop_id_'+active_id).val();
             if(crop_id>0)
             {
@@ -415,7 +424,7 @@
             $("#pack_size_id"+active_id).val("");
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
-
+            set_rest_blank(active_id);
             var crop_type_id=$('#crop_type_id_'+active_id).val();
             if(crop_type_id>0)
             {
@@ -449,7 +458,7 @@
             $("#pack_size_id"+active_id).val("");
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
-
+            set_rest_blank(active_id);
             var variety_id=$('#variety_id_'+active_id).val();
             var warehouse_id=$('#warehouse_id').val();
 
@@ -485,7 +494,7 @@
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
             $("#quantity_"+active_id).val("");
-
+            set_rest_blank(active_id);
             if(variety_id>0 && pack_size_id>0)
             {
                 $.ajax({
@@ -511,6 +520,7 @@
             var quantity=parseInt($('#quantity_'+active_id).val());
             var variety_id=$('#variety_id_'+active_id).val();
             var pack_size_id=$('#pack_size_id_'+active_id).val();
+            set_rest_blank(active_id);
             if((quantity==$('#quantity_'+active_id).val())&&(quantity>0)&&pack_size_id>0&&variety_id>0)
             {
                 $.ajax({
