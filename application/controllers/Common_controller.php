@@ -201,5 +201,25 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_price_by_variety_pack_size_id()
+    {
+        $html_container_id='#pack_price';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $variety_id = $this->input->post('variety_id');
+        $pack_size_id = $this->input->post('pack_size_id');
+        $info=Query_helper::get_info($this->config->item('table_setup_classification_variety_price'),array('price'),array('variety_id ='.$variety_id,'pack_size_id ='.$pack_size_id,'revision =1'),1);
+        $price=$this->lang->line('LABEL_NOT_SET');
+        if($info)
+        {
+            $price=$info['price'];
+        }
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$price);
+
+        $this->jsonReturn($ajax);
+    }
 
 }

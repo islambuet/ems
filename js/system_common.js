@@ -240,6 +240,42 @@ $(document).ready(function()
         }
 
     });
+    $(document).on("click", "#button_action_request_po_approve", function(event)
+    {
+        var jqxgrid_id='#system_jqx_container';
+
+        var selected_row_indexes = $(jqxgrid_id).jqxGrid('getselectedrowindexes');
+        if (selected_row_indexes.length > 0)
+        {
+            var ids=[];
+            for (var i = 0; i < selected_row_indexes.length; i++)
+            {
+                ids.push($(jqxgrid_id).jqxGrid('getrowdata', selected_row_indexes[i]).id);
+            }
+            $.ajax({
+                url: $(this).attr('data-action-link'),
+                type: 'POST',
+                dataType: "JSON",
+                data:{'ids':ids},
+                success: function (data, status)
+                {
+
+                },
+                error: function (xhr, desc, err)
+                {
+                    console.log("error");
+
+                }
+            });
+
+
+        }
+        else
+        {
+            alert(SELCET_ONE_ITEM);
+        }
+
+    });
 
     //load the current page content
     load_current_content();
@@ -358,5 +394,13 @@ function turn_off_triggers()
     $(document).off("change", "#warehouse_id");
     $(document).off("change", "#variety_id");
     $(document).off("change", "#arm_bank_id");
+    //po
+    $(document).off("click", ".system_button_add_more");
+    $(document).off("click", ".system_button_add_delete");
+    $(document).off("change", ".crop_id");
+    $(document).off("change", ".crop_type_id");
+    $(document).off("change", ".variety_id");
+    $(document).off("change", ".pack_size_id");
+    $(document).off("change", ".quantity");
 
 }

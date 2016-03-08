@@ -46,6 +46,16 @@
     }
     ?>
     <?php
+    if(isset($action_request_po_approve))
+    {
+        ?>
+        <div class="action_button">
+            <button id="button_action_request_po_approve" class="btn" data-action-link="<?php echo $action_request_po_approve; ?>"><?php echo $CI->lang->line("ACTION_REQUEST_PO_APPROVE"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if(isset($action_back))
     {
         ?>

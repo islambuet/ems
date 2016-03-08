@@ -21,6 +21,7 @@ $lang['ACTION_REFRESH'] = 'Refresh';
 $lang['ACTION_CLEAR'] = 'Clear';
 $lang['ACTION_DELETE'] = 'Delete';
 $lang['DELETE_CONFIRM'] = 'Are You sure to delete?';
+$lang['ACTION_REQUEST_PO_APPROVE'] = 'Request Approve';
 
 //****MODULE TASK//
 
@@ -123,5 +124,13 @@ $lang['LABEL_CHEQUE_NO'] = 'Cheque/Payment NO';
 $lang['LABEL_ARM_BANK_NAME'] = 'ARM Bank';
 $lang['LABEL_PAYMENT_ID'] = 'Payment Id';
 $lang['LABEL_DESIGNATION_NAME'] = 'Designation';
+//PO
+$lang['LABEL_DATE_PO'] = 'PO Date';
+$lang['LABEL_PRICE_PACK'] = 'Price/Pack';
+$lang['LABEL_TOTAL_PRICE'] = 'Total Price';
+$lang['LABEL_BONUS_PACK_NAME'] = 'Bonus Pack Size(gm)';
+$lang['LABEL_BONUS_QUANTITY_PIECES'] = 'Bonus Quantity (pieces)';
+$lang['LABEL_BONUS_WEIGHT_KG'] = 'Bonus Weight (Kg)';
+$lang['LABEL_NOT_SET'] = 'Not Set';
 
 
