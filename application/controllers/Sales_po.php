@@ -390,9 +390,10 @@ class Sales_po extends Root_Controller
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#total_weight_".$active_id,"html"=>number_format($quantity*$price_info['weight']/1000,3, '.', ''));
         $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>number_format($quantity*$price_info['price'],2));
-        $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>0);
-        $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>0);
-        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>0);
+        $bonus=System_helper::get_bonus_info($variety_id,$pack_size_id,$quantity);
+        $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>$bonus['quantity_bonus']);
+        $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>$bonus['bonus_pack_size_name']);
+        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>number_format($bonus['total_weight'],3,'.',''));
 
             //$ajax['system_message']=$this->message;
 

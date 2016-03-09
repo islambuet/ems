@@ -115,5 +115,51 @@ class System_helper
         $data['date_created_string']=System_helper::display_date($time);
         $CI->db->insert('history_hack', $data);
     }
+    public static function get_bonus_info($variety_id,$pack_size_id,$quantity)
+    {
+        $CI =& get_instance();
+        $CI->db->from($CI->config->item('table_setup_classification_variety_bonus_details').' vbd');
+        $CI->db->select('vbd.*');
+        $CI->db->select('pack.name bonus_pack_size_name');
+        $CI->db->join($CI->config->item('table_setup_classification_variety_bonus').' vb','vb.id = vbd.bonus_id','INNER');
+        $CI->db->join($CI->config->item('table_setup_classification_vpack_size').' pack','pack.id = vbd.bonus_pack_size_id','INNER');
+        $CI->db->where("vb.variety_id",$variety_id);
+        $CI->db->where("vb.pack_size_id",$pack_size_id);
+        $CI->db->where("vbd.revision",1);
+        $CI->db->order_by('vbd.quantity_min DESC');
+        $results=$CI->db->get()->result_array();
+        $info=array();
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                if($result['quantity_min']<=$quantity)
+                {
+                    $info['id']=$result['id'];
+                    $info['bonus_id']=$result['bonus_id'];
+                    $info['quantity_min']=$result['quantity_min'];
+                    $info['bonus_pack_size_id']=$result['bonus_pack_size_id'];
+                    $info['bonus_pack_size_name']=$result['bonus_pack_size_name'];
+                    $info['quantity_bonus']=$result['quantity_bonus'];
+                    $info['total_weight']=$result['quantity_bonus']*$result['bonus_pack_size_name']/1000;
+                    break;
+                }
+
+            }
+        }
+        if(!$info)
+        {
+
+            $info['id']=0;
+            $info['bonus_id']=0;
+            $info['quantity_min']=0;
+            $info['bonus_pack_size_id']=0;
+            $info['bonus_pack_size_name']='N/A';
+            $info['quantity_bonus']=0;
+            $info['total_weight']=0;
+
+        }
+        return $info;
+    }
 
 }
