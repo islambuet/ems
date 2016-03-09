@@ -91,6 +91,7 @@ $lang['LABEL_STOCK_ID'] = 'Stock Id';
 $lang['LABEL_HYBRID'] = 'Hybrid';
 $lang['LABEL_DATE_CREATED'] = 'Creation date';
 $lang['LABEL_PACK_NAME'] = 'Pack Size(gm)';
+$lang['LABEL_BONUS_PACK_NAME'] = 'Bonus Pack Size(gm)';
 $lang['LABEL_PRICE'] = 'Price';
 //basic setup
 $lang['LABEL_CAPACITY_KG'] = 'Capacity (kg)';
@@ -132,5 +133,8 @@ $lang['LABEL_BONUS_PACK_NAME'] = 'Bonus Pack Size (gm)';
 $lang['LABEL_BONUS_QUANTITY_PIECES'] = 'Bonus Quantity (pieces)';
 $lang['LABEL_BONUS_WEIGHT_KG'] = 'Bonus Weight (Kg)';
 $lang['LABEL_NOT_SET'] = 'Not Set';
+$lang['LABEL_NO_RULES'] = 'No of Rules';
+$lang['LABEL_QUANTITY_MIN'] = 'Minimum Quantity (pieces)';
+$lang['LABEL_QUANTITY_BONUS'] = 'Bonus Quantity (pieces)';
 
 

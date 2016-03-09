@@ -30,6 +30,8 @@ $config['table_setup_classification_crop_types'] = 'crop_types';
 $config['table_setup_classification_varieties'] = 'varieties';
 $config['table_setup_classification_vpack_size'] = 'variety_pack_size';
 $config['table_setup_classification_variety_price'] = 'variety_price';
+$config['table_setup_classification_variety_bonus'] = 'variety_bonus';
+$config['table_setup_classification_variety_bonus_details'] = 'variety_bonus_details';
 //basic setup
 $config['table_basic_setup_warehouse'] = 'basic_setup_warehouse';
 $config['table_basic_setup_warehouse_crops'] = 'basic_setup_warehouse_crops';
