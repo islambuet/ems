@@ -220,7 +220,7 @@
             {
                 $('#variety_id_container').show();
                 $.ajax({
-                    url: base_url+"common_controller/get_dropdown_varieties_by_croptypeid/",
+                    url: base_url+"common_controller/get_dropdown_armvarieties_by_croptypeid/",
                     type: 'POST',
                     datatype: "JSON",
                     data:{crop_type_id:crop_type_id},
