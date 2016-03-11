@@ -23,6 +23,17 @@ $config['system_payment_way_cheque']='Cheque';
 $config['system_payment_way_tt']='TT';
 $config['system_payment_way_dd']='DD';
 $config['system_payment_way_online_payment']='Online Payment';
+//po
+$config['system_po_no_length']=6;
+$config['system_status_po_request_pending']='Pending';
+$config['system_status_po_request_requested']='Requested';
+$config['system_status_po_approval_pending']='Pending';
+$config['system_status_po_approval_approved']='Approved';
+$config['system_status_po_approval_rejected']='Rejected';
+$config['system_status_po_delivery_pending']='Pending';
+$config['system_status_po_delivery_delivered']='Delivered';
+$config['system_status_po_received_received']='Received';
+$config['system_status_po_received_pending']='Pending';
 
 
 

@@ -177,11 +177,19 @@
                     <?php
                     foreach($warehouses as $warehouse)
                     {?>
-                        <option value="<?php echo $warehouse['value']?>"><?php echo $warehouse['text'];?></option>
+                        <option value="<?php echo $warehouse['value']?>" <?php if($warehouse['value']==$po['warehouse_id']){ echo "selected";}?>><?php echo $warehouse['text'];?></option>
                     <?php
                     }
                     ?>
                 </select>
+            </div>
+        </div>
+        <div style="" class="row show-grid" id="remarks_po">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea class="form-control" name="remarks"><?php echo $remarks; ?></textarea>
             </div>
         </div>
         <div class="widget-header">
@@ -190,30 +198,98 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <?php
+            if($po['id']>0)
+            {
+                ?>
+                <div class="alert alert-warning">
+                    <?php echo $CI->lang->line('MSG_PO_EDIT_WARNING'); ?>
+                </div>
+                <?php
+            }
+        ?>
+
         <div style="overflow-x: auto;" class="row show-grid" id="order_items_container">
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_PRICE_PACK'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
-                    <th><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
-                    <th><?php echo $CI->lang->line('ACTION'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PRICE_PACK'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('ACTION'); ?></th>
 
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <td>asda</td>
-                    <td>asda</td>
-                </tr>
+                    <?php
+                    foreach($po_varieties as $index=>$po_variety)
+                    {
+                        ?>
+                        <tr>
+                            <td>
+                                <label><?php echo $po_variety['crop_name']; ?></label>
+                            </td>
+                            <td>
+                                <label><?php echo $po_variety['crop_type_name']; ?></label>
+                            </td>
+                            <td>
+                                <label><?php echo $po_variety['variety_name']; ?></label>
+                                <input type="hidden" class="variety_id" id="variety_id_<?php echo $index+1;?>" name="po_varieties[<?php echo $index+1;?>][variety_id]" value="<?php echo $po_variety['variety_id']; ?>" />
+                            </td>
+                            <td>
+                                <label><?php echo $po_variety['pack_size']; ?></label>
+                                <input type="hidden" class="pack_size_id" id="pack_size_id_<?php echo $index+1;?>" name="po_varieties[<?php echo $index+1;?>][pack_size_id]" value="<?php echo $po_variety['pack_size_id']; ?>" />
+
+                            </td>
+                            <td class="text-right">
+                                <label><?php echo $po_variety['variety_price']; ?></label>
+                            </td>
+                            <td class="text-right">
+                                <input type="text" value="<?php echo $po_variety['quantity']; ?>" class="form-control text-right quantity" id="quantity_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>" name="po_varieties[<?php echo $index+1;?>][quantity]">
+                            </td>
+                            <td class="text-right">
+                                <label data-current-id="<?php echo $index+1;?>" id="total_weight_<?php echo $index+1;?>" class="total_weight">
+                                    <?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?>
+                                    <input name="po_varieties[<?php echo $index+1;?>][pack_size]" value="<?php echo $po_variety['pack_size'];?>" type="hidden">
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="total_price" id="total_price_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo number_format($po_variety['variety_price']*$po_variety['quantity'],2); ?>
+                                    <input type="hidden" value="<?php echo $po_variety['variety_price']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price]">
+                                    <input type="hidden" value="<?php echo $po_variety['variety_price_id']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price_id]">
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="bonus_quantity" id="bonus_quantity_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
+                                    <?php echo $po_variety['quantity_bonus']; ?>
+                                    <input type="hidden" value="<?php echo $po_variety['quantity_bonus']; ?>" name="po_varieties[<?php echo $index+1;?>][quantity_bonus]">
+                                    <input type="hidden" value="<?php echo $po_variety['bonus_details_id']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_details_id]">
+                                    <input type="hidden" value="<?php echo $po_variety['bonus_pack_size']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_pack_size]">
+                                </label>
+                            </td>
+                            <td class="text-right">
+                                <label class="bonus_pack_size_name" id="bonus_pack_size_name_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php if($po_variety['bonus_details_id']>0){echo $po_variety['bonus_pack_size'];}else{echo 'N/A';} ?></label>
+                            </td>
+                            <td class="text-right">
+                                <label class="bonus_total_weight" id="bonus_total_weight_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></label>
+                            </td>
+                            <td>
+                                <button class="btn btn-danger system_button_add_delete" type="button"><?php echo $CI->lang->line('DELETE'); ?></button>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+
                 </tbody>
             </table>
 

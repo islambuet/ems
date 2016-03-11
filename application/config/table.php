@@ -48,3 +48,6 @@ $config['table_stockin_varieties'] = 'stockin_varieties';
 $config['table_stockin_excess_inventory'] = 'stockin_excess_inventory';
 //payment
 $config['table_payment_payment'] = 'payment_payment';
+//po
+$config['table_sales_po'] = 'sales_po';
+$config['table_sales_po_details'] = 'sales_po_details';

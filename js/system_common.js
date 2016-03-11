@@ -111,6 +111,11 @@ $(document).ready(function()
     //bind any anchor tag to ajax request
     $(document).on("click", "a", function(event)
     {
+        if(($(this).attr('href')=='#')||($(this).attr('href')==''))
+        {
+            event.preventDefault();
+            return;
+        }
 
         if(($(this).is('[class*="jqx"]'))||($(this).is('[class*="dropdown"]'))||($(this).is('[class*="external"]'))||($(this).is('[class*="ui-corner-all"]')))
         {
@@ -154,10 +159,10 @@ $(document).ready(function()
 
     $(document).on("click", ".button_action_batch", function(event)
     {
-        /*if($(this).attr('id')=='button_action_delete')
+        /*if($(this).attr('id')=='button_action_request_po_approve')
         {
 
-            var sure = confirm(DELETE_CONFIRM);
+            var sure = confirm('Are You sure?');
             if(!sure)
             {
                 return;
@@ -307,7 +312,7 @@ $(document).ready(function()
     $(document).on("click", "#button_action_csv", function(event)
     {
         var jqxgrid_id='#system_jqx_container';
-        $(jqxgrid_id).jqxGrid('exportdata', 'csv', 'jqxGrid');
+        $(jqxgrid_id).jqxGrid('exportdata', 'csv', $(this).attr('data-title'));
 
     });
     $(document).on("click", ".system_jqx_column", function(event)

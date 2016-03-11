@@ -22,6 +22,8 @@ $lang['ACTION_CLEAR'] = 'Clear';
 $lang['ACTION_DELETE'] = 'Delete';
 $lang['DELETE_CONFIRM'] = 'Are You sure to delete?';
 $lang['ACTION_REQUEST_PO_APPROVE'] = 'Request Approve';
+$lang['ACTION_PRINT'] = 'Print';
+$lang['ACTION_CSV'] = 'Download as CSV';
 
 //****MODULE TASK//
 
@@ -136,5 +138,22 @@ $lang['LABEL_NOT_SET'] = 'Not Set';
 $lang['LABEL_NO_RULES'] = 'No of Rules';
 $lang['LABEL_QUANTITY_MIN'] = 'Minimum Quantity (pieces)';
 $lang['LABEL_QUANTITY_BONUS'] = 'Bonus Quantity (pieces)';
+$lang['MSG_MIN_ONE_PO_REQUIRED'] = 'Minimum One PO required';
+$lang['MSG_UNFINISHED_PO'] = 'Unfinished PO';
+$lang['LABEL_PO_NO'] = 'PO NO';
+
+$lang['LABEL_REQUESTED'] = 'Request';
+$lang['LABEL_APPROVAL'] = 'Approval';
+$lang['LABEL_DELIVERY'] = 'Delivery';
+$lang['LABEL_RECEIVED'] = 'Receive';
+$lang['MSG_PO_EDIT_UNABLE'] = 'This po already requested for approval.You cannot edit it';
+$lang['MSG_PO_REQUESTED_UNABLE'] = 'This po already requested for approval.';
+$lang['MSG_PO_EDIT_WARNING'] = 'If Any products price or bonus rule changed please delete that prodcut and re-enter it to get lastest price or bonus.<br>Ignore it if price or bonus rule unchanged';
+$lang['LABEL_PO_TIME_CREATED'] = 'Po Created Time';
+$lang['LABEL_PO_TIME_REQUESTED'] = 'Po Approval Request Time';
+$lang['LABEL_PO_TIME_APPROVED'] = 'Po Approval Time';
+$lang['LABEL_PO_TIME_DELIVERED'] = 'Po Delivered Time';
+$lang['LABEL_PO_TIME_RECEIVED'] = 'Po Received Time';
+$lang['LABEL_PO_USER_CREATED'] = 'Po Created By';
 
 

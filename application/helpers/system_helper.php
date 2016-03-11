@@ -12,6 +12,17 @@ class System_helper
             return '';
         }
     }
+    public static function display_date_time($time)
+    {
+        if(is_numeric($time))
+        {
+            return date('d-M-Y h:i:s A',$time);
+        }
+        else
+        {
+            return '';
+        }
+    }
     public static function get_time($str)
     {
         $time=strtotime($str);
@@ -120,9 +131,9 @@ class System_helper
         $CI =& get_instance();
         $CI->db->from($CI->config->item('table_setup_classification_variety_bonus_details').' vbd');
         $CI->db->select('vbd.*');
-        $CI->db->select('pack.name bonus_pack_size_name');
+        $CI->db->select('bonus_pack.name bonus_pack_size_name');
         $CI->db->join($CI->config->item('table_setup_classification_variety_bonus').' vb','vb.id = vbd.bonus_id','INNER');
-        $CI->db->join($CI->config->item('table_setup_classification_vpack_size').' pack','pack.id = vbd.bonus_pack_size_id','INNER');
+        $CI->db->join($CI->config->item('table_setup_classification_vpack_size').' bonus_pack','bonus_pack.id = vbd.bonus_pack_size_id','INNER');
         $CI->db->where("vb.variety_id",$variety_id);
         $CI->db->where("vb.pack_size_id",$pack_size_id);
         $CI->db->where("vbd.revision",1);
@@ -135,7 +146,7 @@ class System_helper
             {
                 if($result['quantity_min']<=$quantity)
                 {
-                    $info['id']=$result['id'];
+                    $info['bonus_details_id']=$result['id'];
                     $info['bonus_id']=$result['bonus_id'];
                     $info['quantity_min']=$result['quantity_min'];
                     $info['bonus_pack_size_id']=$result['bonus_pack_size_id'];
@@ -150,7 +161,7 @@ class System_helper
         if(!$info)
         {
 
-            $info['id']=0;
+            $info['bonus_details_id']=0;
             $info['bonus_id']=0;
             $info['quantity_min']=0;
             $info['bonus_pack_size_id']=0;
