@@ -195,6 +195,14 @@
                                 <label class="control-label"><?php echo System_helper::display_date_time($details[0]['date_created']);?></label>
                             </div>
                         </div>
+                        <div class="row show-grid">
+                            <div class="col-xs-4">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                            </div>
+                            <div class="col-sm-4 col-xs-8">
+                                <?php echo $details[0]['remarks'];?>
+                            </div>
+                        </div>
                         <div style="overflow-x: auto;" class="row show-grid">
                             <table class="table table-bordered">
                                 <thead>
