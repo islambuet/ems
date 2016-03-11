@@ -284,6 +284,47 @@ $(document).ready(function()
         }
 
     });
+    $(document).on("click", "#button_action_print", function(event)
+    {
+        var jqxgrid_id='#system_jqx_container';
+
+        var gridContent = $(jqxgrid_id).jqxGrid('exportdata', 'html');
+        var newWindow = window.open('', '', 'width=800, height=500'),
+            document = newWindow.document.open(),
+            pageContent =
+                '<!DOCTYPE html>\n' +
+                    '<html>\n' +
+                    '<head>\n' +
+                    '<meta charset="utf-8" />\n' +
+                    '<title>'+$(this).attr('data-title')+'</title>\n' +
+                    '</head>\n' +
+                    '<body>\n' + gridContent + '\n</body>\n</html>';
+        document.write(pageContent);
+        document.close();
+        newWindow.print();
+
+    });
+    $(document).on("click", "#button_action_csv", function(event)
+    {
+        var jqxgrid_id='#system_jqx_container';
+        $(jqxgrid_id).jqxGrid('exportdata', 'csv', 'jqxGrid');
+
+    });
+    $(document).on("click", ".system_jqx_column", function(event)
+    {
+        var jqxgrid_id='#system_jqx_container';
+        $(jqxgrid_id).jqxGrid('beginupdate');
+        if($(this).is(':checked'))
+        {
+            $(jqxgrid_id).jqxGrid('showcolumn', $(this).val());
+        }
+        else
+        {
+            $(jqxgrid_id).jqxGrid('hidecolumn', $(this).val());
+        }
+        $(jqxgrid_id).jqxGrid('endupdate');
+
+    });
 
 
 
@@ -341,6 +382,7 @@ function animate_message(message)
 function turn_off_triggers()
 {
     $(document).off("click", ".task_action_all");
+
 
     //location setup
     $(document).off("change", "#division_id");

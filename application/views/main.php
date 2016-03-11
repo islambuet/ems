@@ -41,6 +41,11 @@ $CI = & get_instance();
         <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdatatable.js"></script>
         <!--    only for color picker-->
         <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxcolorpicker.js"></script>
+        <!--    For column reorder-->
+        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.columnsreorder.js"></script>
+        <!--    For print-->
+        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdata.export.js"></script>
+        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.export.js"></script>
         <!--    for jqx grid end-->
         <script type="text/javascript">
             var base_url = "<?php echo base_url(); ?>";

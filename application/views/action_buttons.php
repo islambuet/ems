@@ -105,5 +105,25 @@
     <?php
     }
     ?>
+    <?php
+    if(isset($action_print))
+    {
+        ?>
+        <div class="action_button">
+            <button id="button_action_print" class="btn" data-title="<?php echo $action_print; ?>"><?php echo $CI->lang->line("ACTION_PRINT"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
+    if(isset($action_csv))
+    {
+        ?>
+        <div class="action_button">
+            <button id="button_action_csv" class="btn" data-title="<?php echo $action_csv; ?>"><?php echo $CI->lang->line("ACTION_CSV"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
 </div>
 <div class="clearfix"></div>

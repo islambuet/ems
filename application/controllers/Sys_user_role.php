@@ -156,7 +156,31 @@ class Sys_user_role extends Root_Controller
                 {
                     $data['delete']=0;
                 }
-                if(($data['add'])||($data['edit'])||($data['delete']))
+                if(isset($task['print'])&& ($task['print']==1))
+                {
+                    $data['print']=1;
+                }
+                else
+                {
+                    $data['print']=0;
+                }
+                if(isset($task['download'])&& ($task['download']==1))
+                {
+                    $data['download']=1;
+                }
+                else
+                {
+                    $data['download']=0;
+                }
+                if(isset($task['column_headers'])&& ($task['column_headers']==1))
+                {
+                    $data['column_headers']=1;
+                }
+                else
+                {
+                    $data['column_headers']=0;
+                }
+                if(($data['add'])||($data['edit'])||($data['delete'])||($data['print'])||($data['download'])||($data['column_headers']))
                 {
                     $data['view']=1;
                 }
