@@ -624,11 +624,13 @@ class Sales_po extends Root_Controller
         if($bonus['bonus_details_id']>0)
         {
             $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][bonus_pack_size]" value="'.$bonus['bonus_pack_size_name'].'" />';
+
         }
         else
         {
             $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][bonus_pack_size]" value="0" />';
         }
+        $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][bonus_pack_size_id]" value="'.$bonus['bonus_pack_size_id'].'" />';
 
         $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>$html_quantity_bonus);
         $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>$bonus['bonus_pack_size_name']);

@@ -274,6 +274,7 @@
                                     <input type="hidden" value="<?php echo $po_variety['quantity_bonus']; ?>" name="po_varieties[<?php echo $index+1;?>][quantity_bonus]">
                                     <input type="hidden" value="<?php echo $po_variety['bonus_details_id']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_details_id]">
                                     <input type="hidden" value="<?php echo $po_variety['bonus_pack_size']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_pack_size]">
+                                    <input type="hidden" value="<?php echo $po_variety['bonus_pack_size_id']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_pack_size_id]">
                                 </label>
                             </td>
                             <td class="text-right">
