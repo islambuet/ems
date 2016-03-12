@@ -159,6 +159,7 @@ $lang['LABEL_PO_TIME_DELIVERED'] = 'Po Delivered Time';
 $lang['LABEL_PO_USER_DELIVERED'] = 'Po Delivered By';
 $lang['LABEL_PO_TIME_RECEIVED'] = 'Po Received Time';
 $lang['LABEL_PO_USER_RECEIVED'] = 'Po Received By';
-
-
+//po approve
+$lang['MSG_PO_APPROVAL_EDIT_UNABLE_APPROVED'] = 'This po already approved.You cannot edit it.';
+$lang['MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED'] = 'This po already Rejected.You cannot edit it.';
 
