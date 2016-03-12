@@ -574,6 +574,16 @@ class Sales_po extends Root_Controller
                 }
             }
         }
+        $id = $this->input->post("id");
+        if($id>0)
+        {
+            $po_info=Query_helper::get_info($this->config->item('table_sales_po'),'*',array('id ='.$id),1);
+            if($po_info['status_requested']==$this->config->item('system_status_po_request_requested'))
+            {
+                $this->message=$this->lang->line('MSG_PO_EDIT_UNABLE');
+                return false;
+            }
+        }
         return true;
     }
     public function get_bonus_and_total()
