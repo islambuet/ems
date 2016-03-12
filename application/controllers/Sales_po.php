@@ -286,6 +286,24 @@ class Sales_po extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
+            $user_ids=array();
+            $user_ids[$data['po']['user_created']]=$data['po']['user_created'];
+            if($data['po']['user_requested']>0)
+            {
+                $user_ids[$data['po']['user_requested']]=$data['po']['user_requested'];
+            }
+            if($data['po']['user_approved']>0)
+            {
+                $user_ids[$data['po']['user_approved']]=$data['po']['user_approved'];
+            }
+            if($data['po']['user_delivered']>0)
+            {
+                $user_ids[$data['po']['user_delivered']]=$data['po']['user_delivered'];
+            }
+            if($data['po']['user_received']>0)
+            {
+                $user_ids[$data['po']['user_received']]=$data['po']['user_received'];
+            }
 
             $this->db->from($this->config->item('table_sales_po_details').' spd');
             $this->db->select('spd.*');
@@ -304,7 +322,10 @@ class Sales_po extends Root_Controller
             foreach($po_varieties as $po_variety)
             {
                 $data['po_details'][$po_variety['revision']][]=$po_variety;
+                $user_ids[$po_variety['user_created']]=$po_variety['user_created'];
             }
+            //get user info from login site
+            $data['users']=System_helper::get_users_info($user_ids);
 
             $data['title']="Details of PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
             $ajax['status']=true;

@@ -79,6 +79,14 @@
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_CREATED');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $users[$po['user_created']]['name'];?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REQUESTED');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -95,6 +103,14 @@
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_requested']);?></label>
+                </div>
+            </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_REQUESTED');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $users[$po['user_requested']]['name'];?></label>
                 </div>
             </div>
             <?php
@@ -120,6 +136,14 @@
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_approved']);?></label>
                 </div>
             </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_APPROVED');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $users[$po['user_approved']]['name'];?></label>
+                </div>
+            </div>
         <?php
         }
         ?>
@@ -143,6 +167,14 @@
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_delivered']);?></label>
                 </div>
             </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_DELIVERED');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $users[$po['user_delivered']]['name'];?></label>
+                </div>
+            </div>
         <?php
         }
         ?>
@@ -164,6 +196,14 @@
                 </div>
                 <div class="col-sm-4 col-xs-8">
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_received']);?></label>
+                </div>
+            </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_RECEIVED');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $users[$po['user_received']]['name'];?></label>
                 </div>
             </div>
         <?php
@@ -193,6 +233,14 @@
                             </div>
                             <div class="col-sm-4 col-xs-8">
                                 <label class="control-label"><?php echo System_helper::display_date_time($details[0]['date_created']);?></label>
+                            </div>
+                        </div>
+                        <div class="row show-grid">
+                            <div class="col-xs-4">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_CREATED');?></label>
+                            </div>
+                            <div class="col-sm-4 col-xs-8">
+                                <label class="control-label"><?php echo $users[$details[0]['user_created']]['name'];?></label>
                             </div>
                         </div>
                         <div class="row show-grid">

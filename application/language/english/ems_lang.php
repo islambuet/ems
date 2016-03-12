@@ -150,10 +150,15 @@ $lang['MSG_PO_EDIT_UNABLE'] = 'This po already requested for approval.You cannot
 $lang['MSG_PO_REQUESTED_UNABLE'] = 'This po already requested for approval.';
 $lang['MSG_PO_EDIT_WARNING'] = 'If Any products price or bonus rule changed please delete that prodcut and re-enter it to get lastest price or bonus.<br>Ignore it if price or bonus rule unchanged';
 $lang['LABEL_PO_TIME_CREATED'] = 'Po Created Time';
-$lang['LABEL_PO_TIME_REQUESTED'] = 'Po Approval Request Time';
-$lang['LABEL_PO_TIME_APPROVED'] = 'Po Approval Time';
-$lang['LABEL_PO_TIME_DELIVERED'] = 'Po Delivered Time';
-$lang['LABEL_PO_TIME_RECEIVED'] = 'Po Received Time';
 $lang['LABEL_PO_USER_CREATED'] = 'Po Created By';
+$lang['LABEL_PO_TIME_REQUESTED'] = 'Po Approval Request Time';
+$lang['LABEL_PO_USER_REQUESTED'] = 'Po Requested By';
+$lang['LABEL_PO_TIME_APPROVED'] = 'Po Approval Time';
+$lang['LABEL_PO_USER_APPROVED'] = 'Po Approval User';
+$lang['LABEL_PO_TIME_DELIVERED'] = 'Po Delivered Time';
+$lang['LABEL_PO_USER_DELIVERED'] = 'Po Delivered By';
+$lang['LABEL_PO_TIME_RECEIVED'] = 'Po Received Time';
+$lang['LABEL_PO_USER_RECEIVED'] = 'Po Received By';
+
 
 

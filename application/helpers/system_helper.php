@@ -172,5 +172,24 @@ class System_helper
         }
         return $info;
     }
+    public static function get_users_info($user_ids)
+    {
+        $CI =& get_instance();
+        $db_login=$CI->load->database('armalik_login',TRUE);
+        $db_login->from($CI->config->item('table_setup_user_info').' user_info');
+        if(sizeof($user_ids)>0)
+        {
+            $db_login->where_in('user_id',$user_ids);
+        }
+        $db_login->where('revision',1);
+        $results=$db_login->get()->result_array();
+        $users=array();
+        foreach($results as $result)
+        {
+            $users[$result['user_id']]=$result;
+        }
+        return $users;
+
+    }
 
 }
