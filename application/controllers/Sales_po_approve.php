@@ -46,10 +46,14 @@ class Sales_po_approve extends Root_Controller
         {
             $this->system_details($id);
         }
-        /*elseif($action=="request_approve")
+        elseif($action=="approve")
         {
-            $this->system_request_approve($id);
-        }*/
+            $this->system_approve($id);
+        }
+        elseif($action=="save_approve")
+        {
+            $this->system_save_approve();
+        }
         elseif($action=="save")
         {
             $this->system_save();
@@ -285,9 +289,9 @@ class Sales_po_approve extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
-    /*private function system_request_approve($id)
+    private function system_approve($id)
     {
-        if(isset($this->permissions['request_approve'])&&($this->permissions['request_approve']==1))
+        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
             if(($this->input->post('id')))
             {
@@ -299,48 +303,119 @@ class Sales_po_approve extends Root_Controller
             }
 
             $this->db->from($this->config->item('table_sales_po').' po');
-            //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
+
             $this->db->select('po.*');
-            $this->db->select('cus.district_id');
-            $this->db->select('d.territory_id');
-            $this->db->select('t.zone_id zone_id');
-            $this->db->select('zone.division_id division_id');
+            $this->db->select('cus.district_id,d.name district_name,cus.name customer_name');
+            $this->db->select('d.territory_id,t.name territory_name');
+            $this->db->select('t.zone_id zone_id,zone.name zone_name');
+            $this->db->select('zone.division_id division_id,division.name division_name');
+            $this->db->select('warehouse.name warehouse_name');
+
             $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+            $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = po.warehouse_id','INNER');
             $this->db->where('po.id',$po_id);
             $data['po']=$this->db->get()->row_array();
 
             if(!$data['po'])
             {
-                System_helper::invalid_try('Not exiting id to send for request approval',$po_id);
+                System_helper::invalid_try("Try to approve on no existing",$po_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
             if(!$this->check_my_editable($data['po']))
             {
-                System_helper::invalid_try('Trying to send request other id fro approval',$po_id);
+                System_helper::invalid_try('Try to approve others po',$po_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if($data['po']['status_requested']==$this->config->item('system_status_po_request_requested'))
+            if($data['po']['status_requested']==$this->config->item('system_status_po_request_pending'))
             {
+                System_helper::invalid_try('trying to approve pending po',$po_id);
                 $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_PO_REQUESTED_UNABLE");
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $time=time();
-            $user = User_helper::get_user();
-            $request=array();
-            $request['status_requested']=$this->config->item('system_status_po_request_requested');
-            $request['user_requested'] = $user->user_id;
-            $request['date_requested'] = $time;
+            if($data['po']['status_approved']==$this->config->item('system_status_po_approval_approved'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_PO_APPROVAL_EDIT_UNABLE_APPROVED");
+                $this->jsonReturn($ajax);
+            }
+            if($data['po']['status_approved']==$this->config->item('system_status_po_approval_rejected'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED");
+                $this->jsonReturn($ajax);
+            }
+            /*$this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
+            $this->db->select('wc.crop_id value,c.name text');
+            $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
+            $this->db->where('wc.warehouse_id',$data['po']['warehouse_id']);
+            $this->db->where('wc.revision',1);
+            $data['crops']=$this->db->get()->result_array();*/
 
+            $this->db->from($this->config->item('table_sales_po_details').' spd');
+            $this->db->select('spd.*');
+            $this->db->select('v.name variety_name');
+            $this->db->select('crop_type.name crop_type_name');
+            $this->db->select('crop.name crop_name');
+            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+            $this->db->where('spd.sales_po_id',$data['po']['id']);
+            $this->db->where('spd.revision',1);
+            $data['po_varieties']=$this->db->get()->result_array();
+            $data['remarks']=$data['po_varieties'][0]['remarks'];
+            $data['title']="PO No ".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_approve/approve",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/approve/'.$po_id);
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+    }
+    private function system_save_approve()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+            die();
+        }
+        if(!$this->check_validation_approve())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $time=time();
+
+            $data=$this->input->post('approval');
+            $data['user_approved'] = $user->user_id;
+            $data['date_approved'] = $time;
             $this->db->trans_start();  //DB Transaction Handle START
-            Query_helper::update($this->config->item('table_sales_po'),$request,array("id = ".$po_id));
+
+            Query_helper::update($this->config->item('table_sales_po'),$data,array("id = ".$id));
 
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -355,13 +430,19 @@ class Sales_po_approve extends Root_Controller
                 $this->jsonReturn($ajax);
             }
         }
-        else
+    }
+    private function  check_validation_approve()
+    {
+        $data=$this->input->post('approval');
+
+        if(!(($data['status_approved']==$this->config->item('system_status_po_approval_approved'))||($data['status_approved']==$this->config->item('system_status_po_approval_rejected'))))
         {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->jsonReturn($ajax);
+            $this->message="Please Select Approve or Reject";
+            return false;
         }
-    }*/
+        return true;
+    }
+
 
     private function system_save()
     {
@@ -397,8 +478,7 @@ class Sales_po_approve extends Root_Controller
         else
         {
             $time=time();
-            $po=$this->input->post('po');
-            $po['date_po']=System_helper::get_time($po['date_po']);
+
             $po_varieties=$this->input->post('po_varieties');
             /*echo '<PRE>';
             print_r($po);
@@ -424,16 +504,8 @@ class Sales_po_approve extends Root_Controller
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
-                $save_and_new=$this->input->post('system_save_new_status');
                 $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                if($save_and_new==1)
-                {
-                    $this->system_add();
-                }
-                else
-                {
-                    $this->system_list();
-                }
+                $this->system_list();
             }
             else
             {
@@ -528,17 +600,17 @@ class Sales_po_approve extends Root_Controller
             die();
         }
         $ajax['status']=true;
-        $weight_html=number_format($quantity*$price_info['pack_size']/1000,3, '.', '');
+        $weight_html='<span>'.number_format($quantity*$price_info['pack_size']/1000,3, '.', '').'</span>';
         $weight_html.='<input type="hidden" name="po_varieties['.$active_id.'][pack_size]" value="'.$price_info['pack_size'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_weight_".$active_id,"html"=>$weight_html);
 
-        $price_html=number_format($quantity*$price_info['variety_price'],2);
+        $price_html='<span>'.number_format($quantity*$price_info['variety_price'],2).'</span>';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price]" value="'.$price_info['variety_price'].'" />';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_id]" value="'.$price_info['variety_price_id'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>$price_html);
 
         $bonus=System_helper::get_bonus_info($variety_id,$pack_size_id,$quantity);
-        $html_quantity_bonus=$bonus['quantity_bonus'];
+        $html_quantity_bonus='<span>'.$bonus['quantity_bonus'].'</span>';
         $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][quantity_bonus]" value="'.$bonus['quantity_bonus'].'" />';
         $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][bonus_details_id]" value="'.$bonus['bonus_details_id'].'" />';
         if($bonus['bonus_details_id']>0)
@@ -554,9 +626,9 @@ class Sales_po_approve extends Root_Controller
 
         $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>$html_quantity_bonus);
         $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>$bonus['bonus_pack_size_name']);
-        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>number_format($bonus['total_weight'],3,'.',''));
+        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>'<span>'.number_format($bonus['total_weight'],3,'.','').'</span>');
 
-            //$ajax['system_message']=$this->message;
+        //$ajax['system_message']=$this->message;
 
         $this->jsonReturn($ajax);
 

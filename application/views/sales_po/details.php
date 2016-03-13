@@ -271,8 +271,21 @@
                                 </thead>
                                 <tbody>
                                 <?php
+                                $total_total_quantity=0;
+                                $total_total_weight=0;
+                                $total_total_price=0;
+                                $total_total_bonus_quantity=0;
+                                $total_total_bonus_weight=0;
                                 foreach($details as $detail)
                                 {
+                                    $total_total_quantity+=$detail['quantity'];
+                                    $total_total_weight+=$detail['pack_size']*$detail['quantity'];
+                                    $total_total_price+=$detail['variety_price']*$detail['quantity'];
+                                    $total_total_bonus_quantity+=$detail['quantity_bonus'];
+                                    if($detail['bonus_details_id']>0)
+                                    {
+                                        $total_total_bonus_weight+=$detail['quantity_bonus']*$detail['bonus_pack_size'];
+                                    }
                                     ?>
                                     <tr>
                                         <td>
@@ -314,6 +327,19 @@
                                 ?>
 
                                 </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td class="text-right" colspan="5"><label><?php echo $CI->lang->line('LABEL_TOTAL'); ?></label></td>
+                                    <td class="text-right"><label id="total_total_quantity"><?php echo number_format($total_total_quantity,0,'.',''); ?></label></td>
+                                    <td class="text-right"><label id="total_total_weight"><?php echo number_format($total_total_weight/1000,3,'.',''); ?></label></td>
+                                    <td class="text-right"><label id="total_total_price"><?php echo number_format($total_total_price,2); ?></label></td>
+                                    <td class="text-right"><label id="total_total_bonus_quantity"><?php echo number_format($total_total_bonus_quantity,0,'.',''); ?></label></td>
+                                    <td>&nbsp;</td>
+                                    <td class="text-right"><label id="total_total_bonus_weight"><?php echo number_format($total_total_bonus_weight/1000,3,'.',''); ?></label></td>
+                                    <td>&nbsp;</td>
+
+                                </tr>
+                                </tfoot>
                             </table>
 
                         </div>

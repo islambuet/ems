@@ -856,6 +856,7 @@
         {
 //            console.log('allah is one');
             $(this).closest('tr').remove();
+            calculate_total();
         });
     });
 </script>

@@ -36,6 +36,26 @@
     }
     ?>
     <?php
+    if(isset($action_approve))
+    {
+        ?>
+        <div class="action_button">
+            <button id="button_action_approve" class="btn button_action_batch" data-action-link="<?php echo $action_approve; ?>"><?php echo $CI->lang->line("ACTION_APPROVE_REJECT"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
+    if(isset($action_approve_get))
+    {
+        ?>
+        <div class="action_button">
+            <a class="btn" id="button_action_approve_get" href="<?php echo $action_approve_get; ?>"><?php echo $CI->lang->line("ACTION_APPROVE_REJECT"); ?></a>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if(isset($action_details))
     {
         ?>
