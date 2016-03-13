@@ -608,17 +608,17 @@ class Sales_po extends Root_Controller
             die();
         }
         $ajax['status']=true;
-        $weight_html=number_format($quantity*$price_info['pack_size']/1000,3, '.', '');
+        $weight_html='<span>'.number_format($quantity*$price_info['pack_size']/1000,3, '.', '').'</span>';
         $weight_html.='<input type="hidden" name="po_varieties['.$active_id.'][pack_size]" value="'.$price_info['pack_size'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_weight_".$active_id,"html"=>$weight_html);
 
-        $price_html=number_format($quantity*$price_info['variety_price'],2);
+        $price_html='<span>'.number_format($quantity*$price_info['variety_price'],2).'</span>';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price]" value="'.$price_info['variety_price'].'" />';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_id]" value="'.$price_info['variety_price_id'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>$price_html);
 
         $bonus=System_helper::get_bonus_info($variety_id,$pack_size_id,$quantity);
-        $html_quantity_bonus=$bonus['quantity_bonus'];
+        $html_quantity_bonus='<span>'.$bonus['quantity_bonus'].'</span>';
         $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][quantity_bonus]" value="'.$bonus['quantity_bonus'].'" />';
         $html_quantity_bonus.='<input type="hidden" name="po_varieties['.$active_id.'][bonus_details_id]" value="'.$bonus['bonus_details_id'].'" />';
         if($bonus['bonus_details_id']>0)
@@ -634,7 +634,7 @@ class Sales_po extends Root_Controller
 
         $ajax['system_content'][]=array("id"=>"#bonus_quantity_".$active_id,"html"=>$html_quantity_bonus);
         $ajax['system_content'][]=array("id"=>"#bonus_pack_size_name_".$active_id,"html"=>$bonus['bonus_pack_size_name']);
-        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>number_format($bonus['total_weight'],3,'.',''));
+        $ajax['system_content'][]=array("id"=>"#bonus_total_weight_".$active_id,"html"=>'<span>'.number_format($bonus['total_weight'],3,'.','').'</span>');
 
             //$ajax['system_message']=$this->message;
 

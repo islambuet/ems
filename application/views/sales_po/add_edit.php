@@ -230,8 +230,22 @@
                 </thead>
                 <tbody>
                     <?php
+                    $total_total_quantity=0;
+                    $total_total_weight=0;
+                    $total_total_price=0;
+                    $total_total_bonus_quantity=0;
+                    $total_total_bonus_weight=0;
                     foreach($po_varieties as $index=>$po_variety)
                     {
+                        $total_total_quantity+=$po_variety['quantity'];
+                        $total_total_weight+=$po_variety['pack_size']*$po_variety['quantity'];
+                        $total_total_price+=$po_variety['variety_price']*$po_variety['quantity'];
+                        $total_total_bonus_quantity+=$po_variety['quantity_bonus'];
+                        if($po_variety['bonus_details_id']>0)
+                        {
+                            $total_total_bonus_weight+=$po_variety['quantity_bonus']*$po_variety['bonus_pack_size'];
+                        }
+
                         ?>
                         <tr>
                             <td>
@@ -257,20 +271,20 @@
                             </td>
                             <td class="text-right">
                                 <label data-current-id="<?php echo $index+1;?>" id="total_weight_<?php echo $index+1;?>" class="total_weight">
-                                    <?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?>
+                                    <span><?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?></span>
                                     <input name="po_varieties[<?php echo $index+1;?>][pack_size]" value="<?php echo $po_variety['pack_size'];?>" type="hidden">
                                 </label>
                             </td>
                             <td class="text-right">
                                 <label class="total_price" id="total_price_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo number_format($po_variety['variety_price']*$po_variety['quantity'],2); ?>
+                                    <span><?php echo number_format($po_variety['variety_price']*$po_variety['quantity'],2); ?></span>
                                     <input type="hidden" value="<?php echo $po_variety['variety_price']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price]">
                                     <input type="hidden" value="<?php echo $po_variety['variety_price_id']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price_id]">
                                 </label>
                             </td>
                             <td class="text-right">
                                 <label class="bonus_quantity" id="bonus_quantity_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
-                                    <?php echo $po_variety['quantity_bonus']; ?>
+                                    <span><?php echo $po_variety['quantity_bonus']; ?></span>
                                     <input type="hidden" value="<?php echo $po_variety['quantity_bonus']; ?>" name="po_varieties[<?php echo $index+1;?>][quantity_bonus]">
                                     <input type="hidden" value="<?php echo $po_variety['bonus_details_id']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_details_id]">
                                     <input type="hidden" value="<?php echo $po_variety['bonus_pack_size']; ?>" name="po_varieties[<?php echo $index+1;?>][bonus_pack_size]">
@@ -281,7 +295,7 @@
                                 <label class="bonus_pack_size_name" id="bonus_pack_size_name_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php if($po_variety['bonus_details_id']>0){echo $po_variety['bonus_pack_size'];}else{echo 'N/A';} ?></label>
                             </td>
                             <td class="text-right">
-                                <label class="bonus_total_weight" id="bonus_total_weight_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></label>
+                                <label class="bonus_total_weight" id="bonus_total_weight_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>"><span><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></span></label>
                             </td>
                             <td>
                                 <button class="btn btn-danger system_button_add_delete" type="button"><?php echo $CI->lang->line('DELETE'); ?></button>
@@ -292,6 +306,19 @@
                     ?>
 
                 </tbody>
+                <tfoot>
+                <tr>
+                    <td class="text-right" colspan="5"><label><?php echo $CI->lang->line('LABEL_TOTAL'); ?></label></td>
+                    <td class="text-right"><label id="total_total_quantity"><?php echo number_format($total_total_quantity,0,'.',''); ?></label></td>
+                    <td class="text-right"><label id="total_total_weight"><?php echo number_format($total_total_weight/1000,3,'.',''); ?></label></td>
+                    <td class="text-right"><label id="total_total_price"><?php echo number_format($total_total_price,2); ?></label></td>
+                    <td class="text-right"><label id="total_total_bonus_quantity"><?php echo number_format($total_total_bonus_quantity,0,'.',''); ?></label></td>
+                    <td>&nbsp;</td>
+                    <td class="text-right"><label id="total_total_bonus_weight"><?php echo number_format($total_total_bonus_weight/1000,3,'.',''); ?></label></td>
+                    <td>&nbsp;</td>
+
+                </tr>
+                </tfoot>
             </table>
 
         </div>
@@ -301,6 +328,7 @@
             </div>
             <div class="col-xs-4">
                 <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($po_varieties);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                <button type="button" id="but_calculate_total" class="btn btn-primary"><?php echo $CI->lang->line('LABEL_CALCULATE_TOTAL');?></button>
             </div>
             <div class="col-xs-4">
 
@@ -382,6 +410,38 @@
         $('#bonus_quantity_'+active_id).html('');
         $('#bonus_pack_size_name_'+active_id).html('');
         $('#bonus_total_weight_'+active_id).html('');
+    }
+    function calculate_total()
+    {
+        var total_quantity=0;
+        $("#order_items_container tbody .quantity").each( function( index, element ){
+            console.log($(this).val());
+            total_quantity=total_quantity+parseFloat($(this).val().replace(/,/g,''));
+        });
+        $('#total_total_quantity').html(number_format(total_quantity));
+        var total_price=0;
+        $("#order_items_container tbody .total_price span").each( function( index, element ){
+            total_price=total_price+parseFloat($(this).html().replace(/,/g,''));
+        });
+        $('#total_total_price').html(number_format(total_price,2));
+
+        var total_weight=0;
+        $("#order_items_container tbody .total_weight span").each( function( index, element ){
+            total_weight=total_weight+parseFloat($(this).html().replace(/,/g,''));
+        });
+        $('#total_total_weight').html(number_format(total_weight,3,'.',''));
+
+        var total_bonus_quantity=0;
+        $("#order_items_container tbody .bonus_quantity span").each( function( index, element ){
+            total_bonus_quantity=total_bonus_quantity+parseFloat($(this).html().replace(/,/g,''));
+        });
+        $('#total_total_bonus_quantity').html(number_format(total_bonus_quantity));
+
+        var total_bonus_total_weight=0;
+        $("#order_items_container tbody .bonus_total_weight span").each( function( index, element ){
+            total_bonus_total_weight=total_bonus_total_weight+parseFloat($(this).html().replace(/,/g,''));
+        });
+        $('#total_total_bonus_weight').html(number_format(total_bonus_total_weight,3,'.',''));
     }
     jQuery(document).ready(function()
     {
@@ -787,6 +847,11 @@
 //            console.log('allah is one');
             $(this).closest('tr').remove();
         });
+        $(document).on("click", "#but_calculate_total", function(event)
+        {
+            calculate_total();
+        });
+
 
     });
 </script>
