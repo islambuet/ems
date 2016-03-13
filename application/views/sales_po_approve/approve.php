@@ -4,8 +4,8 @@
     $action_data["action_back"]=base_url($CI->controller_url);
     $action_data["action_edit_get"]=base_url($CI->controller_url."/index/edit/".$po['id']);
     $action_data["action_save"]='#save_form';
-
     $CI->load->view("action_buttons",$action_data);
+
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_approve');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $po['id']; ?>" />
@@ -214,9 +214,35 @@
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td colspan="10">will be done after calculation</td>
-            </tr>
+
+                <?php
+                foreach($customer_varieties_quantity as $variety_id=>$v)
+                    foreach($v as $pack_size_id=>$variety)
+                    {
+                        ?>
+                        <tr>
+                            <td><?php echo $variety['crop_name']; ?></td>
+                            <td><?php echo $variety['crop_type_name']; ?></td>
+                            <td><?php echo $variety['variety_name']; ?></td>
+                            <td class="text-right"><?php echo $variety['pack_size']; ?></td>
+                            <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock'],0,'.','');?></td>
+                            <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']*$variety['pack_size']/1000,3,'.','');?></td>
+                            <td class="text-right"><?php echo $variety['quantity']; ?></td>
+                            <td class="text-right"><?php echo number_format($variety['pack_size']*$variety['quantity']/1000,3,'.',''); ?></td>
+                            <?php
+                            $back_color='lightgreen';
+                            if($stocks_current[$variety_id][$pack_size_id]['current_stock']<$variety['quantity'])
+                            {
+                                $back_color='red';
+                            }
+                            ?>
+                            <td class="text-right"style="background-color: <?php echo $back_color;?>"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'],0,'.','');?></td>
+                            <td class="text-right"style="background-color: <?php echo $back_color;?>"><?php echo number_format(($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'])*$variety['pack_size']/1000,3,'.','');?></td></td>
+                        </tr>
+                        <?php
+                    }
+                ?>
+
 
             </tbody>
         </table>

@@ -29,7 +29,7 @@ class Sales_po_approve extends Root_Controller
 
         }
         $this->controller_url='sales_po_approve';
-        //$this->load->model("sys_module_task_model");
+        $this->load->model("sales_model");
     }
 
     public function index($action="list",$id=0)
@@ -371,6 +371,55 @@ class Sales_po_approve extends Root_Controller
             $this->db->where('spd.sales_po_id',$data['po']['id']);
             $this->db->where('spd.revision',1);
             $data['po_varieties']=$this->db->get()->result_array();
+
+            $variety_pack_size_ids=array();
+            $data['customer_varieties_quantity']=array();
+            foreach($data['po_varieties'] as $variety)
+            {
+                $ids=array('variety_id'=>$variety['variety_id'],'pack_size_id'=>$variety['pack_size_id']);
+                if(!in_array($ids,$variety_pack_size_ids))
+                {
+                    $variety_pack_size_ids[]=$ids;
+                }
+                if(!isset($data['customer_varieties_quantity'][$variety['variety_id']][$variety['pack_size_id']]))
+                {
+                    $info=array();
+                    $info['crop_name']=$variety['crop_name'];
+                    $info['crop_type_name']=$variety['crop_type_name'];
+                    $info['variety_name']=$variety['variety_name'];
+                    $info['variety_id']=$variety['variety_id'];
+                    $info['pack_size']=$variety['pack_size'];
+                    $info['pack_size_id']=$variety['pack_size_id'];
+                    $info['quantity']=$variety['quantity'];
+                    $data['customer_varieties_quantity'][$variety['variety_id']][$variety['pack_size_id']]=$info;
+                }
+                else
+                {
+                    $data['customer_varieties_quantity'][$variety['variety_id']][$variety['pack_size_id']]['quantity']+=$variety['quantity'];
+                }
+                if($variety['bonus_details_id']>0)
+                {
+                    if(!isset($data['customer_varieties_quantity'][$variety['variety_id']][$variety['bonus_pack_size_id']]))
+                    {
+                        $info=array();
+                        $info['crop_name']=$variety['crop_name'];
+                        $info['crop_type_name']=$variety['crop_type_name'];
+                        $info['variety_name']=$variety['variety_name'];
+                        $info['variety_id']=$variety['variety_id'];
+                        $info['pack_size']=$variety['bonus_pack_size'];
+                        $info['pack_size_id']=$variety['bonus_pack_size_id'];
+                        $info['quantity']=$variety['quantity_bonus'];
+                        $data['customer_varieties_quantity'][$variety['variety_id']][$variety['bonus_pack_size_id']]=$info;
+                    }
+                    else
+                    {
+                        $data['customer_varieties_quantity'][$variety['variety_id']][$variety['bonus_pack_size_id']]['quantity']+=$variety['quantity_bonus'];
+                    }
+                }
+
+            }
+            $data['stocks_current']=$this->sales_model->get_stocks($variety_pack_size_ids);
+
             $data['remarks']=$data['po_varieties'][0]['remarks'];
             $data['title']="PO No ".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
             $ajax['status']=true;
