@@ -418,7 +418,7 @@
             console.log($(this).val());
             total_quantity=total_quantity+parseFloat($(this).val().replace(/,/g,''));
         });
-        $('#total_total_quantity').html(number_format(total_quantity));
+        $('#total_total_quantity').html(number_format(total_quantity,'0','.',''));
         var total_price=0;
         $("#order_items_container tbody .total_price span").each( function( index, element ){
             total_price=total_price+parseFloat($(this).html().replace(/,/g,''));
@@ -435,7 +435,7 @@
         $("#order_items_container tbody .bonus_quantity span").each( function( index, element ){
             total_bonus_quantity=total_bonus_quantity+parseFloat($(this).html().replace(/,/g,''));
         });
-        $('#total_total_bonus_quantity').html(number_format(total_bonus_quantity));
+        $('#total_total_bonus_quantity').html(number_format(total_bonus_quantity,0,',',''));
 
         var total_bonus_total_weight=0;
         $("#order_items_container tbody .bonus_total_weight span").each( function( index, element ){
