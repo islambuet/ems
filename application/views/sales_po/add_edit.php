@@ -328,7 +328,6 @@
             </div>
             <div class="col-xs-4">
                 <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($po_varieties);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
-                <button type="button" id="but_calculate_total" class="btn btn-primary"><?php echo $CI->lang->line('LABEL_CALCULATE_TOTAL');?></button>
             </div>
             <div class="col-xs-4">
 
@@ -414,9 +413,12 @@
     function calculate_total()
     {
         var total_quantity=0;
-        $("#order_items_container tbody .quantity").each( function( index, element ){
-            console.log($(this).val());
-            total_quantity=total_quantity+parseFloat($(this).val().replace(/,/g,''));
+        $("#order_items_container tbody .quantity").each( function( index, element )
+        {
+            if($(this).val()==parseFloat($(this).val()))
+            {
+                total_quantity=total_quantity+parseFloat($(this).val());
+            }
         });
         $('#total_total_quantity').html(number_format(total_quantity,'0','.',''));
         var total_price=0;
@@ -524,6 +526,7 @@
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
             set_rest_blank(active_id);
+            calculate_total();
             var crop_id=$('#crop_id_'+active_id).val();
             if(crop_id>0)
             {
@@ -562,6 +565,7 @@
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
             set_rest_blank(active_id);
+            calculate_total();
             var crop_type_id=$('#crop_type_id_'+active_id).val();
             if(crop_type_id>0)
             {
@@ -596,6 +600,7 @@
             $("#pack_size_price_"+active_id).html("");
             $("#quantity_"+active_id).val("");
             set_rest_blank(active_id);
+            calculate_total();
             var variety_id=$('#variety_id_'+active_id).val();
             var warehouse_id=$('#warehouse_id').val();
 
@@ -632,6 +637,7 @@
             var pack_size_id=$('#pack_size_id_'+active_id).val();
             $("#quantity_"+active_id).val("");
             set_rest_blank(active_id);
+            calculate_total();
             if(variety_id>0 && pack_size_id>0)
             {
                 $.ajax({
@@ -668,6 +674,10 @@
                     success: function (data, status)
                     {
 
+                    },
+                    complete:function(xhr,status)
+                    {
+                        calculate_total();
                     },
                     error: function (xhr, desc, err)
                     {
@@ -847,11 +857,5 @@
 //            console.log('allah is one');
             $(this).closest('tr').remove();
         });
-        $(document).on("click", "#but_calculate_total", function(event)
-        {
-            calculate_total();
-        });
-
-
     });
 </script>
