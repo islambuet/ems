@@ -221,5 +221,28 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_dropdown_curent_stock_by_variety_pack_size_id()
+    {
+        $html_container_id='#stock_current';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+
+        $variety_id = $this->input->post('variety_id');
+        $pack_size_id = $this->input->post('pack_size_id');
+        $this->load->model("sales_model");
+        $stock_info=$this->sales_model->get_stocks(array(array('variety_id'=>$variety_id,'pack_size_id'=>$pack_size_id)));
+        $current_stock='';
+        if(isset($stock_info[$variety_id][$pack_size_id]))
+        {
+            $current_stock=$stock_info[$variety_id][$pack_size_id]['current_stock'];
+        }
+
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$current_stock);
+
+        $this->jsonReturn($ajax);
+    }
 
 }

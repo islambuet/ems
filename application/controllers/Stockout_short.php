@@ -12,6 +12,7 @@ class Stockout_short extends Root_Controller
         $this->permissions=User_helper::get_permission('Stockout_short');
         $this->controller_url='stockout_short';
         //$this->load->model("sys_module_task_model");
+        $this->load->model("sales_model");
     }
 
     public function index($action="list",$id=0)
@@ -84,6 +85,7 @@ class Stockout_short extends Root_Controller
                 'remarks' => '',
                 'date_stock_out' => time()
             );
+            $data['stock_current']='';
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
@@ -138,6 +140,9 @@ class Stockout_short extends Root_Controller
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_out']['crop_id']));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['stock_out']['crop_type_id']));
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array());
+
+            $stock_info=$this->sales_model->get_stocks(array(array('variety_id'=>$data['stock_out']['variety_id'],'pack_size_id'=>$data['stock_out']['pack_size_id'])));
+            $data['stock_current']=$stock_info[$data['stock_out']['variety_id']][$data['stock_out']['pack_size_id']]['current_stock'];
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout_short/add_edit",$data,true));
@@ -334,6 +339,23 @@ class Stockout_short extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
+        $actual_quantity=$data['quantity'];
+        if($id>0)
+        {
+            $info=Query_helper::get_info($this->config->item('table_stockout_short_inventory'),'*',array('id ='.$id,'status ="'.$this->config->item('system_status_active').'"'),1);
+            $data['variety_id']=$info['variety_id'];
+            $data['pack_size_id']=$info['pack_size_id'];
+            $actual_quantity-=$info['quantity'];
+        }
+
+        $stock_info=$this->sales_model->get_stocks(array(array('variety_id'=>$data['variety_id'],'pack_size_id'=>$data['pack_size_id'])));
+
+        if($stock_info[$data['variety_id']][$data['pack_size_id']]['current_stock']<$actual_quantity)
+        {
+            $this->message="Excess Stock Out";
+            return false;
+        }
+
 
         return true;
     }

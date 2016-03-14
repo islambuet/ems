@@ -184,6 +184,14 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CURRENT_STOCK');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label id="stock_current"><?php echo $stock_current; ?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_PIECES');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -224,6 +232,7 @@
             $("#crop_type_id").val("");
             $("#variety_id").val("");
             $("#pack_size_id").val("");
+            $("#stock_current").html("");
             var warehouse_id=$('#warehouse_id').val();
             if(warehouse_id>0)
             {
@@ -260,6 +269,7 @@
             $("#crop_type_id").val("");
             $("#variety_id").val("");
             $("#pack_size_id").val("");
+            $("#stock_current").html("");
             var crop_id=$('#crop_id').val();
             if(crop_id>0)
             {
@@ -294,6 +304,7 @@
 
             $("#variety_id").val("");
             $("#pack_size_id").val("");
+            $("#stock_current").html("");
             var crop_type_id=$('#crop_type_id').val();
             if(crop_type_id>0)
             {
@@ -324,6 +335,7 @@
         $(document).on("change","#variety_id",function()
         {
             $("#pack_size_id").val("");
+            $("#stock_current").html("");
             var variety_id=$('#variety_id').val();
             var warehouse_id=$('#warehouse_id').val();
             if(variety_id>0)
@@ -348,6 +360,30 @@
             else
             {
                 $('#pack_size_id_container').hide();
+            }
+        });
+        $(document).on("change","#pack_size_id",function()
+        {
+            $("#stock_current").html("");
+            var variety_id=$('#variety_id').val();
+            var pack_size_id=$('#pack_size_id').val();
+            if(variety_id>0 && pack_size_id>0)
+            {
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_curent_stock_by_variety_pack_size_id/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{variety_id:variety_id,pack_size_id:pack_size_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
             }
         });
 
