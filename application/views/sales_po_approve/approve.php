@@ -212,6 +212,11 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <?php
+        //echo '<PRE>';
+        //print_r($stocks_current);
+        //echo '</PRE>';
+        ?>
         <table class="table table-bordered">
             <thead>
             <tr>
@@ -231,6 +236,7 @@
 
                 <?php
                 foreach($customer_varieties_quantity as $variety_id=>$v)
+                {
                     foreach($v as $pack_size_id=>$variety)
                     {
                         ?>
@@ -255,6 +261,7 @@
                         </tr>
                         <?php
                     }
+                }
                 ?>
 
 

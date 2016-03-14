@@ -15,6 +15,7 @@ class Sales_model extends CI_Model
         $stocks=array();
 
         $where='';
+        $where_bonus='';
         if(sizeof($variety_pack_sizes)>0)
         {
             foreach($variety_pack_sizes as $i=>$vp)
@@ -22,10 +23,12 @@ class Sales_model extends CI_Model
                 if($i==0)
                 {
                     $where='(variety_id='.$vp['variety_id'].' AND pack_size_id='.$vp['pack_size_id'].')';
+                    $where_bonus='(variety_id='.$vp['variety_id'].' AND bonus_pack_size_id='.$vp['pack_size_id'].')';
                 }
                 else
                 {
                     $where.='OR (variety_id='.$vp['variety_id'].' AND pack_size_id='.$vp['pack_size_id'].')';
+                    $where_bonus.='OR (variety_id='.$vp['variety_id'].' AND bonus_pack_size_id='.$vp['pack_size_id'].')';
                 }
             }
         }
@@ -37,7 +40,7 @@ class Sales_model extends CI_Model
         $this->db->group_by(array('variety_id','pack_size_id'));
         if(strlen($where)>0)
         {
-            $this->db->where($where);
+            $this->db->where('('.$where.')');
         }
         $this->db->where('status',$CI->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
@@ -60,7 +63,7 @@ class Sales_model extends CI_Model
         $this->db->group_by(array('variety_id','pack_size_id'));
         if(strlen($where)>0)
         {
-            $this->db->where($where);
+            $this->db->where('('.$where.')');
         }
         $this->db->where('status',$CI->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
@@ -69,15 +72,71 @@ class Sales_model extends CI_Model
             $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=$result['stock_in'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']+=$result['stock_in'];
         }
-        //+sales return
+        //+sales return pending
+        //sales bonus return pending
 
         //-short
-
+        $this->db->from($CI->config->item('table_stockout_short_inventory'));
+        $this->db->select('variety_id,pack_size_id');
+        $this->db->select('SUM(quantity) short');
+        $this->db->group_by(array('variety_id','pack_size_id'));
+        if(strlen($where)>0)
+        {
+            $this->db->where('('.$where.')');
+        }
+        $this->db->where('status',$CI->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['short']=$result['short'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']-=$result['short'];
+        }
         //-sales
 
-        //-sales bonus
+        $this->db->from($CI->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,pack_size_id');
+        $this->db->select('SUM(quantity) sales');
+        $this->db->join($CI->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','pack_size_id'));
+        if(strlen($where)>0)
+        {
+            $this->db->where('('.$where.')');
+        }
+        $this->db->where('sp.status_approved',$CI->config->item('system_status_po_approval_approved'));
+        $this->db->where('spd.revision',1);
+        $results=$this->db->get()->result_array();
+        /*echo '<PRE>';
+        print_r($results);
+        echo '</PRE>';*/
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=$result['sales'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']-=$result['sales'];
+        }
 
-        //-sample delivery
+        //-sales bonus
+        $this->db->from($CI->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,bonus_pack_size_id pack_size_id');
+        $this->db->select('SUM(quantity_bonus) sales');
+        $this->db->join($CI->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','bonus_pack_size_id'));
+        if(strlen($where_bonus)>0)
+        {
+            $this->db->where('('.$where_bonus.')');
+        }
+        $this->db->where('bonus_details_id >',0);
+        $this->db->where('sp.status_approved',$CI->config->item('system_status_po_approval_approved'));
+        $this->db->where('spd.revision',1);
+        $results=$this->db->get()->result_array();
+        /*echo '<PRE>';
+        print_r($results);
+        echo '</PRE>';*/
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales']+=$result['sales'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']-=$result['sales'];
+        }
+        //-sample delivery pending
         return $stocks;
 
     }
@@ -109,7 +168,7 @@ class Sales_model extends CI_Model
         {
             $current_credit+=$result['total_buy'];//plus for relative to arm
         }
-        //sales _return pending
+        //sales _return and return bonus pending
         return $current_credit;
 
     }

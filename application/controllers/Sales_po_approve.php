@@ -490,6 +490,127 @@ class Sales_po_approve extends Root_Controller
             $this->message="Please Select Approve or Reject";
             return false;
         }
+        $po_id = $this->input->post("id");
+
+        $this->db->from($this->config->item('table_sales_po').' po');
+
+        $this->db->select('po.*');
+        $this->db->select('cus.district_id,d.name district_name,cus.name customer_name,cus.credit_limit');
+        $this->db->select('d.territory_id,t.name territory_name');
+        $this->db->select('t.zone_id zone_id,zone.name zone_name');
+        $this->db->select('zone.division_id division_id,division.name division_name');
+        $this->db->select('warehouse.name warehouse_name');
+
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = po.warehouse_id','INNER');
+        $this->db->where('po.id',$po_id);
+        $po_info=$this->db->get()->row_array();
+
+        if(!$po_info)
+        {
+            System_helper::invalid_try("Try to approve or reject on no existing",$po_id);
+            $this->message=$this->lang->line('YOU_DONT_HAVE_ACCESS');
+            return false;
+        }
+        if(!$this->check_my_editable($po_info))
+        {
+            System_helper::invalid_try('Try to approve or reject others po',$po_id);
+            $this->message=$this->lang->line('YOU_DONT_HAVE_ACCESS');
+            return false;
+        }
+        if($po_info['status_requested']==$this->config->item('system_status_po_request_pending'))
+        {
+            System_helper::invalid_try('trying to approve/reject pending po',$po_id);
+            $this->message=$this->lang->line('YOU_DONT_HAVE_ACCESS');
+            return false;
+        }
+        if($po_info['status_approved']==$this->config->item('system_status_po_approval_approved'))
+        {
+            System_helper::invalid_try('trying to approve or reject approved po',$po_id);
+            $this->message=$this->lang->line('MSG_PO_APPROVAL_EDIT_UNABLE_APPROVED');
+            return false;
+        }
+        if($po_info['status_approved']==$this->config->item('system_status_po_approval_rejected'))
+        {
+            System_helper::invalid_try('trying to approve or reject rejected po',$po_id);
+            $this->message=$this->lang->line('MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED');
+            return false;
+        }
+
+        $this->db->from($this->config->item('table_sales_po_details').' spd');
+        $this->db->select('spd.*');
+        $this->db->select('v.name variety_name');
+        $this->db->select('crop_type.name crop_type_name');
+        $this->db->select('crop.name crop_name');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+        $this->db->where('spd.sales_po_id',$po_id);
+        $this->db->where('spd.revision',1);
+        $po_varieties=$this->db->get()->result_array();
+
+        $variety_pack_size_ids=array();
+        $customer_varieties_quantity=array();
+        foreach($po_varieties as $variety)
+        {
+            $ids=array('variety_id'=>$variety['variety_id'],'pack_size_id'=>$variety['pack_size_id']);
+            if(!in_array($ids,$variety_pack_size_ids))
+            {
+                $variety_pack_size_ids[]=$ids;
+            }
+            if(!isset($customer_varieties_quantity[$variety['variety_id']][$variety['pack_size_id']]))
+            {
+                $info=array();
+                $info['crop_name']=$variety['crop_name'];
+                $info['crop_type_name']=$variety['crop_type_name'];
+                $info['variety_name']=$variety['variety_name'];
+                $info['variety_id']=$variety['variety_id'];
+                $info['pack_size']=$variety['pack_size'];
+                $info['pack_size_id']=$variety['pack_size_id'];
+                $info['quantity']=$variety['quantity'];
+                $customer_varieties_quantity[$variety['variety_id']][$variety['pack_size_id']]=$info;
+            }
+            else
+            {
+                $customer_varieties_quantity[$variety['variety_id']][$variety['pack_size_id']]['quantity']+=$variety['quantity'];
+            }
+            if($variety['bonus_details_id']>0)
+            {
+                if(!isset($customer_varieties_quantity[$variety['variety_id']][$variety['bonus_pack_size_id']]))
+                {
+                    $info=array();
+                    $info['crop_name']=$variety['crop_name'];
+                    $info['crop_type_name']=$variety['crop_type_name'];
+                    $info['variety_name']=$variety['variety_name'];
+                    $info['variety_id']=$variety['variety_id'];
+                    $info['pack_size']=$variety['bonus_pack_size'];
+                    $info['pack_size_id']=$variety['bonus_pack_size_id'];
+                    $info['quantity']=$variety['quantity_bonus'];
+                    $customer_varieties_quantity[$variety['variety_id']][$variety['bonus_pack_size_id']]=$info;
+                }
+                else
+                {
+                    $customer_varieties_quantity[$variety['variety_id']][$variety['bonus_pack_size_id']]['quantity']+=$variety['quantity_bonus'];
+                }
+            }
+
+        }
+        $stocks_current=$this->sales_model->get_stocks($variety_pack_size_ids);
+        foreach($customer_varieties_quantity as $variety_id=>$v)
+        {
+            foreach($v as $pack_size_id=>$variety)
+            {
+                if($stocks_current[$variety_id][$pack_size_id]['current_stock']<$variety['quantity'])
+                {
+                    $this->message=$variety['variety_name'].'('.$variety['crop_name'].'-'.$variety['crop_type_name'].') will be Out of stock.';
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
