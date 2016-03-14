@@ -172,3 +172,7 @@ $lang['LABEL_CURRENT_STOCK_KG'] = 'Current Stock (Kg)';
 $lang['LABEL_NEW_STOCK'] = 'New Stock (pieces)';
 $lang['LABEL_NEW_STOCK_KG'] = 'New Stock (kg)';
 
+//stock in
+
+$lang['LABEL_DATE_STOCK_OUT'] = 'Stock Out date';
+

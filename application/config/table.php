@@ -51,3 +51,6 @@ $config['table_payment_payment'] = 'payment_payment';
 //po
 $config['table_sales_po'] = 'sales_po';
 $config['table_sales_po_details'] = 'sales_po_details';
+
+//stock out
+$config['table_stockout_short_inventory'] = 'stockout_short_inventory';
