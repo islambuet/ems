@@ -119,6 +119,7 @@ $lang['LABEL_NAME_MARKET'] = 'Market Name';
 $lang['LABEL_EMAIL'] = 'Email';
 $lang['LABEL_AGREEMENT'] = 'Agreement';
 $lang['LABEL_OPENING_BALANCE'] = 'Opening Balance';
+$lang['LABEL_CUSTOMER_CREDIT_LIMIT'] = 'Credit Limit';
 //payment
 $lang['LABEL_AMOUNT'] = 'Amount';
 $lang['LABEL_DATE_PAYMENT'] = 'Payment Date';

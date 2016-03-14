@@ -92,6 +92,7 @@ class Setup_csetup_customer extends Root_Controller
                 'district_id'=>$this->locations['district_id'],
                 'name' => '',
                 'customer_code' => '',
+                'credit_limit' => '500000',
                 'name_owner' => '',
                 'name_market' => '',
                 'address' => '',
@@ -308,6 +309,7 @@ class Setup_csetup_customer extends Root_Controller
         $this->load->library('form_validation');
         $this->form_validation->set_rules('customer[name]',$this->lang->line('LABEL_NAME'),'required');
         $this->form_validation->set_rules('customer[district_id]',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
+        $this->form_validation->set_rules('customer[credit_limit]',$this->lang->line('LABEL_CUSTOMER_CREDIT_LIMIT'),'required|numeric');
         $this->form_validation->set_rules('payment[amount]',$this->lang->line('LABEL_OPENING_BALANCE'),'required|numeric');
         if($this->form_validation->run() == FALSE)
         {

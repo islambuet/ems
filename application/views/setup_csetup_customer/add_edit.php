@@ -161,6 +161,14 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_CREDIT_LIMIT');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="customer[credit_limit]" id="credit_limit" class="form-control" value="<?php echo $customer['credit_limit'];?>"/>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OPENING_BALANCE');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
