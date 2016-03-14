@@ -305,7 +305,7 @@ class Sales_po_approve extends Root_Controller
             $this->db->from($this->config->item('table_sales_po').' po');
 
             $this->db->select('po.*');
-            $this->db->select('cus.district_id,d.name district_name,cus.name customer_name');
+            $this->db->select('cus.district_id,d.name district_name,cus.name customer_name,cus.credit_limit');
             $this->db->select('d.territory_id,t.name territory_name');
             $this->db->select('t.zone_id zone_id,zone.name zone_name');
             $this->db->select('zone.division_id division_id,division.name division_name');
@@ -419,6 +419,7 @@ class Sales_po_approve extends Root_Controller
 
             }
             $data['stocks_current']=$this->sales_model->get_stocks($variety_pack_size_ids);
+            $data['customer_current_credit']=$this->sales_model->get_customer_current_credit($data['po']['customer_id']);
 
             $data['remarks']=$data['po_varieties'][0]['remarks'];
             $data['title']="PO No ".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);

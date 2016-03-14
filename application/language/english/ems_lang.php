@@ -165,8 +165,8 @@ $lang['LABEL_PO_USER_RECEIVED'] = 'Po Received By';
 //po approve
 $lang['MSG_PO_APPROVAL_EDIT_UNABLE_APPROVED'] = 'This po already approved.You cannot edit it.';
 $lang['MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED'] = 'This po already Rejected.You cannot edit it.';
-$lang['LABEL_CUSTOMER_CURRENT_BALANCE'] = 'Customer Current Balance';
-$lang['LABEL_CUSTOMER_NEW_BALANCE'] = 'Customer New Balance.';
+$lang['LABEL_CUSTOMER_CURRENT_CREDIT'] = 'Customer Current Credit';
+$lang['LABEL_CUSTOMER_NEW_CREDIT'] = 'Customer New Credit.';
 $lang['LABEL_CURRENT_STOCK'] = 'Current Stock (pieces)';
 $lang['LABEL_CURRENT_STOCK_KG'] = 'Current Stock (Kg)';
 $lang['LABEL_NEW_STOCK'] = 'New Stock (pieces)';

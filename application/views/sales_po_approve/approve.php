@@ -176,15 +176,29 @@
                     <td class="text-right"><label id="total_total_bonus_weight"><?php echo number_format($total_total_bonus_weight/1000,3,'.',''); ?></label></td>
                 </tr>
                 <tr>
-                    <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_BALANCE'); ?></label></td>
-                    <td class="text-right"><label>Need to Calculate</label></td>
+                    <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_CREDIT'); ?></label></td>
+                    <td class="text-right"><label><?php echo number_format($customer_current_credit,2); ?></label></td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                    <td>&nbsp;</td>
+                </tr>
+                <?php
+                $back_color='lightgreen';
+                if($po['credit_limit']<($customer_current_credit+$total_total_price))
+                {
+                    $back_color='red';
+                }
+                ?>
+                <tr>
+                    <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_NEW_CREDIT'); ?></label></td>
+                    <td class="text-right" style="background-color: <?php echo $back_color;?>"><label><?php echo number_format($customer_current_credit+$total_total_price,2); ?></label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_NEW_BALANCE'); ?></label></td>
-                    <td class="text-right"><label>Need to Calculate</label></td>
+                    <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_CREDIT_LIMIT'); ?></label></td>
+                    <td class="text-right"><label><?php echo number_format($po['credit_limit'],2); ?></label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
@@ -236,8 +250,8 @@
                                 $back_color='red';
                             }
                             ?>
-                            <td class="text-right"style="background-color: <?php echo $back_color;?>"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'],0,'.','');?></td>
-                            <td class="text-right"style="background-color: <?php echo $back_color;?>"><?php echo number_format(($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'])*$variety['pack_size']/1000,3,'.','');?></td></td>
+                            <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'],0,'.','');?></td>
+                            <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format(($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'])*$variety['pack_size']/1000,3,'.','');?></td></td>
                         </tr>
                         <?php
                     }
