@@ -217,56 +217,58 @@
         //print_r($stocks_current);
         //echo '</PRE>';
         ?>
-        <table class="table table-bordered">
-            <thead>
-            <tr>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK'); ?></th>
-                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK_KG'); ?></th>
-            </tr>
-            </thead>
-            <tbody>
+        <div style="overflow-x: auto;" class="row show-grid">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK_KG'); ?></th>
+                </tr>
+                </thead>
+                <tbody>
 
-                <?php
-                foreach($customer_varieties_quantity as $variety_id=>$v)
-                {
-                    foreach($v as $pack_size_id=>$variety)
+                    <?php
+                    foreach($customer_varieties_quantity as $variety_id=>$v)
                     {
-                        ?>
-                        <tr>
-                            <td><?php echo $variety['crop_name']; ?></td>
-                            <td><?php echo $variety['crop_type_name']; ?></td>
-                            <td><?php echo $variety['variety_name']; ?></td>
-                            <td class="text-right"><?php echo $variety['pack_size']; ?></td>
-                            <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock'],0,'.','');?></td>
-                            <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']*$variety['pack_size']/1000,3,'.','');?></td>
-                            <td class="text-right"><?php echo $variety['quantity']; ?></td>
-                            <td class="text-right"><?php echo number_format($variety['pack_size']*$variety['quantity']/1000,3,'.',''); ?></td>
-                            <?php
-                            $back_color='lightgreen';
-                            if($stocks_current[$variety_id][$pack_size_id]['current_stock']<$variety['quantity'])
-                            {
-                                $back_color='red';
-                            }
+                        foreach($v as $pack_size_id=>$variety)
+                        {
                             ?>
-                            <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'],0,'.','');?></td>
-                            <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format(($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'])*$variety['pack_size']/1000,3,'.','');?></td></td>
-                        </tr>
-                        <?php
+                            <tr>
+                                <td><?php echo $variety['crop_name']; ?></td>
+                                <td><?php echo $variety['crop_type_name']; ?></td>
+                                <td><?php echo $variety['variety_name']; ?></td>
+                                <td class="text-right"><?php echo $variety['pack_size']; ?></td>
+                                <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock'],0,'.','');?></td>
+                                <td class="text-right"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']*$variety['pack_size']/1000,3,'.','');?></td>
+                                <td class="text-right"><?php echo $variety['quantity']; ?></td>
+                                <td class="text-right"><?php echo number_format($variety['pack_size']*$variety['quantity']/1000,3,'.',''); ?></td>
+                                <?php
+                                $back_color='lightgreen';
+                                if($stocks_current[$variety_id][$pack_size_id]['current_stock']<$variety['quantity'])
+                                {
+                                    $back_color='red';
+                                }
+                                ?>
+                                <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'],0,'.','');?></td>
+                                <td class="text-right" style="background-color: <?php echo $back_color;?>"><?php echo number_format(($stocks_current[$variety_id][$pack_size_id]['current_stock']-$variety['quantity'])*$variety['pack_size']/1000,3,'.','');?></td></td>
+                            </tr>
+                            <?php
+                        }
                     }
-                }
-                ?>
+                    ?>
 
 
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
         <div class="widget-header">
             <div class="title">
                 Approval
