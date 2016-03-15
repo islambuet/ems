@@ -178,6 +178,13 @@ $lang['LABEL_STOCK_OUT_PURPOSE_SHORT'] = 'Short Inventory';
 $lang['LABEL_STOCK_OUT_PURPOSE_RND'] = 'R&D Purpose';
 $lang['LABEL_STOCK_OUT_PURPOSE_CUSTOMER'] = 'Sample Purpose';
 $lang['LABEL_STOCK_OUT_PURPOSE'] = 'Stock Out Purpose';
-
+//po delivery
+$lang['LABEL_DATE_DELIVERY'] = 'Delivery Date';
+$lang['LABEL_DATE_INVOICE'] = 'Invoice Date';
+$lang['LABEL_INVOICE_NO'] = 'Invoice No';
+$lang['LABEL_NAME_COURIER'] = 'Courier Name';
+$lang['LABEL_COURIER_TRACK_NO'] = 'Courier Tracing No';
+$lang['LABEL_DATE_BOOKING'] = 'Booking Date';
+$lang['LABEL_DATE_RECEIVED'] = 'Received  Date';
 
 
