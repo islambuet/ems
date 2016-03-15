@@ -328,12 +328,12 @@ class Sales_po_delivery extends Root_Controller
             {
                 $time=time();
                 $data['delivery_info']=Array(
-                    'date_delivery' => $time,
-                    'date_invoice' => $time,
+                    'date_delivery' => '',
+                    'date_invoice' => '',
                     'invoice_no' => '',
                     'courier_id' => '',
                     'track_no' => '',
-                    'date_booking' => $time,
+                    'date_booking' => '',
                     'remarks' => ''
                 );
             }
