@@ -51,7 +51,7 @@ class Stockout extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Excess Inventory list";
+            $data['title']="Stock Out List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/list",$data,true));
             if($this->message)
@@ -75,7 +75,7 @@ class Stockout extends Root_Controller
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
 
-            $data['title']="New Short Inventory";
+            $data['title']="New Stock Out";
             $data["stock_out"] = Array(
                 'id' => 0,
                 'warehouse_id' => '',
@@ -136,7 +136,7 @@ class Stockout extends Root_Controller
                 $this->jsonReturn($ajax);
                 die();
             }
-            $data['title']="Edit Short Inventory";
+            $data['title']="Edit Stock Out";
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_out']['crop_id']));
@@ -192,7 +192,7 @@ class Stockout extends Root_Controller
                 $this->jsonReturn($ajax);
                 die();
             }
-            $data['title']="Detail of Short Inventory";
+            $data['title']="Detail of Stock Out";
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['stock_out']['crop_id']));
