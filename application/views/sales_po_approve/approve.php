@@ -92,17 +92,17 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PRICE_PACK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PRICE_PACK'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
 
                 </tr>
                 </thead>
@@ -221,16 +221,16 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK'); ?></th>
-                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK_KG'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CURRENT_STOCK_KG'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_NEW_STOCK_KG'); ?></th>
                 </tr>
                 </thead>
                 <tbody>
