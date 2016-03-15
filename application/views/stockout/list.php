@@ -111,7 +111,7 @@
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?>', dataField: 'warehouse_name',filtertype: 'list',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100'},
