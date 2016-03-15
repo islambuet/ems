@@ -97,6 +97,7 @@ $(document).ready(function()
             }
 
         }
+        $("#system_loading").hide();
     });
     $(document).ajaxError(function(event,xhr,options)
     {
