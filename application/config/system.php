@@ -34,6 +34,9 @@ $config['system_status_po_delivery_pending']='Pending';
 $config['system_status_po_delivery_delivered']='Delivered';
 $config['system_status_po_received_received']='Received';
 $config['system_status_po_received_pending']='Pending';
-
+//stock out
+$config['system_purpose_short']='Short';
+$config['system_purpose_rnd']='RND';
+$config['system_purpose_customer']='Customer';
 
 

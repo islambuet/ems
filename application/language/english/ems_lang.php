@@ -172,7 +172,12 @@ $lang['LABEL_CURRENT_STOCK_KG'] = 'Current Stock (Kg)';
 $lang['LABEL_NEW_STOCK'] = 'New Stock (pieces)';
 $lang['LABEL_NEW_STOCK_KG'] = 'New Stock (kg)';
 
-//stock in
-
+//stock out
 $lang['LABEL_DATE_STOCK_OUT'] = 'Stock Out date';
+$lang['LABEL_STOCK_OUT_PURPOSE_SHORT'] = 'Short Inventory';
+$lang['LABEL_STOCK_OUT_PURPOSE_RND'] = 'R&D Purpose';
+$lang['LABEL_STOCK_OUT_PURPOSE_CUSTOMER'] = 'Sample Purpose';
+$lang['LABEL_STOCK_OUT_PURPOSE'] = 'Stock Out Purpose';
+
+
 

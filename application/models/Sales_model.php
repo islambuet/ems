@@ -50,7 +50,7 @@ class Sales_model extends CI_Model
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_in']=$result['stock_in'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=0;
             $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return']=0;
-            $stocks[$result['variety_id']][$result['pack_size_id']]['short']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stockout']=0;
             $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=0;
             $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=0;
 
@@ -75,10 +75,10 @@ class Sales_model extends CI_Model
         //+sales return pending
         //sales bonus return pending
 
-        //-short
-        $this->db->from($CI->config->item('table_stockout_short_inventory'));
+        //-stock out
+        $this->db->from($CI->config->item('table_stockout'));
         $this->db->select('variety_id,pack_size_id');
-        $this->db->select('SUM(quantity) short');
+        $this->db->select('SUM(quantity) stockout');
         $this->db->group_by(array('variety_id','pack_size_id'));
         if(strlen($where)>0)
         {
@@ -88,8 +88,8 @@ class Sales_model extends CI_Model
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['short']=$result['short'];
-            $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']-=$result['short'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stockout']=$result['stockout'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['current_stock']-=$result['stockout'];
         }
         //-sales
 

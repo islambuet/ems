@@ -443,4 +443,8 @@ function turn_off_triggers()
     $(document).off("change", ".pack_size_id");
     $(document).off("change", ".quantity");
 
+    //stock out
+    $(document).off("change", "#purpose");
+    $(document).off("change", "#customer_id");
+
 }

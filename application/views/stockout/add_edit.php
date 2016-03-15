@@ -192,6 +192,120 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($stock_out['id']>0)
+                {
+                    ?>
+                    <label class="control-label"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_'.strtoupper($stock_out['purpose']));?></label>
+                <?php
+                }
+                else
+                {
+                    ?>
+                    <select id="purpose" name="stock_out[purpose]" class="form-control">
+                        <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_short'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_rnd'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');?></option>
+                        <option value="<?php echo $CI->config->item('system_purpose_customer'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_CUSTOMER');?></option>
+                    </select>
+                <?php
+                }
+                ?>
+            </div>
+        </div>
+        <?php
+        if($stock_out['id']==0)
+        {
+            ?>
+            <div style="display: none;" class="row show-grid" id="division_id_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="division_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                        <?php
+                        foreach($divisions as $division)
+                        {?>
+                            <option value="<?php echo $division['value']?>"><?php echo $division['text'];?></option>
+                        <?php
+                        }
+                        ?>
+                    </select>
+                </div>
+            </div>
+            <div style="display: none;" class="row show-grid" id="zone_id_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="zone_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+                </div>
+            </div>
+            <div style="display: none;" class="row show-grid" id="territory_id_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="territory_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+
+                </div>
+            </div>
+            <div style="display: none;" class="row show-grid" id="district_id_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="district_id" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+
+                </div>
+            </div>
+            <div style="display: none;" class="row show-grid" id="customer_id_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <select id="customer_id" name="stock_out[customer_id]" class="form-control">
+                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    </select>
+
+                </div>
+            </div>
+            <div class="row show-grid" style="display: none;" id="customer_name_container">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <input type="text" name="stock_out[customer_name]" id="customer_name" class="form-control" value=""/>
+                </div>
+            </div>
+            <?php
+        }
+        elseif($stock_out['purpose']==$CI->config->item('system_purpose_customer'))
+        {
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $stock_out['customer_name'];?></label>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_PIECES');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -384,6 +498,186 @@
 
                     }
                 });
+            }
+        });
+        $(document).on("change","#purpose",function()
+        {
+
+            $("#customer_name").val("");
+            $("#division_id").val("");
+            $("#zone_id").val("");
+            $("#territory_id").val("");
+            $("#district_id").val("");
+            $("#customer_id").val("");
+            var purpose=$('#purpose').val();
+            if(purpose=='<?php echo $CI->config->item('system_purpose_customer'); ?>')
+            {
+                $('#customer_name_container').show();
+                $('#division_id_container').show();
+                $('#zone_id_container').hide();
+                $('#territory_id_container').hide();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+            }
+            else
+            {
+                $('#customer_name_container').hide();
+                $('#division_id_container').hide();
+                $('#zone_id_container').hide();
+                $('#territory_id_container').hide();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+            }
+        });
+        $(document).on("change","#division_id",function()
+        {
+            $('#customer_name_container').show();
+            $("#customer_name").val("");
+            $("#zone_id").val("");
+            $("#territory_id").val("");
+            $("#district_id").val("");
+            $("#customer_id").val("");
+            var division_id=$('#division_id').val();
+            if(division_id>0)
+            {
+                $('#zone_id_container').show();
+                $('#territory_id_container').hide();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_zones_by_divisionid/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{division_id:division_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#zone_id_container').hide();
+                $('#territory_id_container').hide();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+            }
+        });
+        $(document).on("change","#zone_id",function()
+        {
+            $('#customer_name_container').show();
+            $("#customer_name").val("");
+            $("#territory_id").val("");
+            $("#district_id").val("");
+            $("#customer_id").val("");
+            var zone_id=$('#zone_id').val();
+            if(zone_id>0)
+            {
+                $('#territory_id_container').show();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_territories_by_zoneid/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{zone_id:zone_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#territory_id_container').hide();
+                $('#district_id_container').hide();
+                $('#customer_id_container').hide();
+            }
+        });
+        $(document).on("change","#territory_id",function()
+        {
+            $('#customer_name_container').show();
+            $("#customer_name").val("");
+            $("#district_id").val("");
+            $("#customer_id").val("");
+            var territory_id=$('#territory_id').val();
+            if(territory_id>0)
+            {
+                $('#district_id_container').show();
+                $('#customer_id_container').hide();
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_districts_by_territoryid/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{territory_id:territory_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#customer_id_container').hide();
+                $('#district_id_container').hide();
+            }
+        });
+        $(document).on("change","#district_id",function()
+        {
+            $('#customer_name_container').show();
+            $("#customer_name").val("");
+            $("#customer_id").val("");
+            var district_id=$('#district_id').val();
+            if(district_id>0)
+            {
+                $('#customer_id_container').show();
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_customers_by_districtid/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{district_id:district_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#customer_id_container').hide();
+            }
+        });
+        $(document).on("change","#customer_id",function()
+        {
+            var customer_id=$('#customer_id').val();
+            if(customer_id>0)
+            {
+                $("#customer_name").val($("#customer_id :selected").text());
+                $('#customer_name_container').hide();
+            }
+            else
+            {
+                $('#customer_name_container').show();
             }
         });
 

@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Stockout_short extends Root_Controller
+class Stockout extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Stockout_short extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Stockout_short');
-        $this->controller_url='stockout_short';
+        $this->permissions=User_helper::get_permission('Stockout');
+        $this->controller_url='stockout';
         //$this->load->model("sys_module_task_model");
         $this->load->model("sales_model");
     }
@@ -53,7 +53,7 @@ class Stockout_short extends Root_Controller
         {
             $data['title']="Excess Inventory list";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout_short/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -81,16 +81,18 @@ class Stockout_short extends Root_Controller
                 'warehouse_id' => '',
                 'variety_id' => '',
                 'pack_size_id' => '',
+                'purpose'=>'',
                 'quantity' => '0',
                 'remarks' => '',
                 'date_stock_out' => time()
             );
             $data['stock_current']='';
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout_short/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -116,7 +118,7 @@ class Stockout_short extends Root_Controller
             {
                 $stock_id=$id;
             }
-            $this->db->from($this->config->item('table_stockout_short_inventory').' stei');
+            $this->db->from($this->config->item('table_stockout').' stei');
             $this->db->select('stei.*');
             $this->db->select('v.crop_type_id crop_type_id');
             $this->db->select('type.crop_id crop_id');
@@ -145,7 +147,7 @@ class Stockout_short extends Root_Controller
             $data['stock_current']=$stock_info[$data['stock_out']['variety_id']][$data['stock_out']['pack_size_id']]['current_stock'];
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout_short/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -223,7 +225,7 @@ class Stockout_short extends Root_Controller
             $time=time();
             foreach($ids as $id)
             {
-                Query_helper::update($this->config->item('table_stockout_short_inventory'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
+                Query_helper::update($this->config->item('table_stockout'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
             }
             $this->db->trans_complete();   //DB Transaction Handle END
 
@@ -289,7 +291,7 @@ class Stockout_short extends Root_Controller
                 $data['user_updated'] = $user->user_id;
                 $data['date_updated'] = time();
 
-                Query_helper::update($this->config->item('table_stockout_short_inventory'),$data,array("id = ".$id));
+                Query_helper::update($this->config->item('table_stockout'),$data,array("id = ".$id));
 
             }
             else
@@ -297,7 +299,7 @@ class Stockout_short extends Root_Controller
 
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_stockout_short_inventory'),$data);
+                Query_helper::add($this->config->item('table_stockout'),$data);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -331,6 +333,7 @@ class Stockout_short extends Root_Controller
             $this->form_validation->set_rules('stock_out[warehouse_id]',$this->lang->line('LABEL_WAREHOUSE_NAME'),'required');
             $this->form_validation->set_rules('stock_out[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
             $this->form_validation->set_rules('stock_out[pack_size_id]',$this->lang->line('LABEL_PACK_NAME'),'required');
+            $this->form_validation->set_rules('stock_out[purpose]',$this->lang->line('LABEL_STOCK_OUT_PURPOSE'),'required');
         }
         $this->form_validation->set_rules('stock_out[quantity]',$this->lang->line('LABEL_QUANTITY_PIECES'),'required|numeric');
         $this->form_validation->set_rules('stock_out[date_stock_out]',$this->lang->line('LABEL_DATE_STOCK_OUT'),'required');
@@ -342,7 +345,7 @@ class Stockout_short extends Root_Controller
         $actual_quantity=$data['quantity'];
         if($id>0)
         {
-            $info=Query_helper::get_info($this->config->item('table_stockout_short_inventory'),'*',array('id ='.$id,'status ="'.$this->config->item('system_status_active').'"'),1);
+            $info=Query_helper::get_info($this->config->item('table_stockout'),'*',array('id ='.$id,'status ="'.$this->config->item('system_status_active').'"'),1);
             $data['variety_id']=$info['variety_id'];
             $data['pack_size_id']=$info['pack_size_id'];
             $actual_quantity-=$info['quantity'];
@@ -361,8 +364,8 @@ class Stockout_short extends Root_Controller
     }
     public function get_items()
     {
-        $this->db->from($this->config->item('table_stockout_short_inventory').' stei');
-        $this->db->select('stei.id,stei.quantity,stei.date_stock_out');
+        $this->db->from($this->config->item('table_stockout').' sout');
+        $this->db->select('sout.*');
         $this->db->select('v.name variety_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
@@ -370,20 +373,21 @@ class Stockout_short extends Root_Controller
         $this->db->select('warehouse.name warehouse_name');
         $this->db->select('fy.name fiscal_year_name');
 
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = stei.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = sout.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = stei.pack_size_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = stei.warehouse_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = sout.pack_size_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_warehouse').' warehouse','warehouse.id = sout.warehouse_id','INNER');
         //$this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.id = stei.fiscal_year_id','INNER');
-        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= stei.date_stock_out and fy.date_end >= stei.date_stock_out','LEFT');
-        $this->db->where('stei.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('stei.id','DESC');
+        $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= sout.date_stock_out and fy.date_end >= sout.date_stock_out','LEFT');
+        $this->db->where('sout.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('sout.id','DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
             $item['quantity_weight']=number_format($item['quantity']*$item['pack_size_name']/1000,3, '.', '');
             $item['date_stock_out']=System_helper::display_date($item['date_stock_out']);
+            $item['purpose']=$this->lang->line('LABEL_STOCK_OUT_PURPOSE_'.strtoupper($item['purpose']));
         }
         $this->jsonReturn($items);
 
