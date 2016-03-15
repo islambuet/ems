@@ -174,7 +174,7 @@ class Stockout extends Root_Controller
             {
                 $stock_id=$id;
             }
-            $this->db->from($this->config->item('table_stockout_short_inventory').' stei');
+            $this->db->from($this->config->item('table_stockout').' stei');
             $this->db->select('stei.*');
             $this->db->select('v.crop_type_id crop_type_id');
             $this->db->select('type.crop_id crop_id');
@@ -200,7 +200,7 @@ class Stockout extends Root_Controller
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array());
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout_short/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;

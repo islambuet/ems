@@ -106,6 +106,29 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_STOCK_OUT_PURPOSE');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_'.strtoupper($stock_out['purpose']));?></label>
+            </div>
+        </div>
+        <?php
+        if($stock_out['purpose']==$CI->config->item('system_purpose_customer'))
+        {
+            ?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $stock_out['customer_name'];?></label>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_QUANTITY_PIECES');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
