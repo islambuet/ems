@@ -189,3 +189,11 @@ $lang['LABEL_DATE_RECEIVED'] = 'Received  Date';
 //po receive
 $lang['LABEL_QUANTITY_RECEIVE_PIECES'] = 'Received  Quantity';
 $lang['LABEL_BONUS_QUANTITY_RECEIVE_PIECES'] = 'Received Bonus Quantity';
+//po return
+$lang['LABEL_QUANTITY_RETURN_PIECES'] = 'Quantity Returns (pieces)';
+$lang['LABEL_WEIGHT_RETURN_KG'] = 'Weight Returns (Kg)';
+$lang['LABEL_TOTAL_PRICE_RETURN'] = 'Return Price';
+
+$lang['LABEL_QUANTITY_ACTUAL_PIECES'] = 'Quantity Actual (pieces)';
+$lang['LABEL_WEIGHT_ACTUAL_KG'] = 'Weight Actual (Kg)';
+$lang['LABEL_TOTAL_PRICE_ACTUAL'] = 'Actual Price';
