@@ -161,6 +161,8 @@ $lang['LABEL_PO_TIME_DELIVERED'] = 'Po Delivered Time';
 $lang['LABEL_PO_USER_DELIVERED'] = 'Po Delivered By';
 $lang['LABEL_PO_TIME_RECEIVED'] = 'Po Received Time';
 $lang['LABEL_PO_USER_RECEIVED'] = 'Po Received By';
+$lang['LABEL_PO_TIME_RETURNED'] = 'Po Returned Time';
+$lang['LABEL_PO_USER_RETURNED'] = 'Po Returned By';
 
 //po approve
 $lang['MSG_PO_APPROVAL_EDIT_UNABLE_APPROVED'] = 'This po already approved.You cannot edit it.';
@@ -191,9 +193,11 @@ $lang['LABEL_QUANTITY_RECEIVE_PIECES'] = 'Received  Quantity';
 $lang['LABEL_BONUS_QUANTITY_RECEIVE_PIECES'] = 'Received Bonus Quantity';
 //po return
 $lang['LABEL_QUANTITY_RETURN_PIECES'] = 'Quantity Returns (pieces)';
+$lang['LABEL_BONUS_QUANTITY_RETURN_PIECES'] = 'Bonus Quantity Returns (pieces)';
 $lang['LABEL_WEIGHT_RETURN_KG'] = 'Weight Returns (Kg)';
 $lang['LABEL_TOTAL_PRICE_RETURN'] = 'Return Price';
 
 $lang['LABEL_QUANTITY_ACTUAL_PIECES'] = 'Quantity Actual (pieces)';
 $lang['LABEL_WEIGHT_ACTUAL_KG'] = 'Weight Actual (Kg)';
 $lang['LABEL_TOTAL_PRICE_ACTUAL'] = 'Actual Price';
+$lang['LABEL_DATE_RETURNED'] = 'Returned Date';

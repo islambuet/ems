@@ -65,10 +65,10 @@
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo System_helper::display_date($po['date_delivery']);?></label>
+                <label class="control-label"><?php echo System_helper::display_date($po['date_receive']);?></label>
             </div>
         </div>
         <div style="" class="row show-grid" id="warehouse_id_container">
@@ -87,10 +87,10 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RECEIVED');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_RETURNED');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="date_receive" id="date_receive" class="form-control datepicker" value="<?php echo System_helper::display_date($date_receive);?>"/>
+                <input type="text" name="date_return" id="date_return" class="form-control datepicker" value="<?php echo System_helper::display_date($date_return);?>"/>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -111,14 +111,14 @@
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_PIECES'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RETURN_PIECES'); ?></th>
 
 
 
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
                     <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RECEIVE_PIECES'); ?></th>
+                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RETURN_PIECES'); ?></th>
 
                 </tr>
                 </thead>
@@ -149,7 +149,7 @@
                             <label><?php echo $po_variety['quantity']; ?></label>
                         </td>
                         <td class="text-right">
-                            <input type="text" class="form-control" name="receive[<?php echo $po_variety['id'];?>][quantity_receive]" value="<?php echo $receive_info[$po_variety['id']]['quantity_receive']; ?>">
+                            <input type="text" class="form-control" name="return[<?php echo $po_variety['id'];?>][quantity_return]" value="<?php echo $po_variety['quantity_return']; ?>">
                         </td>
 
                         <td class="text-right">
@@ -162,7 +162,7 @@
                             <label><?php echo $po_variety['quantity_bonus']; ?></label>
                         </td>
                         <td class="text-right">
-                            <input type="text" class="form-control" name="receive[<?php echo $po_variety['id'];?>][quantity_bonus_receive]" value="<?php echo $receive_info[$po_variety['id']]['quantity_bonus_receive']; ?>">
+                            <input type="text" class="form-control" name="return[<?php echo $po_variety['id'];?>][quantity_bonus_return]" value="<?php echo $po_variety['quantity_bonus_return']; ?>">
                         </td>
                     </tr>
                 <?php

@@ -307,7 +307,7 @@
                                     <tbody>
                                     <?php
 
-                                    foreach($po_varieties as $index=>$po_variety)
+                                    foreach($po_varieties as $po_variety)
                                     {
 
                                         ?>

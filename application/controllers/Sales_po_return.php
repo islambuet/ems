@@ -124,9 +124,9 @@ class Sales_po_return extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if($data['po']['status_delivered']!=$this->config->item('system_status_po_delivery_delivered'))
+            if($data['po']['status_received']!=$this->config->item('system_status_po_received_received'))
             {
-                System_helper::invalid_try('Trying to edit not delivered po',$po_id);
+                System_helper::invalid_try('Trying to edit not received po',$po_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
@@ -143,39 +143,22 @@ class Sales_po_return extends Root_Controller
             $this->db->where('spd.sales_po_id',$data['po']['id']);
             $this->db->where('spd.revision',1);
             $data['po_varieties']=$this->db->get()->result_array();
-            $data['receive_info']=array();
-
-            if($data['po']['status_received']==$this->config->item('system_status_po_received_received'))
+            $data['date_return']=time();
+            $data['remarks']='';
+            if($data['po_varieties'][0]['date_return'])
             {
-                $data['date_receive']=$data['po']['date_receive'];
-                $receive_data=Query_helper::get_info($this->config->item('table_sales_po_receives'),'*',array('sales_po_id ='.$po_id,'revision =1'));
-                $data['remarks']=$receive_data[0]['remarks'];
-                foreach($receive_data as $rv)
-                {
-                    $data['receive_info'][$rv['sales_po_detail_id']]=$rv;
-                }
-
-
-                //$data['receive_info']=Query_helper::get_info($this->config->item('table_sales_po_delivery'),'*',array('sales_po_id ='.$po_id,'revision =1'),1);
-            }
-            else
-            {
-                $time=time();
-                $data['date_receive']=$time;
-                $data['remarks']='';
-                foreach($data['po_varieties'] as $v)
-                {
-                    $data['receive_info'][$v['id']]=array('quantity_receive'=>$v['quantity'],'quantity_bonus_receive'=>$v['quantity_bonus']);
-
-                }
+                $data['date_return']=$data['po_varieties'][0]['date_return'];
+                $data['remarks']=$data['po_varieties'][0]['remarks_return'];
             }
 
 
-            $data['title']="Receive PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
+
+
+            $data['title']="Sales return For PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
 
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_receive/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_return/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -235,13 +218,6 @@ class Sales_po_return extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if($data['po']['status_delivered']!=$this->config->item('system_status_po_delivery_delivered'))
-            {
-                System_helper::invalid_try('Trying to view not delivered po',$po_id);
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-            }
             $user_ids=array();
             $user_ids[$data['po']['user_created']]=$data['po']['user_created'];
             if($data['po']['user_requested']>0)
@@ -274,29 +250,21 @@ class Sales_po_return extends Root_Controller
             $this->db->where('spd.revision',1);
             $data['po_varieties']=$this->db->get()->result_array();
 
-
-            $data['receive_info']=array();
-
-            if($data['po']['status_received']==$this->config->item('system_status_po_received_received'))
+            $data['return_details']=array();
+            $return_info=Query_helper::get_info($this->config->item('table_sales_po_returns'),'*',array('sales_po_id ='.$po_id),0,0,array('revision ASC'));
+            foreach($return_info as $info)
             {
-                $receive_info=Query_helper::get_info($this->config->item('table_sales_po_receives'),'*',array('sales_po_id ='.$po_id),0,0,array('revision ASC'));
-                $data['receive_details']=array();
-                foreach($receive_info as $info)
-                {
-                    $data['receive_details'][$info['revision']][$info['sales_po_detail_id']]=$info;
-                    $user_ids[$info['user_created']]=$info['user_created'];
-                }
-
-                //$data['receive_info']=Query_helper::get_info($this->config->item('table_sales_po_delivery'),'*',array('sales_po_id ='.$po_id,'revision =1'),1);
+                $data['return_details'][$info['revision']][$info['sales_po_detail_id']]=$info;
+                $user_ids[$info['user_created']]=$info['user_created'];
             }
             $data['users']=System_helper::get_users_info($user_ids);
 
 
-            $data['title']="Receive PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
+            $data['title']="Sales Return of PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
 
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_receive/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_return/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -318,6 +286,7 @@ class Sales_po_return extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+
 
         if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
         {
@@ -341,92 +310,84 @@ class Sales_po_return extends Root_Controller
 
             if(!$po_info)
             {
-                System_helper::invalid_try('Trying to save receive info on non existing id',$id);
+                System_helper::invalid_try('Trying to save return info on non existing id',$id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if($po_info['status_delivered']!=$this->config->item('system_status_po_delivery_delivered'))
+            //if($po_info['status_delivered']!=$this->config->item('system_status_po_delivery_delivered'))
+            if($po_info['status_received']!=$this->config->item('system_status_po_received_received'))
             {
-                System_helper::invalid_try('Trying to save receive on not delivered po',$id);
+                System_helper::invalid_try('Trying to save return on not received po',$id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $date_receive=System_helper::get_time($this->input->post('date_receive'));
+            $date_return=System_helper::get_time($this->input->post('date_return'));
             $remarks=$this->input->post('remarks');
-            $receive_info=$this->input->post('receive');
+            $return_info=$this->input->post('return');
             $po_varieties=Query_helper::get_info($this->config->item('table_sales_po_details'),'*',array('sales_po_id ='.$id,'revision =1'));
-            $receive_data=array();
+            $return_data=array();
             foreach($po_varieties as $pv)
             {
                 $info=array();
                 $info['sales_po_id']=$pv['sales_po_id'];
                 $info['sales_po_detail_id']=$pv['id'];
-                $info['quantity_receive']=$receive_info[$pv['id']]['quantity_receive'];
-                if(($info['quantity_receive']<0)||(intval($info['quantity_receive'])!=$info['quantity_receive']))
+                $info['quantity_return']=$return_info[$pv['id']]['quantity_return'];
+                if(($info['quantity_return']<0)||(intval($info['quantity_return'])!=$info['quantity_return']))
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']="Invalid Receive Quantity";
+                    $ajax['system_message']="Invalid Return Quantity";
                     $this->jsonReturn($ajax);
                     die();
 
                 }
-                if($info['quantity_receive']>$pv['quantity'])
+                if($info['quantity_return']>$pv['quantity'])
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']="Receive Quantity is greater than Delivered Quantity";
+                    $ajax['system_message']="Return Quantity is greater than Delivered Quantity";
                     $this->jsonReturn($ajax);
                     die();
                 }
-                $info['quantity_bonus_receive']=$receive_info[$pv['id']]['quantity_bonus_receive'];
-                if(($info['quantity_bonus_receive']<0)||(intval($info['quantity_bonus_receive'])!=$info['quantity_bonus_receive']))
+                $info['quantity_bonus_return']=$return_info[$pv['id']]['quantity_bonus_return'];
+                if(($info['quantity_bonus_return']<0)||(intval($info['quantity_bonus_return'])!=$info['quantity_bonus_return']))
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']="Invalid Receive Bonus Quantity";
+                    $ajax['system_message']="Invalid Return Bonus Quantity";
                     $this->jsonReturn($ajax);
                     die();
 
                 }
-                if($info['quantity_bonus_receive']>$pv['quantity_bonus'])
+                if($info['quantity_bonus_return']>$pv['quantity_bonus'])
                 {
                     $ajax['status']=false;
-                    $ajax['system_message']="Receive Bonus Quantity is greater than Delivered Bonus Quantity";
+                    $ajax['system_message']="Return Bonus Quantity is greater than Delivered Bonus Quantity";
                     $this->jsonReturn($ajax);
                     die();
                 }
-                $info['date_receive']=$date_receive;
+                $info['date_return']=$date_return;
                 $info['remarks']=$remarks;
                 $info['revision']=1;
                 $info['user_created'] = $user->user_id;
                 $info['date_created'] = $time;
-                $receive_data[]=$info;
+                $return_data[$pv['id']]=$info;
 
             }
             $this->db->trans_start();  //DB Transaction Handle START
-            $data=array();
-            $data['date_receive']=$date_receive;
-            $data['user_updated'] = $user->user_id;
-            $data['date_updated'] = $time;
 
-            if($po_info['status_received']==$this->config->item('system_status_po_received_received'))
-            {
-
-            }
-            else
-            {
-                $data['status_received']=$this->config->item('system_status_po_received_received');
-                $data['date_received']=$time;
-                $data['user_received'] = $user->user_id;
-            }
-            Query_helper::update($this->config->item('table_sales_po'),$data,array("id = ".$id));
 
             $this->db->where('sales_po_id',$id);
             $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_sales_po_receives'));
-            foreach($receive_data as $data)
+            $this->db->update($this->config->item('table_sales_po_returns'));
+            foreach($return_data as $details_id=>$data)
             {
-                Query_helper::add($this->config->item('table_sales_po_receives'),$data);
+                Query_helper::add($this->config->item('table_sales_po_returns'),$data);
+                $bonus_data=array();
+                $bonus_data['quantity_return']=$data['quantity_return'];
+                $bonus_data['quantity_bonus_return']=$data['quantity_bonus_return'];
+                $bonus_data['date_return']=$data['date_return'];
+                $bonus_data['remarks_return']=$data['remarks'];
+                Query_helper::update($this->config->item('table_sales_po_details'),$bonus_data,array("id = ".$details_id));
             }
 
             $this->db->trans_complete();   //DB Transaction Handle END
@@ -447,7 +408,7 @@ class Sales_po_return extends Root_Controller
     private function check_validation()
     {
         $this->load->library('form_validation');
-        $this->form_validation->set_rules('date_receive',$this->lang->line('LABEL_DATE_RECEIVED'),'required');
+        $this->form_validation->set_rules('date_return',$this->lang->line('LABEL_DATE_RETURNED'),'required');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
@@ -521,7 +482,7 @@ class Sales_po_return extends Root_Controller
             }
         }
         $this->db->where('pod.revision',1);
-        $this->db->where('po.status_received',$this->config->item('system_status_po_received_received'));
+        //$this->db->where('po.status_received',$this->config->item('system_status_po_received_received'));
         $this->db->group_by('po.id');
         $this->db->order_by('po.id','DESC');
         $items=$this->db->get()->result_array();

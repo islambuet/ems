@@ -228,17 +228,17 @@
             </div>
         </div>
         <?php
-        if($po['status_received']==$CI->config->item('system_status_po_received_received'))
+        if(sizeof($return_details)>0)
         {
             ?>
             <div class="panel-group" id="accordion">
                 <?php
                 $index=0;
-                $revisions=array_keys($receive_details);
+                $revisions=array_keys($return_details);
                 $max_revision=$revisions[sizeof($revisions)-1];
 
 
-                foreach($receive_details as $revision=>$details)
+                foreach($return_details as $revision=>$details)
                 {
                     $index++;
                     $details_ids=array_keys($details)
@@ -253,7 +253,7 @@
                         <div id="collapse_<?php echo $index; ?>" class="panel-collapse collapse <?php if($index==1){echo 'in';} ?>">
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_RECEIVED');?></label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_RETURNED');?></label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo System_helper::display_date_time($details[$details_ids[0]]['date_created']);?></label>
@@ -261,7 +261,7 @@
                             </div>
                             <div class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_RECEIVED');?></label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_RETURNED');?></label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
                                     <label class="control-label"><?php echo $users[$details[$details_ids[0]]['user_created']]['name'];?></label>
@@ -269,10 +269,10 @@
                             </div>
                             <div style="" class="row show-grid">
                                 <div class="col-xs-4">
-                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RETURNED');?></label>
                                 </div>
                                 <div class="col-sm-4 col-xs-8">
-                                    <label class="control-label"><?php echo System_helper::display_date($details[$details_ids[0]]['date_receive']);?></label>
+                                    <label class="control-label"><?php echo System_helper::display_date($details[$details_ids[0]]['date_return']);?></label>
                                 </div>
                             </div>
                             <div style="" class="row show-grid">
@@ -293,21 +293,21 @@
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_PIECES'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RETURN_PIECES'); ?></th>
 
 
 
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
                                         <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RECEIVE_PIECES'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RETURN_PIECES'); ?></th>
 
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <?php
 
-                                    foreach($po_varieties as $index=>$po_variety)
+                                    foreach($po_varieties as $po_variety)
                                     {
 
                                         ?>
@@ -331,7 +331,7 @@
                                                 <label><?php echo $po_variety['quantity']; ?></label>
                                             </td>
                                             <td class="text-right">
-                                                <label><?php echo $details[$po_variety['id']]['quantity_receive']; ?></label>
+                                                <label><?php echo $details[$po_variety['id']]['quantity_return']; ?></label>
                                             </td>
 
                                             <td class="text-right">
@@ -344,7 +344,7 @@
                                                 <label><?php echo $po_variety['quantity_bonus']; ?></label>
                                             </td>
                                             <td class="text-right">
-                                                <label><?php echo $details[$po_variety['id']]['quantity_bonus_receive']; ?></label>
+                                                <label><?php echo $details[$po_variety['id']]['quantity_bonus_return']; ?></label>
                                             </td>
                                         </tr>
                                     <?php

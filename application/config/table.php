@@ -58,3 +58,4 @@ $config['table_stockout'] = 'stockout';
 //delivery
 $config['table_sales_po_delivery'] = 'sales_po_delivery';
 $config['table_sales_po_receives'] = 'sales_po_receives';
+$config['table_sales_po_returns'] = 'sales_po_returns';
