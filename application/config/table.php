@@ -40,6 +40,7 @@ $config['table_basic_setup_arm_bank'] = 'basic_setup_arm_bank';
 $config['table_basic_setup_arm_bank_accounts'] = 'basic_setup_arm_bank_accounts';
 $config['table_basic_setup_fiscal_year'] = 'basic_setup_fiscal_year';
 $config['table_basic_setup_competitor'] = 'basic_setup_competitor';
+$config['table_basic_setup_couriers'] = 'basic_setup_couriers';
 //customer setup
 $config['table_csetup_customers'] = 'csetup_customers';
 $config['table_csetup_other_customers'] = 'csetup_other_customers';
