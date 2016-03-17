@@ -181,7 +181,7 @@ class Sales_po_delivery extends Root_Controller
                     'remarks' => ''
                 );
             }
-            $data['couriers']=array();//will come from query helper courrier setup
+            $data['couriers']=Query_helper::get_info($this->config->item('table_basic_setup_couriers'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_delivery/add_edit",$data,true));
@@ -262,7 +262,7 @@ class Sales_po_delivery extends Root_Controller
             {
                 $user_ids[$data['po']['user_received']]=$data['po']['user_received'];
             }
-            $data['users']=System_helper::get_users_info($user_ids);
+
 
             $this->db->from($this->config->item('table_sales_po_details').' spd');
             $this->db->select('spd.*');
@@ -322,22 +322,19 @@ class Sales_po_delivery extends Root_Controller
             $data['title']="Delivery PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
             if($data['po']['status_delivered']==$this->config->item('system_status_po_delivery_delivered'))
             {
-                $data['delivery_info']=Query_helper::get_info($this->config->item('table_sales_po_delivery'),'*',array('sales_po_id ='.$po_id,'revision =1'),1);
+                $delivery_info=Query_helper::get_info($this->config->item('table_sales_po_delivery'),'*',array('sales_po_id ='.$po_id),0,0,array('revision ASC'));
+
+                $data['delivery_details']=array();
+                foreach($delivery_info as $info)
+                {
+                    $data['delivery_details'][$info['revision']]=$info;
+                    $user_ids[$info['user_created']]=$info['user_created'];
+                }
+
             }
-            else
-            {
-                $time=time();
-                $data['delivery_info']=Array(
-                    'date_delivery' => '',
-                    'date_invoice' => '',
-                    'invoice_no' => '',
-                    'courier_id' => '',
-                    'track_no' => '',
-                    'date_booking' => '',
-                    'remarks' => ''
-                );
-            }
-            $data['couriers']=array();//will come from query helper courrier setup
+
+            $data['users']=System_helper::get_users_info($user_ids);
+            $data['couriers']=Query_helper::get_info($this->config->item('table_basic_setup_couriers'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering'));
 
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po_delivery/details",$data,true));

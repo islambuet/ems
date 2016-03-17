@@ -340,80 +340,123 @@
                 </tbody>
             </table>
         </div>
-        <div class="widget-header">
-            <div class="title">
-                Delivery Info
-            </div>
-            <div class="clearfix"></div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo System_helper::display_date($delivery_info['date_delivery']);?></label>
-            </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_INVOICE');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php if($delivery_info['date_invoice']>0){echo System_helper::display_date($delivery_info['date_invoice']);};?></label>
-            </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INVOICE_NO');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $delivery_info['invoice_no'];?></label>
-            </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NAME_COURIER');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-
+        <?php
+        if($po['status_delivered']==$CI->config->item('system_status_po_delivery_delivered'))
+        {
+            ?>
+            <div class="panel-group" id="accordion">
                 <?php
-                $courier_name='';
-                foreach($couriers as $courier)
-                {
+                $index=0;
+                $revisions=array_keys($delivery_details);
+                $max_revision=$revisions[sizeof($revisions)-1];
 
-                    if($courier['value']==$delivery_info['courier_id'])
-                    {
-                        $courier_name=$courier['text'];
-                    }
+
+                foreach($delivery_details as $revision=>$details)
+                {
+                    $index++;
+                    ?>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_<?php echo $index; ?>" href="#">
+                                    Revision : <?php echo ($max_revision-$revision+1);if($index==1){echo '(Latest Revision)';} ?></a>
+                            </h4>
+                        </div>
+                        <div id="collapse_<?php echo $index; ?>" class="panel-collapse collapse <?php if($index==1){echo 'in';} ?>">
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_DELIVERED');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::display_date_time($details['date_created']);?></label>
+                                </div>
+                            </div>
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_DELIVERED');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $users[$details['user_created']]['name'];?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::display_date($details['date_delivery']);?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_INVOICE');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php if($details['date_invoice']>0){echo System_helper::display_date($details['date_invoice']);};?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INVOICE_NO');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $details['invoice_no'];?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NAME_COURIER');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+
+                                    <?php
+                                    $courier_name='';
+                                    foreach($couriers as $courier)
+                                    {
+
+                                        if($courier['value']==$details['courier_id'])
+                                        {
+                                            $courier_name=$courier['text'];
+                                        }
+                                    }
+                                    ?>
+                                    <label class="control-label"><?php echo $courier_name;?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $details['track_no'];?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_BOOKING');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php if($details['date_booking']>0){echo System_helper::display_date($details['date_booking']);}?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $details['remarks'];?></label>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                <?php
                 }
                 ?>
-                <label class="control-label"><?php echo $courier_name;?></label>
             </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $delivery_info['track_no'];?></label>
-            </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_BOOKING');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php if($delivery_info['date_booking']>0){echo System_helper::display_date($delivery_info['date_booking']);}?></label>
-            </div>
-        </div>
-        <div style="" class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $delivery_info['remarks'];?></label>
-            </div>
-        </div>
+        <?php
+        }
+        ?>
     </div>
 
     <div class="clearfix"></div>
