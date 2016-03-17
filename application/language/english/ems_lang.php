@@ -186,5 +186,6 @@ $lang['LABEL_NAME_COURIER'] = 'Courier Name';
 $lang['LABEL_COURIER_TRACK_NO'] = 'Courier Tracing No';
 $lang['LABEL_DATE_BOOKING'] = 'Booking Date';
 $lang['LABEL_DATE_RECEIVED'] = 'Received  Date';
-
-
+//po receive
+$lang['LABEL_QUANTITY_RECEIVE_PIECES'] = 'Received  Quantity';
+$lang['LABEL_BONUS_QUANTITY_RECEIVE_PIECES'] = 'Received Bonus Quantity';
