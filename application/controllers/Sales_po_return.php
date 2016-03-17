@@ -482,7 +482,7 @@ class Sales_po_return extends Root_Controller
             }
         }
         $this->db->where('pod.revision',1);
-        //$this->db->where('po.status_received',$this->config->item('system_status_po_received_received'));
+        $this->db->where('po.status_received',$this->config->item('system_status_po_received_received'));
         $this->db->group_by('po.id');
         $this->db->order_by('po.id','DESC');
         $items=$this->db->get()->result_array();
