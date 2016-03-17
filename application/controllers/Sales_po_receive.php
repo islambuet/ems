@@ -229,7 +229,7 @@ class Sales_po_receive extends Root_Controller
             {
                 $user_ids[$data['po']['user_received']]=$data['po']['user_received'];
             }
-            $data['users']=System_helper::get_users_info($user_ids);
+
 
             $this->db->from($this->config->item('table_sales_po_details').' spd');
             $this->db->select('spd.*');
@@ -248,28 +248,17 @@ class Sales_po_receive extends Root_Controller
 
             if($data['po']['status_received']==$this->config->item('system_status_po_received_received'))
             {
-                $data['date_receive']=$data['po']['date_receive'];
-                $receive_data=Query_helper::get_info($this->config->item('table_sales_po_receives'),'*',array('sales_po_id ='.$po_id,'revision =1'));
-                $data['remarks']=$receive_data[0]['remarks'];
-                foreach($receive_data as $rv)
+                $receive_info=Query_helper::get_info($this->config->item('table_sales_po_receives'),'*',array('sales_po_id ='.$po_id),0,0,array('revision ASC'));
+                $data['receive_details']=array();
+                foreach($receive_info as $info)
                 {
-                    $data['receive_info'][$rv['sales_po_detail_id']]=$rv;
+                    $data['receive_details'][$info['revision']][$info['sales_po_detail_id']]=$info;
+                    $user_ids[$info['user_created']]=$info['user_created'];
                 }
-
 
                 //$data['receive_info']=Query_helper::get_info($this->config->item('table_sales_po_delivery'),'*',array('sales_po_id ='.$po_id,'revision =1'),1);
             }
-            else
-            {
-                $time=time();
-                $data['date_receive']=$time;
-                $data['remarks']='';
-                foreach($data['po_varieties'] as $v)
-                {
-                    $data['receive_info'][$v['id']]=array('quantity_receive'=>'N/A','quantity_bonus_receive'=>'N/A');
-
-                }
-            }
+            $data['users']=System_helper::get_users_info($user_ids);
 
 
             $data['title']="Receive PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';

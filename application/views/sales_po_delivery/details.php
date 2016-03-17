@@ -197,7 +197,7 @@
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <label class="control-label"><?php echo System_helper::display_date_time($po['date_receive']);?></label>
+                    <label class="control-label"><?php echo System_helper::display_date($po['date_receive']);?></label>
                 </div>
             </div>
             <div style="" class="row show-grid">

@@ -197,7 +197,7 @@
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
                 </div>
                 <div class="col-sm-4 col-xs-8">
-                    <label class="control-label"><?php echo System_helper::display_date_time($po['date_receive']);?></label>
+                    <label class="control-label"><?php echo System_helper::display_date($po['date_receive']);?></label>
                 </div>
             </div>
             <div style="" class="row show-grid">
@@ -227,84 +227,143 @@
                 <label class="control-label"><?php echo $po['warehouse_name'];?></label>
             </div>
         </div>
-        <div class="widget-header">
-            <div class="title">
-                Receive Info
-            </div>
-            <div class="clearfix"></div>
-        </div>
-
-        <div style="overflow-x: auto;" class="row show-grid" id="order_items_container">
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_PIECES'); ?></th>
-
-
-
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RECEIVE_PIECES'); ?></th>
-
-                </tr>
-                </thead>
-                <tbody>
+        <?php
+        if($po['status_received']==$CI->config->item('system_status_po_received_received'))
+        {
+            ?>
+            <div class="panel-group" id="accordion">
                 <?php
+                $index=0;
+                $revisions=array_keys($receive_details);
+                $max_revision=$revisions[sizeof($revisions)-1];
 
-                foreach($po_varieties as $index=>$po_variety)
+
+                foreach($receive_details as $revision=>$details)
                 {
-
+                    $index++;
+                    $details_ids=array_keys($details)
                     ?>
-                    <tr>
-                        <td>
-                            <label><?php echo $po_variety['crop_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $po_variety['crop_type_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $po_variety['variety_name']; ?></label>
-                        </td>
-                        <td>
-                            <label><?php echo $po_variety['pack_size']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $po_variety['quantity']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $receive_info[$po_variety['id']]['quantity_receive']; ?></label>
-                        </td>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_<?php echo $index; ?>" href="#">
+                                    Revision : <?php echo ($max_revision-$revision+1);if($index==1){echo '(Latest Revision)';} ?></a>
+                            </h4>
+                        </div>
+                        <div id="collapse_<?php echo $index; ?>" class="panel-collapse collapse <?php if($index==1){echo 'in';} ?>">
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_RECEIVED');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::display_date_time($details[$details_ids[0]]['date_created']);?></label>
+                                </div>
+                            </div>
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_RECEIVED');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $users[$details[$details_ids[0]]['user_created']]['name'];?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo System_helper::display_date($details[$details_ids[0]]['date_receive']);?></label>
+                                </div>
+                            </div>
+                            <div style="" class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                                </div>
+                                <div class="col-sm-4 col-xs-8">
+                                    <label class="control-label"><?php echo $details[$details_ids[0]]['remarks'];?></label>
+                                </div>
+                            </div>
+                            <div style="overflow-x: auto;" class="row show-grid">
+                                <table class="table table-bordered">
+                                    <thead>
+                                    <tr>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_RECEIVE_PIECES'); ?></th>
 
-                        <td class="text-right">
-                            <label><?php if($po_variety['bonus_details_id']>0){echo $po_variety['bonus_pack_size'];}else{echo 'N/A';} ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $po_variety['quantity_bonus']; ?></label>
-                        </td>
-                        <td class="text-right">
-                            <label><?php echo $receive_info[$po_variety['id']]['quantity_bonus_receive']; ?></label>
-                        </td>
-                    </tr>
+
+
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
+                                        <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_RECEIVE_PIECES'); ?></th>
+
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+
+                                    foreach($po_varieties as $index=>$po_variety)
+                                    {
+
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                <label><?php echo $po_variety['crop_name']; ?></label>
+                                            </td>
+                                            <td>
+                                                <label><?php echo $po_variety['crop_type_name']; ?></label>
+                                            </td>
+                                            <td>
+                                                <label><?php echo $po_variety['variety_name']; ?></label>
+                                            </td>
+                                            <td>
+                                                <label><?php echo $po_variety['pack_size']; ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo $po_variety['quantity']; ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo $details[$po_variety['id']]['quantity_receive']; ?></label>
+                                            </td>
+
+                                            <td class="text-right">
+                                                <label><?php if($po_variety['bonus_details_id']>0){echo $po_variety['bonus_pack_size'];}else{echo 'N/A';} ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo $po_variety['quantity_bonus']; ?></label>
+                                            </td>
+                                            <td class="text-right">
+                                                <label><?php echo $details[$po_variety['id']]['quantity_bonus_receive']; ?></label>
+                                            </td>
+                                        </tr>
+                                    <?php
+                                    }
+                                    ?>
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
                 <?php
                 }
                 ?>
-
-                </tbody>
-            </table>
-        </div>
+            </div>
+        <?php
+        }
+        ?>
 
     <div class="clearfix"></div>
 
