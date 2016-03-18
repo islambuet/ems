@@ -175,6 +175,12 @@ $(document).ready(function()
         $($(this).attr('data-form')).trigger('reset');
 
     });
+    $(document).on("click", "#button_action_report", function(event)
+    {
+        $('#system_report_container').html('');
+        $($(this).attr('data-form')).submit();
+
+    });
     $(document).on("click", "#button_action_save", function(event)
     {
         $("#system_save_new_status").val(0);

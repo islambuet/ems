@@ -106,6 +106,16 @@
     }
     ?>
     <?php
+    if(isset($action_report))
+    {
+        ?>
+        <div class="action_button">
+            <button id="button_action_report" class="btn" data-form="<?php echo $action_report; ?>"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if(isset($action_save))
     {
         ?>

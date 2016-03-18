@@ -25,6 +25,7 @@ $lang['ACTION_REQUEST_PO_APPROVE'] = 'Request Approve';
 $lang['ACTION_PRINT'] = 'Print';
 $lang['ACTION_CSV'] = 'Download as CSV';
 $lang['ACTION_APPROVE_REJECT'] = 'Approve/Reject';
+$lang['ACTION_REPORT'] = 'View Report';
 
 //****MODULE TASK//
 
