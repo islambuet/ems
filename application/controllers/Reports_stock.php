@@ -110,42 +110,47 @@ class Reports_stock extends Root_Controller
         $items=array();
         if(sizeof($starting_items)>0)
         {
-            foreach($starting_items as $crop)
+            $initial_items=$this->get_stocks($this->input->post('date_start'));
+            foreach($starting_items as $vid=>$variety)
             {
-                foreach($crop as $type)
+                foreach($variety as $pack_id=>$pack)
                 {
-                    foreach($type as $variety)
+                    $initial=array();
+                    $initial['stock_in']=0;
+                    $initial['excess']=0;
+                    $initial['sales']=0;
+                    $initial['sales_return']=0;
+                    $initial['sales_bonus']=0;
+                    $initial['sales_return_bonus']=0;
+                    $initial['short']=0;
+                    $initial['rnd']=0;
+                    $initial['sample']=0;
+                    if(isset($initial_items[$vid][$pack_id]))
                     {
-                        foreach($variety as $pack)
-                        {
-                            $info=array();
-                            $info['crop_name']=$pack['crop_name'];
-                            $info['crop_type_name']=$pack['crop_type_name'];
-                            $info['variety_name']=$pack['variety_name'];
-                            $info['pack_size_name']=$pack['pack_size_name'];
-                            $info['starting_stock']=$pack['starting_stock'];
-                            $info['stock_in']=$pack['stock_in'];
-                            $info['excess']=$pack['excess'];
-                            $info['sales']=$pack['sales'];
-                            $info['sales_return']=$pack['sales_return'];
-                            $info['sales_bonus']=$pack['sales_bonus'];
-                            $info['sales_return_bonus']=$pack['sales_return_bonus'];
-                            $info['short']=$pack['short'];
-                            $info['rnd']=$pack['rnd'];
-                            $info['sample']=$pack['sample'];
-                            $info['current']=$info['stock_in'];
-                            $items[]=$info;
-                        }
+                        $initial=$initial_items[$vid][$pack_id];
                     }
+                    $info=array();
+                    $info['crop_name']=$pack['crop_name'];
+                    $info['crop_type_name']=$pack['crop_type_name'];
+                    $info['variety_name']=$pack['variety_name'];
+                    $info['pack_size_name']=$pack['pack_size_name'];
+                    $info['starting_stock']=$initial['stock_in']+$initial['excess']-$initial['sales']+$initial['sales_return']-$initial['sales_bonus']+$initial['sales_return_bonus']-$initial['short']-$initial['rnd']-$initial['sample'];
+                    $info['current']=$pack['stock_in']+$pack['excess']-$pack['sales']+$pack['sales_return']-$pack['sales_bonus']+$pack['sales_return_bonus']-$pack['short']-$pack['rnd']-$pack['sample'];
+
+                    $info['stock_in']=$pack['stock_in']-$initial['stock_in'];
+                    $info['excess']=$pack['excess']-$initial['excess'];
+                    $info['sales']=$pack['sales']-$initial['sales'];
+                    $info['sales_return']=$pack['sales_return']-$initial['sales_return'];
+                    $info['sales_bonus']=$pack['sales_bonus']-$initial['sales_bonus'];
+                    $info['sales_return_bonus']=$pack['sales_return_bonus']-$initial['sales_return_bonus'];
+                    $info['short']=$pack['short']-$initial['short'];
+                    $info['rnd']=$pack['rnd']-$initial['rnd'];
+                    $info['sample']=$pack['sample']-$initial['sample'];
+                    $items[]=$info;
                 }
             }
-
         }
-        else
-        {
 
-
-        }
         $this->jsonReturn($items);
 
 
@@ -153,6 +158,11 @@ class Reports_stock extends Root_Controller
     private function get_stocks($time)
     {
         $stocks=array();
+        if($time==0)
+        {
+            return $stocks;
+        }
+        //stock in
         $this->db->from($this->config->item('table_stockin_varieties').' stv');
         $this->db->select('variety_id,pack_size_id');
         $this->db->select('SUM(quantity) stock_in');
@@ -178,21 +188,121 @@ class Reports_stock extends Root_Controller
 
         foreach($results as $result)
         {
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['starting_stock']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['stock_in']=$result['stock_in'];
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['excess']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['sales']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['sales_return']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['sales_bonus']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['sales_return_bonus']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['short']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['rnd']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['sample']=0;
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['current_stock']=$result['stock_in'];
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$result['pack_size_name'];
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
-            $stocks[$result['crop_id']][$result['type_id']][$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_in']=$result['stock_in'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_bonus']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return_bonus']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['short']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['rnd']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=0;
+
+            $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$result['pack_size_name'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
+        }
+        //excess
+        $this->db->from($this->config->item('table_stockin_excess_inventory'));
+        $this->db->select('variety_id,pack_size_id');
+        $this->db->select('SUM(quantity) stock_in');
+        $this->db->group_by(array('variety_id','pack_size_id'));
+        $this->db->where('status',$this->config->item('system_status_active'));
+        $this->db->where('date_stock_in <=',$time);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=$result['stock_in'];
+        }
+        //stock out
+        $this->db->from($this->config->item('table_stockout'));
+        $this->db->select('variety_id,pack_size_id,purpose');
+        $this->db->select('SUM(quantity) stockout');
+        $this->db->group_by(array('variety_id','pack_size_id','purpose'));
+        $this->db->where('status',$this->config->item('system_status_active'));
+        $this->db->where('date_stock_out <=',$time);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            if($result['purpose']==$this->config->item('system_purpose_short'))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['short']=$result['stockout'];
+            }
+            elseif($result['purpose']==$this->config->item('system_purpose_rnd'))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['rnd']=$result['stockout'];
+            }
+            elseif($result['purpose']==$this->config->item('system_purpose_customer'))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=$result['stockout'];
+            }
+        }
+        //sales
+        $this->db->from($this->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,pack_size_id');
+        $this->db->select('SUM(quantity) sales');
+        $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','pack_size_id'));
+
+        $this->db->where('sp.status_approved',$this->config->item('system_status_po_approval_approved'));
+        $this->db->where('spd.revision',1);
+        $this->db->where('sp.date_approved <=',$time);
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=$result['sales'];
+        }
+        //sales return
+        $this->db->from($this->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,pack_size_id');
+        $this->db->select('SUM(quantity_return) sales_return');
+        $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','pack_size_id'));
+
+        $this->db->where('sp.status_received',$this->config->item('system_status_po_received_received'));
+        $this->db->where('spd.revision',1);
+        $this->db->where('spd.date_return <=',$time);
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return']=$result['sales_return'];
+        }
+        //sales bonus
+        $this->db->from($this->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,bonus_pack_size_id pack_size_id');
+        $this->db->select('SUM(quantity_bonus) sales_bonus');
+        $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','bonus_pack_size_id'));
+
+        $this->db->where('bonus_details_id >',0);
+        $this->db->where('sp.status_approved',$this->config->item('system_status_po_approval_approved'));
+        $this->db->where('spd.revision',1);
+        $this->db->where('sp.date_approved <=',$time);
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_bonus']=$result['sales_bonus'];
+        }
+        //sales bonus return
+        $this->db->from($this->config->item('table_sales_po_details').' spd');
+        $this->db->select('variety_id,bonus_pack_size_id pack_size_id');
+        $this->db->select('SUM(quantity_bonus_return) sales_return_bonus');
+        $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->group_by(array('variety_id','bonus_pack_size_id'));
+
+        $this->db->where('bonus_details_id >',0);
+        $this->db->where('sp.status_received',$this->config->item('system_status_po_received_received'));
+        $this->db->where('spd.revision',1);
+        $this->db->where('spd.date_return <=',$time);
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return_bonus']=$result['sales_return_bonus'];
         }
         return $stocks;
 

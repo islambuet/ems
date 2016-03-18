@@ -33,6 +33,17 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="pack_size_name"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="starting_stock">Starting Stock</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="stock_in">Stock In</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="excess">Excess</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales">Sales</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_return">Sales Return</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_bonus">Sales Bonus</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_return_bonus">Sales Bonus Return</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="short">Short</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="rnd">Rnd Sample</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sample">Sample</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current">Current Stock</label>
         </div>
     <?php
     }
@@ -86,23 +97,24 @@
                 columnsresize: true,
                 columnsreorder: true,
                 altrows: true,
+                columnsheight:'60',
 
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width: '100'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width: '100'},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width: '100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',cellsalign: 'right',width: '100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STARTING_STOCK'); ?>', dataField: 'starting_stock',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_IN'); ?>', dataField: 'stock_in',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_EXCESS'); ?>', dataField: 'excess',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SALES'); ?>', dataField: 'sales',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SALES_RETURN'); ?>', dataField: 'sales_return',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SALES_BONUS'); ?>', dataField: 'sales_bonus',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SALES_RETURN_BONUS'); ?>', dataField: 'sales_return_bonus',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SHORT'); ?>', dataField: 'short',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_RND'); ?>', dataField: 'rnd',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SAMPLE'); ?>', dataField: 'sample',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CURRENT'); ?>', dataField: 'current',width:'100',cellsalign: 'right'}
+                    { text: 'Pack Size<br>(gm)', dataField: 'pack_size_name',cellsalign: 'right',width: '100'},
+                    { text: 'Starting<br>Stock', dataField: 'starting_stock',width:'100',cellsalign: 'right'},
+                    { text: 'Stock In', dataField: 'stock_in',width:'100',cellsalign: 'right'},
+                    { text: 'Excess', dataField: 'excess',width:'100',cellsalign: 'right'},
+                    { text: 'Sales', dataField: 'sales',width:'100',cellsalign: 'right'},
+                    { text: 'Sales Return', dataField: 'sales_return',width:'100',cellsalign: 'right'},
+                    { text: 'Sales Bonus', dataField: 'sales_bonus',width:'100',cellsalign: 'right'},
+                    { text: 'Sales Bonus<br> Return', dataField: 'sales_return_bonus',width:'100',cellsalign: 'right'},
+                    { text: 'Short', dataField: 'short',width:'100',cellsalign: 'right'},
+                    { text: 'Rnd Sample', dataField: 'rnd',width:'100',cellsalign: 'right'},
+                    { text: 'Sample', dataField: 'sample',width:'100',cellsalign: 'right'},
+                    { text: 'Current Stock', dataField: 'current',width:'100',cellsalign: 'right'}
                 ]
             });
     });

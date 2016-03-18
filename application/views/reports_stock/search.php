@@ -132,12 +132,10 @@
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
         $(document).on("change","#fiscal_year_id",function()
         {
-            console.log('wtf');
 
             var fiscal_year_ranges=$('#fiscal_year_id').val();
             if(fiscal_year_ranges!='')
             {
-                console.log('wtf in');
                 var dates = fiscal_year_ranges.split("/");
                 $("#date_start").val(dates[0]);
                 $("#date_end").val(dates[1]);
