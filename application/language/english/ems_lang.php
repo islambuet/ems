@@ -202,3 +202,7 @@ $lang['LABEL_QUANTITY_ACTUAL_PIECES'] = 'Quantity Actual (pieces)';
 $lang['LABEL_WEIGHT_ACTUAL_KG'] = 'Weight Actual (Kg)';
 $lang['LABEL_TOTAL_PRICE_ACTUAL'] = 'Actual Price';
 $lang['LABEL_DATE_RETURNED'] = 'Returned Date';
+//
+$lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
+$lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
+$lang['LABEL_EXCESS'] = 'Excess';

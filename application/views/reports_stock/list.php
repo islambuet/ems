@@ -54,9 +54,21 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'name', type: 'string' },
-                { name: 'ordering', type: 'int' },
-                { name: 'status', type: 'string' }
+                { name: 'crop_name', type: 'string' },
+                { name: 'crop_type_name', type: 'string' },
+                { name: 'variety_name', type: 'string' },
+                { name: 'pack_size_name', type: 'numeric' },
+                { name: 'starting_stock', type: 'string' },
+                { name: 'stock_in', type: 'string' },
+                { name: 'excess', type: 'string' },
+                { name: 'sales', type: 'string' },
+                { name: 'sales_return', type: 'string' },
+                { name: 'sales_bonus', type: 'string' },
+                { name: 'sales_return_bonus', type: 'string' },
+                { name: 'short', type: 'string' },
+                { name: 'rnd', type: 'string' },
+                { name: 'sample', type: 'string' },
+                { name: 'current', type: 'string' }
             ],
             id: 'id',
             url: url,
@@ -69,21 +81,28 @@
         $("#system_jqx_container").jqxGrid(
             {
                 width: '100%',
+                height:300,
                 source: dataAdapter,
-                pageable: true,
-                filterable: true,
-                sortable: true,
-                showfilterrow: true,
                 columnsresize: true,
-                pagesize:50,
-                pagesizeoptions: ['20', '50', '100', '200','300','500'],
-                selectionmode: 'checkbox',
+                columnsreorder: true,
                 altrows: true,
-                autoheight: true,
+
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'150',cellsalign: 'right'}
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width: '100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width: '100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width: '100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',cellsalign: 'right',width: '100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_STARTING_STOCK'); ?>', dataField: 'starting_stock',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_IN'); ?>', dataField: 'stock_in',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_EXCESS'); ?>', dataField: 'excess',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SALES'); ?>', dataField: 'sales',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SALES_RETURN'); ?>', dataField: 'sales_return',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SALES_BONUS'); ?>', dataField: 'sales_bonus',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SALES_RETURN_BONUS'); ?>', dataField: 'sales_return_bonus',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SHORT'); ?>', dataField: 'short',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_RND'); ?>', dataField: 'rnd',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SAMPLE'); ?>', dataField: 'sample',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_CURRENT'); ?>', dataField: 'current',width:'100',cellsalign: 'right'}
                 ]
             });
     });
