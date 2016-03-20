@@ -137,7 +137,7 @@
 
     <div class="clearfix"></div>
 </form>
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php
 
 $action_data=array();
 $action_data["action_report"]='#save_form';
