@@ -89,14 +89,16 @@ class Reports_stock extends Root_Controller
 
             $data['title']="Stock Report";
             $ajax['status']=true;
-            if($reports['report_type']=='weight')
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list",$data,true));
+
+            /*if($reports['report_type']=='weight')
             {
                 $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list_weight",$data,true));
             }
             else
             {
                 $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list_quantity",$data,true));
-            }
+            }*/
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -114,6 +116,7 @@ class Reports_stock extends Root_Controller
     }
     public function get_items()
     {
+        $report_type=$this->input->post('report_type');
         $starting_items=$this->get_stocks($this->input->post('date_end'));
         $items=array();
         if(sizeof($starting_items)>0)
@@ -122,6 +125,50 @@ class Reports_stock extends Root_Controller
             $prev_crop_name='';
             $prev_crop_type_name='';
             $count=0;
+
+            $type_starting_stock=0;
+            $crop_starting_stock=0;
+            $grand_starting_stock=0;
+
+            $type_stock_in=0;
+            $crop_stock_in=0;
+            $grand_stock_in=0;
+
+            $type_excess=0;
+            $crop_excess=0;
+            $grand_excess=0;
+
+            $type_sales=0;
+            $crop_sales=0;
+            $grand_sales=0;
+
+            $type_sales_return=0;
+            $crop_sales_return=0;
+            $grand_sales_return=0;
+
+            $type_sales_bonus=0;
+            $crop_sales_bonus=0;
+            $grand_sales_bonus=0;
+
+            $type_sales_return_bonus=0;
+            $crop_sales_return_bonus=0;
+            $grand_sales_return_bonus=0;
+
+            $type_short=0;
+            $crop_short=0;
+            $grand_short=0;
+
+            $type_rnd=0;
+            $crop_rnd=0;
+            $grand_rnd=0;
+
+            $type_sample=0;
+            $crop_sample=0;
+            $grand_sample=0;
+
+            $type_current=0;
+            $crop_current=0;
+            $grand_current=0;
 
             foreach($starting_items as $vid=>$variety)
             {
@@ -148,8 +195,32 @@ class Reports_stock extends Root_Controller
                         if($prev_crop_name!=$pack['crop_name'])
                         {
 
-                            $items[]=$this->get_type_total_row();
-                            $items[]=$this->get_crop_total_row();
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
+                            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current);
+
+                            $type_starting_stock=0;
+                            $type_stock_in=0;
+                            $type_excess=0;
+                            $type_sales=0;
+                            $type_sales_return=0;
+                            $type_sales_bonus=0;
+                            $type_sales_return_bonus=0;
+                            $type_short=0;
+                            $type_rnd=0;
+                            $type_sample=0;
+                            $type_current=0;
+
+                            $crop_starting_stock=0;
+                            $crop_stock_in=0;
+                            $crop_excess=0;
+                            $crop_sales=0;
+                            $crop_sales_return=0;
+                            $crop_sales_bonus=0;
+                            $crop_sales_return_bonus=0;
+                            $crop_short=0;
+                            $crop_rnd=0;
+                            $crop_sample=0;
+                            $crop_current=0;
                             $info['crop_name']=$pack['crop_name'];
                             $prev_crop_name=$pack['crop_name'];
 
@@ -158,8 +229,16 @@ class Reports_stock extends Root_Controller
                         }
                         elseif($prev_crop_type_name!=$pack['crop_type_name'])
                         {
-                            $items[]=$this->get_type_total_row();
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
                             $type_starting_stock=0;
+                            $type_stock_in=0;
+                            $type_excess=0;
+                            $type_sales=0;
+                            $type_sales_return=0;
+                            $type_short=0;
+                            $type_rnd=0;
+                            $type_sample=0;
+                            $type_current=0;
                             $info['crop_name']='';
                             $info['crop_type_name']=$pack['crop_type_name'];
                             $prev_crop_type_name=$pack['crop_type_name'];
@@ -198,11 +277,45 @@ class Reports_stock extends Root_Controller
                     $info['sample']=$pack['sample']-$initial['sample'];
                     $info['current_price']=$count;
 
-                    /*if($this->input->post('report_type')=='weight')
+                    if($report_type=='weight')
                     {
+                        $type_starting_stock+=$info['starting_stock']*$info['pack_size_name'];
+                        $crop_starting_stock+=$info['starting_stock']*$info['pack_size_name'];
+                        $grand_starting_stock+=$info['starting_stock']*$info['pack_size_name'];
+                        $type_stock_in+=$info['stock_in']*$info['pack_size_name'];
+                        $crop_stock_in+=$info['stock_in']*$info['pack_size_name'];
+                        $grand_stock_in+=$info['stock_in']*$info['pack_size_name'];
+                        $type_excess+=$info['excess']*$info['pack_size_name'];
+                        $crop_excess+=$info['excess']*$info['pack_size_name'];
+                        $grand_excess+=$info['excess']*$info['pack_size_name'];
+                        $type_sales+=$info['sales']*$info['pack_size_name'];
+                        $crop_sales+=$info['sales']*$info['pack_size_name'];
+                        $grand_sales+=$info['sales']*$info['pack_size_name'];
+                        $type_sales_return+=$info['sales_return']*$info['pack_size_name'];
+                        $crop_sales_return+=$info['sales_return']*$info['pack_size_name'];
+                        $grand_sales_return+=$info['sales_return']*$info['pack_size_name'];
+                        $type_sales_bonus+=$info['sales_bonus']*$info['pack_size_name'];
+                        $crop_sales_bonus+=$info['sales_bonus']*$info['pack_size_name'];
+                        $grand_sales_bonus+=$info['sales_bonus']*$info['pack_size_name'];
+                        $type_sales_return_bonus+=$info['sales_return_bonus']*$info['pack_size_name'];
+                        $crop_sales_return_bonus+=$info['sales_return_bonus']*$info['pack_size_name'];
+                        $grand_sales_return_bonus+=$info['sales_return_bonus']*$info['pack_size_name'];
+                        $type_short+=$info['short']*$info['pack_size_name'];
+                        $crop_short+=$info['short']*$info['pack_size_name'];
+                        $grand_short+=$info['short']*$info['pack_size_name'];
+                        $type_rnd+=$info['rnd']*$info['pack_size_name'];
+                        $crop_rnd+=$info['rnd']*$info['pack_size_name'];
+                        $grand_rnd+=$info['rnd']*$info['pack_size_name'];
+                        $type_sample+=$info['sample']*$info['pack_size_name'];
+                        $crop_sample+=$info['sample']*$info['pack_size_name'];
+                        $grand_sample+=$info['sample']*$info['pack_size_name'];
+                        $type_current+=$info['current']*$info['pack_size_name'];
+                        $crop_current+=$info['current']*$info['pack_size_name'];
+                        $grand_current+=$info['current']*$info['pack_size_name'];
+
                         $info['starting_stock']=number_format($info['starting_stock']*$info['pack_size_name']/1000,3,'.','');
                         $info['stock_in']=number_format($info['stock_in']*$info['pack_size_name']/1000,3,'.','');
-                        $info['excess']=number_format($info['stock_in']*$info['pack_size_name']/1000,3,'.','');
+                        $info['excess']=number_format($info['excess']*$info['pack_size_name']/1000,3,'.','');
                         $info['sales']=number_format($info['sales']*$info['pack_size_name']/1000,3,'.','');
                         $info['sales_return']=number_format($info['sales_return']*$info['pack_size_name']/1000,3,'.','');
                         $info['sales_bonus']=number_format($info['sales_bonus']*$info['pack_size_name']/1000,3,'.','');
@@ -211,18 +324,52 @@ class Reports_stock extends Root_Controller
                         $info['rnd']=number_format($info['rnd']*$info['pack_size_name']/1000,3,'.','');
                         $info['sample']=number_format($info['sample']*$info['pack_size_name']/1000,3,'.','');
                         $info['current']=number_format($info['current']*$info['pack_size_name']/1000,3,'.','');
-                    }*/
+                    }
+                    else
+                    {
+                        $type_starting_stock+=$info['starting_stock'];
+                        $crop_starting_stock+=$info['starting_stock'];
+                        $grand_starting_stock+=$info['starting_stock'];
+
+                        $type_stock_in+=$info['stock_in'];
+                        $crop_stock_in+=$info['stock_in'];
+                        $grand_stock_in+=$info['stock_in'];
+                        $type_excess+=$info['excess'];
+                        $crop_excess+=$info['excess'];
+                        $grand_excess+=$info['excess'];
+                        $type_sales+=$info['sales'];
+                        $crop_sales+=$info['sales'];
+                        $grand_sales+=$info['sales'];
+                        $type_sales_return+=$info['sales_return'];
+                        $crop_sales_return+=$info['sales_return'];
+                        $grand_sales_return+=$info['sales_return'];
+                        $type_sales_bonus+=$info['sales_bonus'];
+                        $crop_sales_bonus+=$info['sales_bonus'];
+                        $grand_sales_bonus+=$info['sales_bonus'];
+                        $type_sales_return_bonus+=$info['sales_return_bonus'];
+                        $crop_sales_return_bonus+=$info['sales_return_bonus'];
+                        $grand_sales_return_bonus+=$info['sales_return_bonus'];
+                        $type_short+=$info['short'];
+                        $crop_short+=$info['short'];
+                        $grand_short+=$info['short'];
+                        $type_rnd+=$info['rnd'];
+                        $crop_rnd+=$info['rnd'];
+                        $grand_rnd+=$info['rnd'];
+                        $type_sample+=$info['sample'];
+                        $crop_sample+=$info['sample'];
+                        $grand_sample+=$info['sample'];
+                        $type_current+=$info['current'];
+                        $crop_current+=$info['current'];
+                        $grand_current+=$info['current'];
+
+                    }
 
                     $items[]=$info;
                 }
             }
-            /*if($this->input->post('report_type')=='weight')
-            {
-                $type_starting_stock=number_format($type_starting_stock/1000,3,'.','');
-                $crop_starting_stock=number_format($crop_starting_stock/1000,3,'.','');
-            }*/
-            $items[]=$this->get_type_total_row();
-            $items[]=$this->get_crop_total_row();
+            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
+            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current);
+            $items[]=$this->get_grand_total_row($report_type,$grand_starting_stock,$grand_stock_in,$grand_excess,$grand_sales,$grand_sales_return,$grand_sales_bonus,$grand_sales_return_bonus,$grand_short,$grand_rnd,$grand_sample,$grand_current);
         }
 
         $this->jsonReturn($items);
@@ -381,18 +528,121 @@ class Reports_stock extends Root_Controller
         return $stocks;
 
     }
-    private function get_type_total_row()
+//$info['short']=$pack['short']-$initial['short'];
+//$info['rnd']=$pack['rnd']-$initial['rnd'];
+//$info['sample']=$pack['sample']-$initial['sample'];
+//$info['current_price']=$count;
+    private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
     {
         $row=array();
         $row['crop_name']='';
-        $row['crop_type_name']='Total Type';
+        $row['crop_type_name']='';
+        $row['variety_name']='Total Type';
+        if($report_type=='weight')
+        {
+
+            $row['starting_stock']=number_format($starting_stock/1000,3,'.','');
+            $row['stock_in']=number_format($stock_in/1000,3,'.','');
+            $row['excess']=number_format($excess/1000,3,'.','');
+            $row['sales']=number_format($sales/1000,3,'.','');
+            $row['sales_return']=number_format($sales_return/1000,3,'.','');
+            $row['sales_bonus']=number_format($sales_bonus/1000,3,'.','');
+            $row['sales_return_bonus']=number_format($sales_return_bonus/1000,3,'.','');
+            $row['short']=number_format($short/1000,3,'.','');
+            $row['rnd']=number_format($rnd/1000,3,'.','');
+            $row['sample']=number_format($sample/1000,3,'.','');
+            $row['current']=number_format($current/1000,3,'.','');
+        }
+        else
+        {
+            $row['starting_stock']=$starting_stock;
+            $row['stock_in']=$stock_in;
+            $row['excess']=$excess;
+            $row['sales']=$sales;
+            $row['sales_return']=$sales_return;
+            $row['sales_bonus']=$sales_bonus;
+            $row['sales_return_bonus']=$sales_return_bonus;
+            $row['short']=$short;
+            $row['rnd']=$rnd;
+            $row['sample']=$sample;
+            $row['current']=$current;
+
+        }
+
         return $row;
     }
-    private function get_crop_total_row()
+    private function get_crop_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
     {
         $row=array();
-        $row['crop_name']='Total Crop';
+        $row['crop_name']='';
+        $row['crop_type_name']='Total Crop';
+        $row['variety_name']='';
+
+        if($report_type=='weight')
+        {
+            $row['starting_stock']=number_format($starting_stock/1000,3,'.','');
+            $row['stock_in']=number_format($stock_in/1000,3,'.','');
+            $row['excess']=number_format($excess/1000,3,'.','');
+            $row['sales']=number_format($sales/1000,3,'.','');
+            $row['sales_return']=number_format($sales_return/1000,3,'.','');
+            $row['sales_bonus']=number_format($sales_bonus/1000,3,'.','');
+            $row['sales_return_bonus']=number_format($sales_return_bonus/1000,3,'.','');
+            $row['short']=number_format($short/1000,3,'.','');
+            $row['rnd']=number_format($rnd/1000,3,'.','');
+            $row['sample']=number_format($sample/1000,3,'.','');
+            $row['current']=number_format($current/1000,3,'.','');
+        }
+        else
+        {
+            $row['starting_stock']=$starting_stock;
+            $row['stock_in']=$stock_in;
+            $row['excess']=$excess;
+            $row['sales']=$sales;
+            $row['sales_return']=$sales_return;
+            $row['sales_bonus']=$sales_bonus;
+            $row['sales_return_bonus']=$sales_return_bonus;
+            $row['short']=$short;
+            $row['rnd']=$rnd;
+            $row['sample']=$sample;
+            $row['current']=$current;
+        }
+        return $row;
+    }
+    private function get_grand_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
+    {
+        $row=array();
+        $row['crop_name']='Grand Total';
         $row['crop_type_name']='';
+        $row['variety_name']='';
+
+        if($report_type=='weight')
+        {
+            $row['starting_stock']=number_format($starting_stock/1000,3,'.','');
+            $row['stock_in']=number_format($stock_in/1000,3,'.','');
+            $row['excess']=number_format($excess/1000,3,'.','');
+            $row['sales']=number_format($sales/1000,3,'.','');
+            $row['sales_return']=number_format($sales_return/1000,3,'.','');
+            $row['sales_bonus']=number_format($sales_bonus/1000,3,'.','');
+            $row['sales_return_bonus']=number_format($sales_return_bonus/1000,3,'.','');
+            $row['short']=number_format($short/1000,3,'.','');
+            $row['rnd']=number_format($rnd/1000,3,'.','');
+            $row['sample']=number_format($sample/1000,3,'.','');
+            $row['current']=number_format($current/1000,3,'.','');
+        }
+        else
+        {
+            $row['starting_stock']=$starting_stock;
+            $row['stock_in']=$stock_in;
+            $row['excess']=$excess;
+            $row['sales']=$sales;
+            $row['sales_return']=$sales_return;
+            $row['sales_bonus']=$sales_bonus;
+            $row['sales_return_bonus']=$sales_return_bonus;
+            $row['short']=$short;
+            $row['rnd']=$rnd;
+            $row['sample']=$sample;
+            $row['current']=$current;
+        }
         return $row;
     }
 
