@@ -44,6 +44,8 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="rnd">Rnd Sample</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sample">Sample</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current">Current Stock</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_price">Current unit(pieces) Price</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_total_price">Current Stock Price</label>
         </div>
     <?php
     }
@@ -80,7 +82,8 @@
                 { name: 'rnd', type: 'string' },
                 { name: 'sample', type: 'string' },
                 { name: 'current', type: 'string' },
-                { name: 'current_price', type: 'string' }
+                { name: 'current_price', type: 'string' },
+                { name: 'current_total_price', type: 'string' }
             ],
             id: 'id',
             url: url,
@@ -150,7 +153,8 @@
                     { text: 'Rnd Sample', dataField: 'rnd',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Sample', dataField: 'sample',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Current Stock', dataField: 'current',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Current Price', dataField: 'current_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                    { text: 'Current unit(pieces) Price', dataField: 'current_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Current Stock Price', dataField: 'current_total_price',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]
             });
     });

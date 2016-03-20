@@ -87,8 +87,15 @@ class Reports_stock extends Root_Controller
             }
 
             $data['keys']=trim($keys,',');
+            if($reports['report_type']=='weight')
+            {
+                $data['title']="Stock Report In Kg";
+            }
+            else
+            {
+                $data['title']="Stock Report In Quantity";
+            }
 
-            $data['title']="Stock Report";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list",$data,true));
 
@@ -131,6 +138,7 @@ class Reports_stock extends Root_Controller
         $items=array();
         if(sizeof($starting_items)>0)
         {
+            $prices=$this->get_current_price($warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
             $initial_items=$this->get_stocks($date_start,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
             $prev_crop_name='';
             $prev_crop_type_name='';
@@ -180,6 +188,10 @@ class Reports_stock extends Root_Controller
             $crop_current=0;
             $grand_current=0;
 
+            $type_total_price=0;
+            $crop_total_price=0;
+            $grand_total_price=0;
+
             foreach($starting_items as $vid=>$variety)
             {
                 foreach($variety as $pack_id=>$pack)
@@ -205,8 +217,8 @@ class Reports_stock extends Root_Controller
                         if($prev_crop_name!=$pack['crop_name'])
                         {
 
-                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
-                            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current);
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
+                            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current,$crop_total_price);
 
                             $type_starting_stock=0;
                             $type_stock_in=0;
@@ -219,6 +231,7 @@ class Reports_stock extends Root_Controller
                             $type_rnd=0;
                             $type_sample=0;
                             $type_current=0;
+                            $type_total_price=0;
 
                             $crop_starting_stock=0;
                             $crop_stock_in=0;
@@ -231,6 +244,7 @@ class Reports_stock extends Root_Controller
                             $crop_rnd=0;
                             $crop_sample=0;
                             $crop_current=0;
+                            $crop_total_price=0;
                             $info['crop_name']=$pack['crop_name'];
                             $prev_crop_name=$pack['crop_name'];
 
@@ -239,7 +253,7 @@ class Reports_stock extends Root_Controller
                         }
                         elseif($prev_crop_type_name!=$pack['crop_type_name'])
                         {
-                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
                             $type_starting_stock=0;
                             $type_stock_in=0;
                             $type_excess=0;
@@ -249,6 +263,7 @@ class Reports_stock extends Root_Controller
                             $type_rnd=0;
                             $type_sample=0;
                             $type_current=0;
+                            $type_total_price=0;
                             $info['crop_name']='';
                             $info['crop_type_name']=$pack['crop_type_name'];
                             $prev_crop_type_name=$pack['crop_type_name'];
@@ -285,7 +300,19 @@ class Reports_stock extends Root_Controller
                     $info['short']=$pack['short']-$initial['short'];
                     $info['rnd']=$pack['rnd']-$initial['rnd'];
                     $info['sample']=$pack['sample']-$initial['sample'];
-                    $info['current_price']=$count;
+
+                    $info['current_price']='Not Set';
+                    $info['current_total_price']='N/A';
+                    if(isset($prices[$vid][$pack_id]))
+                    {
+                        $unit_price=$prices[$vid][$pack_id]['price'];
+                        $total_price=$info['current']*$unit_price;
+                        $type_total_price+=$total_price;
+                        $crop_total_price+=$total_price;
+                        $grand_total_price+=$total_price;
+                        $info['current_price']=number_format($unit_price,2);
+                        $info['current_total_price']=number_format($total_price,2);
+                    }
 
                     if($report_type=='weight')
                     {
@@ -377,9 +404,9 @@ class Reports_stock extends Root_Controller
                     $items[]=$info;
                 }
             }
-            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current);
-            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current);
-            $items[]=$this->get_grand_total_row($report_type,$grand_starting_stock,$grand_stock_in,$grand_excess,$grand_sales,$grand_sales_return,$grand_sales_bonus,$grand_sales_return_bonus,$grand_short,$grand_rnd,$grand_sample,$grand_current);
+            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
+            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current,$crop_total_price);
+            $items[]=$this->get_grand_total_row($report_type,$grand_starting_stock,$grand_stock_in,$grand_excess,$grand_sales,$grand_sales_return,$grand_sales_bonus,$grand_sales_return_bonus,$grand_short,$grand_rnd,$grand_sample,$grand_current,$grand_total_price);
         }
 
         $this->jsonReturn($items);
@@ -723,7 +750,42 @@ class Reports_stock extends Root_Controller
         return $stocks;
 
     }
-    private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
+    private function get_current_price($warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id)
+    {
+        //$warehouse_id not used because need another join
+
+        $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
+        $this->db->select('vp.variety_id,vp.pack_size_id,vp.price');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =vp.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->where('vp.revision',1);
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('vp.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('vp.pack_size_id',$pack_size_id);
+        }
+        $prices=array();
+
+        $results=$this->db->get()->result_array();
+
+        foreach($results as $result)
+        {
+            $prices[$result['variety_id']][$result['pack_size_id']]['price']=$result['price'];
+        }
+        return $prices;
+    }
+    private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='';
@@ -759,10 +821,11 @@ class Reports_stock extends Root_Controller
             $row['current']=$current;
 
         }
+        $row['current_total_price']=number_format($current_total_price,2);
 
         return $row;
     }
-    private function get_crop_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
+    private function get_crop_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='';
@@ -797,9 +860,10 @@ class Reports_stock extends Root_Controller
             $row['sample']=$sample;
             $row['current']=$current;
         }
+        $row['current_total_price']=number_format($current_total_price,2);
         return $row;
     }
-    private function get_grand_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
+    private function get_grand_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='Grand Total';
@@ -834,6 +898,7 @@ class Reports_stock extends Root_Controller
             $row['sample']=$sample;
             $row['current']=$current;
         }
+        $row['current_total_price']=number_format($current_total_price,2);
         return $row;
     }
 
