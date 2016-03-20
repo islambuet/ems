@@ -1,9 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
-    $action_data=array();
-    $action_data["action_report"]='#save_form';
 
-    $CI->load->view("action_buttons",$action_data);
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
     <div class="row widget">
@@ -115,12 +112,31 @@
                         <label class="control-label"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
                     </div>
                 </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+                        <select name="report[report_type]" class="form-control">
+                            <option value="weight">Kg</option>
+                            <option value="quantity">Pkt</option>
+                        </select>
+
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="control-label">Kg/Pkt</label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="clearfix"></div>
 </form>
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+$action_data=array();
+$action_data["action_report"]='#save_form';
+
+$CI->load->view("action_buttons",$action_data);
+?>
 <div id="system_report_container">
 
 </div>

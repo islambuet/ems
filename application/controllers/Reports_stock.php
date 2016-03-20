@@ -65,6 +65,7 @@ class Reports_stock extends Root_Controller
 
     private function system_list()
     {
+
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
             $reports=$this->input->post('report');
@@ -88,7 +89,14 @@ class Reports_stock extends Root_Controller
 
             $data['title']="Stock Report";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list",$data,true));
+            if($reports['report_type']=='weight')
+            {
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list_weight",$data,true));
+            }
+            else
+            {
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_stock/list_quantity",$data,true));
+            }
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -111,10 +119,15 @@ class Reports_stock extends Root_Controller
         if(sizeof($starting_items)>0)
         {
             $initial_items=$this->get_stocks($this->input->post('date_start'));
+            $prev_crop_name='';
+            $prev_crop_type_name='';
+            $count=0;
+
             foreach($starting_items as $vid=>$variety)
             {
                 foreach($variety as $pack_id=>$pack)
                 {
+                    $count++;
                     $initial=array();
                     $initial['stock_in']=0;
                     $initial['excess']=0;
@@ -130,11 +143,48 @@ class Reports_stock extends Root_Controller
                         $initial=$initial_items[$vid][$pack_id];
                     }
                     $info=array();
-                    $info['crop_name']=$pack['crop_name'];
-                    $info['crop_type_name']=$pack['crop_type_name'];
+                    if($count>1)
+                    {
+                        if($prev_crop_name!=$pack['crop_name'])
+                        {
+
+                            $items[]=$this->get_type_total_row();
+                            $items[]=$this->get_crop_total_row();
+                            $info['crop_name']=$pack['crop_name'];
+                            $prev_crop_name=$pack['crop_name'];
+
+                            $info['crop_type_name']=$pack['crop_type_name'];
+                            $prev_crop_type_name=$pack['crop_type_name'];
+                        }
+                        elseif($prev_crop_type_name!=$pack['crop_type_name'])
+                        {
+                            $items[]=$this->get_type_total_row();
+                            $type_starting_stock=0;
+                            $info['crop_name']='';
+                            $info['crop_type_name']=$pack['crop_type_name'];
+                            $prev_crop_type_name=$pack['crop_type_name'];
+                        }
+                        else
+                        {
+                            $info['crop_name']='';
+                            $info['crop_type_name']='';
+                        }
+                    }
+                    else
+                    {
+                        $info['crop_name']=$pack['crop_name'];
+                        $prev_crop_name=$pack['crop_name'];
+                        $info['crop_type_name']=$pack['crop_type_name'];
+                        $prev_crop_type_name=$pack['crop_type_name'];
+                    }
+
+
+
                     $info['variety_name']=$pack['variety_name'];
                     $info['pack_size_name']=$pack['pack_size_name'];
                     $info['starting_stock']=$initial['stock_in']+$initial['excess']-$initial['sales']+$initial['sales_return']-$initial['sales_bonus']+$initial['sales_return_bonus']-$initial['short']-$initial['rnd']-$initial['sample'];
+
+
                     $info['current']=$pack['stock_in']+$pack['excess']-$pack['sales']+$pack['sales_return']-$pack['sales_bonus']+$pack['sales_return_bonus']-$pack['short']-$pack['rnd']-$pack['sample'];
 
                     $info['stock_in']=$pack['stock_in']-$initial['stock_in'];
@@ -146,9 +196,33 @@ class Reports_stock extends Root_Controller
                     $info['short']=$pack['short']-$initial['short'];
                     $info['rnd']=$pack['rnd']-$initial['rnd'];
                     $info['sample']=$pack['sample']-$initial['sample'];
+                    $info['current_price']=$count;
+
+                    /*if($this->input->post('report_type')=='weight')
+                    {
+                        $info['starting_stock']=number_format($info['starting_stock']*$info['pack_size_name']/1000,3,'.','');
+                        $info['stock_in']=number_format($info['stock_in']*$info['pack_size_name']/1000,3,'.','');
+                        $info['excess']=number_format($info['stock_in']*$info['pack_size_name']/1000,3,'.','');
+                        $info['sales']=number_format($info['sales']*$info['pack_size_name']/1000,3,'.','');
+                        $info['sales_return']=number_format($info['sales_return']*$info['pack_size_name']/1000,3,'.','');
+                        $info['sales_bonus']=number_format($info['sales_bonus']*$info['pack_size_name']/1000,3,'.','');
+                        $info['sales_return_bonus']=number_format($info['sales_return_bonus']*$info['pack_size_name']/1000,3,'.','');
+                        $info['short']=number_format($info['short']*$info['pack_size_name']/1000,3,'.','');
+                        $info['rnd']=number_format($info['rnd']*$info['pack_size_name']/1000,3,'.','');
+                        $info['sample']=number_format($info['sample']*$info['pack_size_name']/1000,3,'.','');
+                        $info['current']=number_format($info['current']*$info['pack_size_name']/1000,3,'.','');
+                    }*/
+
                     $items[]=$info;
                 }
             }
+            /*if($this->input->post('report_type')=='weight')
+            {
+                $type_starting_stock=number_format($type_starting_stock/1000,3,'.','');
+                $crop_starting_stock=number_format($crop_starting_stock/1000,3,'.','');
+            }*/
+            $items[]=$this->get_type_total_row();
+            $items[]=$this->get_crop_total_row();
         }
 
         $this->jsonReturn($items);
@@ -306,6 +380,20 @@ class Reports_stock extends Root_Controller
         }
         return $stocks;
 
+    }
+    private function get_type_total_row()
+    {
+        $row=array();
+        $row['crop_name']='';
+        $row['crop_type_name']='Total Type';
+        return $row;
+    }
+    private function get_crop_total_row()
+    {
+        $row=array();
+        $row['crop_name']='Total Crop';
+        $row['crop_type_name']='';
+        return $row;
     }
 
 }

@@ -46,6 +46,10 @@ $CI = & get_instance();
         <!--    For print-->
         <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdata.export.js"></script>
         <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.export.js"></script>
+        <!--        for footer sum-->
+        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.aggregates.js"></script>
+        <!-- for header tool tip-->
+        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxtooltip.js"></script>
         <!--    for jqx grid end-->
         <script type="text/javascript">
             var base_url = "<?php echo base_url(); ?>";
