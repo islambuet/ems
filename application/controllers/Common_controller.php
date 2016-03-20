@@ -191,6 +191,19 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_dropdown_allpack_sizes()
+    {
+        $html_container_id='#pack_size_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
     public function get_dropdown_packsizes_by_variety_warehouse()
     {
         $html_container_id='#pack_size_id';

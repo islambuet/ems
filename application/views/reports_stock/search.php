@@ -66,13 +66,20 @@
                         </select>
                     </div>
                 </div>
-                <div style="display: none;" class="row show-grid" id="pack_size_id_container">
+                <div style="" id="pack_size_id_container">
                     <div class="col-xs-6">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PACK_NAME');?></label>
                     </div>
                     <div class="col-xs-6">
                         <select id="pack_size_id" name="report[pack_size_id]" class="form-control">
                             <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($pack_sizes as $pack_size)
+                            {?>
+                                <option value="<?php echo $pack_size['value']?>"><?php echo $pack_size['text'];?></option>
+                            <?php
+                            }
+                            ?>
                         </select>
                     </div>
                 </div>
@@ -163,14 +170,14 @@ $CI->load->view("action_buttons",$action_data);
             $("#crop_id").val("");
             $("#crop_type_id").val("");
             $("#variety_id").val("");
-            $("#pack_size_id").val("");
+
             var warehouse_id=$('#warehouse_id').val();
             if(warehouse_id>0)
             {
 
                 $('#crop_type_id_container').hide();
                 $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
+
                 $.ajax({
                     url: base_url+"common_controller/get_dropdown_crops_by_warehouseid/",
                     type: 'POST',
@@ -191,7 +198,7 @@ $CI->load->view("action_buttons",$action_data);
             {
                 $('#crop_type_id_container').hide();
                 $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
+
                 $.ajax({
                     url: base_url+"common_controller/get_dropdown_allcrops",
                     type: 'POST',
@@ -213,13 +220,13 @@ $CI->load->view("action_buttons",$action_data);
         {
             $("#crop_type_id").val("");
             $("#variety_id").val("");
-            $("#pack_size_id").val("");
+
             var crop_id=$('#crop_id').val();
             if(crop_id>0)
             {
                 $('#crop_type_id_container').show();
                 $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
+
                 $.ajax({
                     url: base_url+"common_controller/get_dropdown_croptypes_by_cropid/",
                     type: 'POST',
@@ -240,19 +247,19 @@ $CI->load->view("action_buttons",$action_data);
             {
                 $('#crop_type_id_container').hide();
                 $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
+
             }
         });
         $(document).on("change","#crop_type_id",function()
         {
 
             $("#variety_id").val("");
-            $("#pack_size_id").val("");
+
             var crop_type_id=$('#crop_type_id').val();
             if(crop_type_id>0)
             {
                 $('#variety_id_container').show();
-                $('#pack_size_id_container').hide();
+
                 $.ajax({
                     url: base_url+"common_controller/get_dropdown_armvarieties_by_croptypeid/",
                     type: 'POST',
@@ -272,7 +279,7 @@ $CI->load->view("action_buttons",$action_data);
             else
             {
                 $('#variety_id_container').hide();
-                $('#pack_size_id_container').hide();
+
             }
         });
         $(document).on("change","#variety_id",function()
@@ -282,7 +289,7 @@ $CI->load->view("action_buttons",$action_data);
             var warehouse_id=$('#warehouse_id').val();
             if(variety_id>0)
             {
-                $('#pack_size_id_container').show();
+
                 $.ajax({
                     url: base_url+"common_controller/get_dropdown_packsizes_by_variety_warehouse/",
                     type: 'POST',
@@ -301,7 +308,20 @@ $CI->load->view("action_buttons",$action_data);
             }
             else
             {
-                $('#pack_size_id_container').hide();
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_allpack_sizes/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
             }
         });
 

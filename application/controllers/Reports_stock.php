@@ -38,6 +38,7 @@ class Reports_stock extends Root_Controller
             $ajax['status']=true;
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
+            $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('name ASC'));
             $fiscal_years=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array());
             $data['fiscal_years']=array();
             foreach($fiscal_years as $year)
@@ -117,11 +118,20 @@ class Reports_stock extends Root_Controller
     public function get_items()
     {
         $report_type=$this->input->post('report_type');
-        $starting_items=$this->get_stocks($this->input->post('date_end'));
+        $warehouse_id=$this->input->post('warehouse_id');
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $pack_size_id=$this->input->post('pack_size_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+
+        $starting_items=$this->get_stocks($date_end,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
         $items=array();
         if(sizeof($starting_items)>0)
         {
-            $initial_items=$this->get_stocks($this->input->post('date_start'));
+            $initial_items=$this->get_stocks($date_start,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id);
             $prev_crop_name='';
             $prev_crop_type_name='';
             $count=0;
@@ -376,7 +386,7 @@ class Reports_stock extends Root_Controller
 
 
     }
-    private function get_stocks($time)
+    private function get_stocks($time,$warehouse_id,$crop_id,$crop_type_id,$variety_id,$pack_size_id)
     {
         $stocks=array();
         if($time==0)
@@ -402,6 +412,26 @@ class Reports_stock extends Root_Controller
 
         $this->db->where('stv.status',$this->config->item('system_status_active'));
         $this->db->where('stv.date_stock_in <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('stv.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('crop.id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('stv.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('pack.id',$pack_size_id);
+        }
         $this->db->order_by('crop.ordering');
         $this->db->order_by('type.ordering');
         $this->db->order_by('v.ordering');
@@ -424,114 +454,275 @@ class Reports_stock extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
         }
+
         //excess
-        $this->db->from($this->config->item('table_stockin_excess_inventory'));
-        $this->db->select('variety_id,pack_size_id');
-        $this->db->select('SUM(quantity) stock_in');
-        $this->db->group_by(array('variety_id','pack_size_id'));
-        $this->db->where('status',$this->config->item('system_status_active'));
-        $this->db->where('date_stock_in <=',$time);
+        $this->db->from($this->config->item('table_stockin_excess_inventory').' ste');
+        $this->db->select('ste.variety_id,ste.pack_size_id');
+        $this->db->select('SUM(ste.quantity) stock_in');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =ste.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->group_by(array('ste.variety_id','ste.pack_size_id'));
+        $this->db->where('ste.status',$this->config->item('system_status_active'));
+        $this->db->where('ste.date_stock_in <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('ste.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('ste.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('ste.pack_size_id',$pack_size_id);
+        }
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=$result['stock_in'];
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['excess']=$result['stock_in'];
+            }
+
         }
+
         //stock out
-        $this->db->from($this->config->item('table_stockout'));
-        $this->db->select('variety_id,pack_size_id,purpose');
-        $this->db->select('SUM(quantity) stockout');
-        $this->db->group_by(array('variety_id','pack_size_id','purpose'));
-        $this->db->where('status',$this->config->item('system_status_active'));
-        $this->db->where('date_stock_out <=',$time);
+        $this->db->from($this->config->item('table_stockout').' sout');
+        $this->db->select('sout.variety_id,sout.pack_size_id,sout.purpose');
+        $this->db->select('SUM(sout.quantity) stockout');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =sout.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->group_by(array('sout.variety_id','sout.pack_size_id','sout.purpose'));
+        $this->db->where('sout.status',$this->config->item('system_status_active'));
+        $this->db->where('sout.date_stock_out <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('sout.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('sout.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('sout.pack_size_id',$pack_size_id);
+        }
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
-            if($result['purpose']==$this->config->item('system_purpose_short'))
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
             {
-                $stocks[$result['variety_id']][$result['pack_size_id']]['short']=$result['stockout'];
+                if($result['purpose']==$this->config->item('system_purpose_short'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['short']=$result['stockout'];
+                }
+                elseif($result['purpose']==$this->config->item('system_purpose_rnd'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['rnd']=$result['stockout'];
+                }
+                elseif($result['purpose']==$this->config->item('system_purpose_customer'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=$result['stockout'];
+                }
             }
-            elseif($result['purpose']==$this->config->item('system_purpose_rnd'))
-            {
-                $stocks[$result['variety_id']][$result['pack_size_id']]['rnd']=$result['stockout'];
-            }
-            elseif($result['purpose']==$this->config->item('system_purpose_customer'))
-            {
-                $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=$result['stockout'];
-            }
+
         }
+
         //sales
         $this->db->from($this->config->item('table_sales_po_details').' spd');
-        $this->db->select('variety_id,pack_size_id');
-        $this->db->select('SUM(quantity) sales');
+        $this->db->select('spd.variety_id,spd.pack_size_id');
+        $this->db->select('SUM(spd.quantity) sales');
         $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+
         $this->db->group_by(array('variety_id','pack_size_id'));
 
         $this->db->where('sp.status_approved',$this->config->item('system_status_po_approval_approved'));
         $this->db->where('spd.revision',1);
         $this->db->where('sp.date_approved <=',$time);
+
+        if($warehouse_id>0)
+        {
+            $this->db->where('sp.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('spd.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('spd.pack_size_id',$pack_size_id);
+        }
+
         $results=$this->db->get()->result_array();
 
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=$result['sales'];
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['sales']=$result['sales'];
+            }
         }
+
         //sales return
         $this->db->from($this->config->item('table_sales_po_details').' spd');
         $this->db->select('variety_id,pack_size_id');
         $this->db->select('SUM(quantity_return) sales_return');
         $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+
         $this->db->group_by(array('variety_id','pack_size_id'));
 
         $this->db->where('sp.status_received',$this->config->item('system_status_po_received_received'));
         $this->db->where('spd.revision',1);
         $this->db->where('spd.date_return <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('sp.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('spd.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('spd.pack_size_id',$pack_size_id);
+        }
         $results=$this->db->get()->result_array();
 
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return']=$result['sales_return'];
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return']=$result['sales_return'];
+            }
+
         }
+
         //sales bonus
         $this->db->from($this->config->item('table_sales_po_details').' spd');
         $this->db->select('variety_id,bonus_pack_size_id pack_size_id');
         $this->db->select('SUM(quantity_bonus) sales_bonus');
         $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
         $this->db->group_by(array('variety_id','bonus_pack_size_id'));
 
         $this->db->where('bonus_details_id >',0);
         $this->db->where('sp.status_approved',$this->config->item('system_status_po_approval_approved'));
         $this->db->where('spd.revision',1);
         $this->db->where('sp.date_approved <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('sp.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('spd.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('spd.pack_size_id',$pack_size_id);
+        }
         $results=$this->db->get()->result_array();
 
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_bonus']=$result['sales_bonus'];
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['sales_bonus']=$result['sales_bonus'];
+            }
+
         }
         //sales bonus return
         $this->db->from($this->config->item('table_sales_po_details').' spd');
         $this->db->select('variety_id,bonus_pack_size_id pack_size_id');
         $this->db->select('SUM(quantity_bonus_return) sales_return_bonus');
         $this->db->join($this->config->item('table_sales_po').' sp','sp.id =spd.sales_po_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
         $this->db->group_by(array('variety_id','bonus_pack_size_id'));
 
         $this->db->where('bonus_details_id >',0);
         $this->db->where('sp.status_received',$this->config->item('system_status_po_received_received'));
         $this->db->where('spd.revision',1);
         $this->db->where('spd.date_return <=',$time);
+        if($warehouse_id>0)
+        {
+            $this->db->where('sp.warehouse_id',$warehouse_id);
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('type.crop_id',$crop_id);
+        }
+        if($crop_type_id>0)
+        {
+            $this->db->where('type.id',$crop_type_id);
+        }
+        if($variety_id>0)
+        {
+            $this->db->where('spd.variety_id',$variety_id);
+        }
+        if($pack_size_id>0)
+        {
+            $this->db->where('spd.pack_size_id',$pack_size_id);
+        }
         $results=$this->db->get()->result_array();
 
         foreach($results as $result)
         {
-            $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return_bonus']=$result['sales_return_bonus'];
+            if(isset($stocks[$result['variety_id']][$result['pack_size_id']]))
+            {
+                $stocks[$result['variety_id']][$result['pack_size_id']]['sales_return_bonus']=$result['sales_return_bonus'];
+            }
+
         }
         return $stocks;
 
     }
-//$info['short']=$pack['short']-$initial['short'];
-//$info['rnd']=$pack['rnd']-$initial['rnd'];
-//$info['sample']=$pack['sample']-$initial['sample'];
-//$info['current_price']=$count;
     private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current)
     {
         $row=array();
