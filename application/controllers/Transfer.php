@@ -20,6 +20,14 @@ class Transfer extends CI_Controller {
 	 */
 	public function index()
 	{
+        /*$this->load->dbforge();
+        $tables = $this->db->list_tables();
+
+        foreach ($tables as $i=>$table)
+        {
+            $this->dbforge->rename_table($table, 'ems_'.$table);
+
+        }*/
 
 	}
     public function divisions()
