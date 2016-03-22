@@ -586,6 +586,11 @@ class Sales_po_approve extends Root_Controller
             }
             if($variety['bonus_details_id']>0)
             {
+                $ids=array('variety_id'=>$variety['variety_id'],'pack_size_id'=>$variety['bonus_pack_size_id']);
+                if(!in_array($ids,$variety_pack_size_ids))
+                {
+                    $variety_pack_size_ids[]=$ids;
+                }
                 if(!isset($customer_varieties_quantity[$variety['variety_id']][$variety['bonus_pack_size_id']]))
                 {
                     $info=array();
