@@ -399,6 +399,11 @@ class Sales_po_approve extends Root_Controller
                 }
                 if($variety['bonus_details_id']>0)
                 {
+                    $ids=array('variety_id'=>$variety['variety_id'],'pack_size_id'=>$variety['bonus_pack_size_id']);
+                    if(!in_array($ids,$variety_pack_size_ids))
+                    {
+                        $variety_pack_size_ids[]=$ids;
+                    }
                     if(!isset($data['customer_varieties_quantity'][$variety['variety_id']][$variety['bonus_pack_size_id']]))
                     {
                         $info=array();
@@ -419,6 +424,7 @@ class Sales_po_approve extends Root_Controller
 
             }
             $data['stocks_current']=$this->sales_model->get_stocks($variety_pack_size_ids);
+
             $data['customer_current_credit']=$this->sales_model->get_customer_current_credit($data['po']['customer_id']);
 
             $data['remarks']=$data['po_varieties'][0]['remarks'];
