@@ -311,6 +311,10 @@ class Reports_stock extends Root_Controller
                         $crop_total_price+=$total_price;
                         $grand_total_price+=$total_price;
                         $info['current_price']=number_format($unit_price,2);
+                        if($report_type=='weight')
+                        {
+                            $info['current_price']=number_format($unit_price*1000/$info['pack_size_name'],2);
+                        }
                         $info['current_total_price']=number_format($total_price,2);
                     }
 
@@ -869,6 +873,8 @@ class Reports_stock extends Root_Controller
         $row['crop_name']='Grand Total';
         $row['crop_type_name']='';
         $row['variety_name']='';
+        $row['pack_size_name']='';
+        $row['current_price']='';
 
         if($report_type=='weight')
         {
