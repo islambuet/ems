@@ -161,7 +161,7 @@
             </div>
             <div class="col-xs-4">
                 <div class="action_button pull-right">
-                    <button id="button_action_report" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
+                    <button id="button_action_report" type="button" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
                 </div>
 
             </div>
