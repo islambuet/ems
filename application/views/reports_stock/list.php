@@ -131,7 +131,7 @@
         $("#system_jqx_container").jqxGrid(
             {
                 width: '100%',
-                height:'600px',
+                height:'350px',
                 source: dataAdapter,
                 columnsresize: true,
                 columnsreorder: true,

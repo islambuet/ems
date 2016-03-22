@@ -133,17 +133,25 @@
                 </div>
             </div>
         </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+
+            </div>
+            <div class="col-xs-4">
+                <div class="action_button pull-right">
+                    <button id="button_action_report" class="btn" data-form="#save_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
+                </div>
+
+            </div>
+            <div class="col-xs-4">
+
+            </div>
+        </div>
     </div>
 
     <div class="clearfix"></div>
 </form>
-<?php
 
-$action_data=array();
-$action_data["action_report"]='#save_form';
-
-$CI->load->view("action_buttons",$action_data);
-?>
 <div id="system_report_container">
 
 </div>
