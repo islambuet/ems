@@ -546,7 +546,10 @@ class Sales_po_approve extends Root_Controller
             $this->message=$this->lang->line('MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED');
             return false;
         }
-
+        if($data['status_approved']==$this->config->item('system_status_po_approval_rejected'))
+        {
+            return true;
+        }
         $this->db->from($this->config->item('table_sales_po_details').' spd');
         $this->db->select('spd.*');
         $this->db->select('v.name variety_name');

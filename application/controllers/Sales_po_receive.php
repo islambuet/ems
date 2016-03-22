@@ -364,7 +364,10 @@ class Sales_po_receive extends Root_Controller
                 $info['sales_po_id']=$pv['sales_po_id'];
                 $info['sales_po_detail_id']=$pv['id'];
                 $info['quantity_receive']=$receive_info[$pv['id']]['quantity_receive'];
-                if(($info['quantity_receive']<0)||(intval($info['quantity_receive'])!=$info['quantity_receive']))
+
+
+
+                if(($info['quantity_receive']<0)||((strval(intval($info['quantity_receive'])))!=$info['quantity_receive']))
                 {
                     $ajax['status']=false;
                     $ajax['system_message']="Invalid Receive Quantity";
@@ -372,15 +375,15 @@ class Sales_po_receive extends Root_Controller
                     die();
 
                 }
-                if($info['quantity_receive']>$pv['quantity'])
+                /*if($info['quantity_receive']>$pv['quantity'])
                 {
                     $ajax['status']=false;
                     $ajax['system_message']="Receive Quantity is greater than Delivered Quantity";
                     $this->jsonReturn($ajax);
                     die();
-                }
+                }*/
                 $info['quantity_bonus_receive']=$receive_info[$pv['id']]['quantity_bonus_receive'];
-                if(($info['quantity_bonus_receive']<0)||(intval($info['quantity_bonus_receive'])!=$info['quantity_bonus_receive']))
+                if(($info['quantity_bonus_receive']<0)||(strval(intval($info['quantity_bonus_receive']))!=$info['quantity_bonus_receive']))
                 {
                     $ajax['status']=false;
                     $ajax['system_message']="Invalid Receive Bonus Quantity";
@@ -388,13 +391,13 @@ class Sales_po_receive extends Root_Controller
                     die();
 
                 }
-                if($info['quantity_bonus_receive']>$pv['quantity_bonus'])
+                /*if($info['quantity_bonus_receive']>$pv['quantity_bonus'])
                 {
                     $ajax['status']=false;
                     $ajax['system_message']="Receive Bonus Quantity is greater than Delivered Bonus Quantity";
                     $this->jsonReturn($ajax);
                     die();
-                }
+                }*/
                 $info['date_receive']=$date_receive;
                 $info['remarks']=$remarks;
                 $info['revision']=1;
