@@ -103,24 +103,24 @@
             var element = $(defaultHtml);
            // console.log(defaultHtml);
 
-            if (record.crop_type_name=="Crop Total")
+            if (record.crop_name=="Crop Total")
             {
-                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')||(column=='district_name')||(column=='crop_name')))
+                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')||(column=='district_name')))
                 {
                     element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
                 }
             }
-            else if (record.crop_name=="Customer Total")
+            else if (record.district_name=="Customer Total")
             {
 
-                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')||(column=='district_name')))
+                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')))
                 {
                     element.css({ 'background-color': '#0CA2C5','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
 
                 }
 
             }
-            else if (record.district_name=="Grand Total")
+            else if (record.territory_name=="Grand Total")
             {
 
                 element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
@@ -139,7 +139,7 @@
         };
         var aggregates=function (total, column, element, record)
         {
-            if(record.district_name=="Grand Total")
+            if(record.territory_name=="Grand Total")
             {
                 //console.log(element);
                 return record[element];

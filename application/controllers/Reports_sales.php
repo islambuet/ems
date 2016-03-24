@@ -529,7 +529,7 @@ class Reports_sales extends Root_Controller
         $this->db->where('pod.revision',1);
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
 
-        $this->db->order_by('po.id');
+
         if($po_no>0)
         {
             $this->db->where('po.id',$po_no);
@@ -586,6 +586,7 @@ class Reports_sales extends Root_Controller
             }
         }
         $this->db->order_by('cus.ordering','ASC');
+        $this->db->order_by('po.id,crop.ordering,crop.id,crop_type.ordering,crop_type.id,v.ordering,v.id');
         $results=$this->db->get()->result_array();
         if(!$results)
         {
@@ -795,7 +796,7 @@ class Reports_sales extends Root_Controller
                         $prev_variety_name=$pack['variety_name'];
 
                     }
-                    if($report_type='weight')
+                    if($report_type=='weight')
                     {
                         $po_quantity_crop+=$pack['po_quantity']*$pack['pack_size'];
                         $po_quantity_customer+=$pack['po_quantity']*$pack['pack_size'];
@@ -882,21 +883,22 @@ class Reports_sales extends Root_Controller
         $info['division_name']='';
         $info['zone_name']='';
         $info['territory_name']='';
-        $info['district_name']='';
         if($total_type=='grand')
         {
-            $info['district_name']='Grand Total';
+            $info['territory_name']='Grand Total';
         }
-        $info['crop_name']='';
+        $info['district_name']='';
         if($total_type=='customer')
         {
-            $info['crop_name']='Customer Total';
+            $info['district_name']='Customer Total';
         }
-        $info['crop_type_name']='';
+        $info['crop_name']='';
         if($total_type=='crop')
         {
-            $info['crop_type_name']='Crop Total';
+            $info['crop_name']='Crop Total';
         }
+        $info['crop_type_name']='';
+
         $info['variety_name']='';
         $info['pack_size']='';
         if($report_type=='weight')
