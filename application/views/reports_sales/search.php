@@ -90,10 +90,10 @@
                     </div>
                     <div class="col-xs-6">
                         <select name="report[report_name]" class="form-control">
-                            <option value="po">Purchase Order Report</option>
                             <option value="sales">Sales Report</option>
-                            <option value="sales_return">Sales Return Report</option>
+                            <option value="po">Purchase Order Report</option>
                             <option value="sales_product">Product wise Sales Report</option>
+                            <option value="sales_return">Sales Return Report</option>
                         </select>
 
                     </div>

@@ -219,8 +219,11 @@ class Common_controller extends Root_Controller
         //$this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
         $this->db->select('stv.pack_size_id value,pack.name text');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id =stv.pack_size_id','INNER');
+        if($warehouse_id>0)
+        {
+            $this->db->where('stv.warehouse_id',$warehouse_id);
+        }
 
-        $this->db->where('stv.warehouse_id',$warehouse_id);
         $this->db->where('stv.variety_id',$variety_id);
         $this->db->where('stv.status',$this->config->item('system_status_active'));
         $this->db->group_by('stv.pack_size_id');

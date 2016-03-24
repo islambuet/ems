@@ -30,10 +30,8 @@
         ?>
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_no"><?php echo $CI->lang->line('LABEL_PO_NO'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_po"><?php echo $CI->lang->line('LABEL_DATE_PO'); ?></label>
 
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
@@ -42,16 +40,16 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="pack_size"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_total"><?php echo $CI->lang->line('LABEL_QUANTITY'); ?></label>
 
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bonus_pack_size">Bonus Pack Size</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_bonus">Bonus Quantity</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_return">Return Quantity</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_bonus_return">Bonus Return Quantity</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_actual">Actual Quantity</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price_total">Unit Price</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price_total"><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price_total_actual">Actual Total Price</label>
+
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_quantity">Po Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bonus_quantity">Bonus Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_quantity">Sales Return</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bonus_return_quantity">Bonus Return</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_po_quantity">Total PO Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="actual_quantity">Actual Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_price">PO price</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="actual_price">Actual Price</label>
             </div>
         </div>
     <?php
@@ -76,9 +74,7 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'po_no', type: 'string' },
                 { name: 'name', type: 'string' },
-                { name: 'date_po', type: 'string' },
                 { name: 'division_name', type: 'numeric' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
@@ -87,15 +83,14 @@
                 { name: 'crop_type_name', type: 'string' },
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size', type: 'string' },
-                { name: 'quantity', type: 'string' },
-                { name: 'bonus_pack_size', type: 'string' },
-                { name: 'quantity_bonus', type: 'string' },
-                { name: 'quantity_return', type: 'string' },
-                { name: 'quantity_bonus_return', type: 'string' },
-                { name: 'quantity_actual', type: 'string' },
-                { name: 'variety_price', type: 'string' },
-                { name: 'price_total', type: 'string' },
-                { name: 'price_total_actual', type: 'string' }
+                { name: 'po_quantity', type: 'string' },
+                { name: 'bonus_quantity', type: 'string' },
+                { name: 'return_quantity', type: 'string' },
+                { name: 'bonus_return_quantity', type: 'string' },
+                { name: 'total_po_quantity', type: 'string' },
+                { name: 'actual_quantity', type: 'string' },
+                { name: 'po_price', type: 'string' },
+                { name: 'actual_price', type: 'string' }
 
             ],
             id: 'id',
@@ -108,18 +103,32 @@
             var element = $(defaultHtml);
            // console.log(defaultHtml);
 
-            if (record.variety_name=="Total")
+            if (record.crop_type_name=="Crop Total")
             {
-                if(column!='po_no')
+                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')||(column=='district_name')||(column=='crop_name')))
                 {
-                    element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'4px 2px 2px 4px'});
+                    element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
                 }
             }
-            else if (record.crop_type_name=="Grand Total")
+            else if (record.crop_name=="Customer Total")
             {
 
-                element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'4px 2px 2px 4px'});
+                if(!((column=='name')||(column=='division_name')||(column=='zone_name')||(column=='territory_name')||(column=='district_name')))
+                {
+                    element.css({ 'background-color': '#0CA2C5','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
 
+                }
+
+            }
+            else if (record.district_name=="Grand Total")
+            {
+
+                element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
 
             return element[0].outerHTML;
@@ -130,7 +139,7 @@
         };
         var aggregates=function (total, column, element, record)
         {
-            if(record.crop_type_name=="Grand Total")
+            if(record.district_name=="Grand Total")
             {
                 //console.log(element);
                 return record[element];
@@ -141,7 +150,7 @@
         };
         var aggregatesrenderer=function (aggregates)
         {
-            return '<div style="position: relative; margin: 0px;padding: 4px;width: 100%;height: 100%; overflow: hidden;background-color:'+grand_total_color+';">' +aggregates['total']+'</div>';
+            return '<div style="position: relative; margin: 0px;padding: 5px;width: 100%;height: 100%; overflow: hidden;background-color:'+grand_total_color+';">' +aggregates['total']+'</div>';
 
         };
 
@@ -158,10 +167,9 @@
                 enabletooltips: true,
                 showaggregates: true,
                 showstatusbar: true,
+                rowsheight: 35,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>', dataField: 'po_no',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width: '200',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_PO'); ?>', dataField: 'date_po',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',cellsalign: 'right',width: '100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
@@ -170,15 +178,14 @@
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY'); ?>', dataField: 'quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Bonus Pack Size', dataField: 'bonus_pack_size',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Bonus Quantity', dataField: 'quantity_bonus',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Return Quantity', dataField: 'quantity_return',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Bonus Return Quantity', dataField: 'quantity_bonus_return',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Actual Quantity', dataField: 'quantity_actual',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Unit price', dataField: 'variety_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?>', dataField: 'price_total',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Actual Total Price', dataField: 'price_total_actual',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
+                    { text: 'Po Quantity', dataField: 'po_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Bonus Quantity', dataField: 'bonus_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Sales Return', dataField: 'return_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Bonus Return', dataField: 'bonus_return_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Total PO Quantity', dataField: 'total_po_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Actual Quantity', dataField: 'actual_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'PO price', dataField: 'po_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Actual Price', dataField: 'actual_price',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
                 ]
             });
     });
