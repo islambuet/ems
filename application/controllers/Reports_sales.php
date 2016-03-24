@@ -587,6 +587,10 @@ class Reports_sales extends Root_Controller
         }
         $this->db->order_by('cus.ordering','ASC');
         $results=$this->db->get()->result_array();
+        if(!$results)
+        {
+            $this->jsonReturn($items);
+        }
         $varieties=array();
         foreach($results as $result)
         {
