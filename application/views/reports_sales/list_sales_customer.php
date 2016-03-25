@@ -66,7 +66,7 @@
         //var grand_total_color='#AEC2DD';
         var grand_total_color='#AEC2DD';
 
-        var url = "<?php echo base_url($CI->controller_url.'/get_items_sales');?>";
+        var url = "<?php echo base_url($CI->controller_url.'/get_items_sales_customer');?>";
 
         // prepare the data
         var source =
