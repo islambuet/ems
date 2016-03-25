@@ -34,18 +34,16 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="pack_size"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></label>
-                <?php
-                foreach($areas as $area)
-                {
-                    ?>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_<?php echo $area['value'];?>"><?php echo $area['text'].' Quantity'; ?></label>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price_<?php echo $area['value'];?>"><?php echo $area['text'].' Price'; ?></label>
-                    <?php
-                }
-                ?>
 
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_quantity">Total Quantity</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_price">Total Price</label>
+
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_quantity">Po Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bonus_quantity">Bonus Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_quantity">Sales Return</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bonus_return_quantity">Bonus Return</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_po_quantity">Total PO Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="actual_quantity">Actual Quantity</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_price">PO price</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="actual_price">Actual Price</label>
             </div>
         </div>
     <?php
@@ -62,7 +60,7 @@
         //var grand_total_color='#AEC2DD';
         var grand_total_color='#AEC2DD';
 
-        var url = "<?php echo base_url($CI->controller_url.'/get_items_sales_area');?>";
+        var url = "<?php echo base_url($CI->controller_url.'/get_items_sales_product');?>";
 
         // prepare the data
         var source =
@@ -74,16 +72,15 @@
                 { name: 'crop_type_name', type: 'string' },
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size', type: 'string' },
-                <?php
-                    foreach($areas as $area)
-                    {?>{ name: '<?php echo 'quantity_'.$area['value'];?>', type: 'string' },
-                { name: '<?php echo 'price_'.$area['value'];?>', type: 'string' },
-                <?php
-                    }
-                ?>
+                { name: 'po_quantity', type: 'string' },
+                { name: 'bonus_quantity', type: 'string' },
+                { name: 'return_quantity', type: 'string' },
+                { name: 'bonus_return_quantity', type: 'string' },
+                { name: 'total_po_quantity', type: 'string' },
+                { name: 'actual_quantity', type: 'string' },
+                { name: 'po_price', type: 'string' },
+                { name: 'actual_price', type: 'string' }
 
-                { name: 'total_quantity', type: 'string' },
-                { name: 'total_price', type: 'string' }
             ],
             id: 'id',
             url: url,
@@ -95,7 +92,7 @@
             var element = $(defaultHtml);
            // console.log(defaultHtml);
 
-            if (record.crop_type_name=="Total Crop")
+            if (record.crop_type_name=="Crop Total")
             {
                 if(column!='crop_name')
                 {
@@ -151,31 +148,19 @@
                 showstatusbar: true,
                 rowsheight: 35,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',align:'center',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',align:'center',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',align:'center',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    <?php
-                        foreach($areas as $area)
-                        {?>{ columngroup: '<?php echo $area['text']; ?>',text: 'Quantity', dataField: '<?php echo 'quantity_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { columngroup: '<?php echo $area['text']; ?>',text: 'Price', dataField: '<?php echo 'price_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    <?php
-                        }
-                    ?>
-                    { text: 'Total Quantity', dataField: 'total_quantity',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Total Price', dataField: 'total_price',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
-                ],
-                columngroups:
-                [
-                    <?php
-                        foreach($areas as $area)
-                        {?>{ text: '<?php echo $area['text']; ?>', align: 'center', name: '<?php echo $area['text']; ?>' },
-                    <?php
-                        }
-                    ?>
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Po Quantity', dataField: 'po_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Bonus Quantity', dataField: 'bonus_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Sales Return', dataField: 'return_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Bonus Return', dataField: 'bonus_return_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Total PO Quantity', dataField: 'total_po_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Actual Quantity', dataField: 'actual_quantity',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'PO price', dataField: 'po_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Actual Price', dataField: 'actual_price',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
                 ]
-
-
             });
     });
 </script>
