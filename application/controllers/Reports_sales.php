@@ -137,6 +137,11 @@ class Reports_sales extends Root_Controller
                 $data['title']="Sales Report";
                 $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_sales/list_sales",$data,true));
             }
+            elseif($reports['report_name']=='sales_return')
+            {
+                $data['title']="Sales Return Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_sales/list_sales_return",$data,true));
+            }
             else
             {
                 $data['title']="Approved Purchase Orders";
@@ -1026,5 +1031,323 @@ class Reports_sales extends Root_Controller
         return $row;
     }
 
+    public function get_items_sales_return()
+    {
+        $items=array();
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $customer_id=$this->input->post('customer_id');
 
+        $report_type=$this->input->post('report_type');//means kg/pkt
+
+        $warehouse_id=$this->input->post('warehouse_id');
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $pack_size_id=$this->input->post('pack_size_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        $po_no=$this->input->post('po_no');
+        if($po_no)
+        {
+            $po_no=intval($po_no);
+            if(!($po_no>0))
+            {
+                $this->jsonReturn($items);
+            }
+        }
+        $this->db->from($this->config->item('table_sales_po_details').' pod');
+
+        $this->db->select('pod.*');
+
+
+
+        $this->db->select('po.id po_no,po.date_po');
+        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) name');
+        $this->db->select('d.name district_name');
+        $this->db->select('t.name territory_name');
+        $this->db->select('zone.name zone_name');
+        $this->db->select('division.name division_name');
+        $this->db->select('v.name variety_name');
+        $this->db->select('crop_type.name crop_type_name');
+        $this->db->select('crop.name crop_name');
+
+        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =pod.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+
+        $this->db->where('pod.revision',1);
+        $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+        $this->db->where('pod.date_return >',0);
+        if($po_no>0)
+        {
+            $this->db->where('po.id',$po_no);
+        }
+        else
+        {
+            if($date_end>0)
+            {
+                $this->db->where('pod.date_return <=',$date_end);
+            }
+            if($date_start>0)
+            {
+                $this->db->where('pod.date_return >=',$date_start);
+            }
+            if($warehouse_id>0)
+            {
+                $this->db->where('po.warehouse_id',$warehouse_id);
+            }
+            if($crop_id>0)
+            {
+                $this->db->where('crop.id',$crop_id);
+            }
+            if($crop_type_id>0)
+            {
+                $this->db->where('crop_type.id',$crop_type_id);
+            }
+            if($variety_id>0)
+            {
+                $this->db->where('pod.variety_id',$variety_id);
+            }
+            if($pack_size_id>0)
+            {
+                $this->db->where('pod.pack_size_id',$pack_size_id);
+            }
+            if($division_id>0)
+            {
+                $this->db->where('division.id',$division_id);
+                if($zone_id>0)
+                {
+                    $this->db->where('zone.id',$zone_id);
+                    if($territory_id>0)
+                    {
+                        $this->db->where('t.id',$territory_id);
+                        if($district_id>0)
+                        {
+                            $this->db->where('d.id',$district_id);
+                            if($customer_id>0)
+                            {
+                                $this->db->where('cus.id',$customer_id);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        $this->db->order_by('po.id','ASC');
+        $results=$this->db->get()->result_array();
+
+        if(!$results)
+        {
+            $this->jsonReturn($items);
+        }
+        $prev_po='';
+        $po_quantity_total=0;
+        $po_quantity_grand=0;
+        $bonus_quantity_total=0;
+        $bonus_quantity_grand=0;
+        $return_quantity_total=0;
+        $return_quantity_grand=0;
+        $bonus_return_quantity_total=0;
+        $bonus_return_quantity_grand=0;
+        $total_po_quantity_total=0;
+        $total_po_quantity_grand=0;
+        $actual_quantity_total=0;
+        $actual_quantity_grand=0;
+        $po_price_total=0;
+        $po_price_grand=0;
+        $actual_price_total=0;
+        $actual_price_grand=0;
+        foreach($results as $count=>$result)
+        {
+            if($count>0)
+            {
+                if($result['po_no']!=$prev_po)
+                {
+                    $prev_po=$result['po_no'];
+                    $items[]=$this->get_total_sales_return_row('total',$report_type,$po_quantity_total,$bonus_quantity_total,$return_quantity_total,$bonus_return_quantity_total,$total_po_quantity_total,$actual_quantity_total,$po_price_total,$actual_price_total);
+                    $po_quantity_total=0;
+                    $bonus_quantity_total=0;
+                    $return_quantity_total=0;
+                    $bonus_return_quantity_total=0;
+                    $total_po_quantity_total=0;
+                    $actual_quantity_total=0;
+                    $po_price_total=0;
+                    $actual_price_total=0;
+                    //go total row
+                }
+                else
+                {
+                    $result['po_no']='';
+                    $result['name']='';
+                    $result['date_po']='';
+                    $result['date_return']='';
+                    $result['division_name']='';
+                    $result['zone_name']='';
+                    $result['territory_name']='';
+                    $result['district_name']='';
+                }
+            }
+            else
+            {
+                $prev_po=$result['po_no'];
+
+            }
+            $result['po_quantity']=$result['quantity'];
+            $result['bonus_quantity']=$result['quantity_bonus'];
+            $result['return_quantity']=$result['quantity_return'];
+            $result['bonus_return_quantity']=$result['quantity_bonus_return'];
+            $result['total_po_quantity']=$result['po_quantity']+$result['bonus_quantity']-$result['return_quantity']-$result['bonus_return_quantity'];
+            if($report_type=='weight')
+            {
+                $result['total_po_quantity']=($result['po_quantity']-$result['return_quantity'])*$result['pack_size']+($result['bonus_quantity']-$result['bonus_return_quantity'])*$result['bonus_pack_size'];
+                $total_po_quantity_total+=$result['total_po_quantity'];
+                $total_po_quantity_grand+=$result['total_po_quantity'];
+            }
+            $result['actual_quantity']=$result['po_quantity']-$result['return_quantity'];
+            $result['po_price']=$result['po_quantity']*$result['variety_price'];
+            $result['actual_price']=$result['actual_quantity']*$result['variety_price'];
+            if($report_type=='weight')
+            {
+                $po_quantity_total+=$result['po_quantity']*$result['pack_size'];
+                $po_quantity_grand+=$result['po_quantity']*$result['pack_size'];
+                $bonus_quantity_total+=$result['bonus_quantity']*$result['bonus_pack_size'];
+                $bonus_quantity_grand+=$result['bonus_quantity']*$result['bonus_pack_size'];
+                $return_quantity_total+=$result['return_quantity']*$result['pack_size'];
+                $return_quantity_grand+=$result['return_quantity']*$result['pack_size'];
+                $bonus_return_quantity_total+=$result['bonus_return_quantity']*$result['bonus_pack_size'];
+                $bonus_return_quantity_grand+=$result['bonus_return_quantity']*$result['bonus_pack_size'];
+                $actual_quantity_total+=$result['actual_quantity']*$result['pack_size'];
+                $actual_quantity_grand+=$result['actual_quantity']*$result['pack_size'];
+            }
+            else
+            {
+                $po_quantity_total+=$result['po_quantity'];
+                $po_quantity_grand+=$result['po_quantity'];
+                $bonus_quantity_total+=$result['bonus_quantity'];
+                $bonus_quantity_grand+=$result['bonus_quantity'];
+                $return_quantity_total+=$result['return_quantity'];
+                $return_quantity_grand+=$result['return_quantity'];
+                $bonus_return_quantity_total+=$result['bonus_return_quantity'];
+                $bonus_return_quantity_grand+=$result['bonus_return_quantity'];
+                $total_po_quantity_total+=$result['total_po_quantity'];
+                $total_po_quantity_grand+=$result['total_po_quantity'];
+                $actual_quantity_total+=$result['actual_quantity'];
+                $actual_quantity_grand+=$result['actual_quantity'];
+            }
+            $po_price_total+=$result['po_price'];
+            $po_price_grand+=$result['po_price'];
+            $actual_price_total+=$result['actual_price'];
+            $actual_price_grand+=$result['actual_price'];
+
+            $items[]=$this->get_sales_return_row($report_type,$result);
+        }
+        $items[]=$this->get_total_sales_return_row('total',$report_type,$po_quantity_total,$bonus_quantity_total,$return_quantity_total,$bonus_return_quantity_total,$total_po_quantity_total,$actual_quantity_total,$po_price_total,$actual_price_total);
+        $items[]=$this->get_total_sales_return_row('grand',$report_type,$po_quantity_grand,$bonus_quantity_grand,$return_quantity_grand,$bonus_return_quantity_grand,$total_po_quantity_grand,$actual_quantity_grand,$po_price_grand,$actual_price_grand);
+        $this->jsonReturn($items);
+    }
+    private function get_total_sales_return_row($total_type,$report_type,$po_quantity,$bonus_quantity,$return_quantity,$bonus_return_quantity,$total_po_quantity,$actual_quantity,$po_price,$actual_price)
+    {
+        $info=array();
+        $info['po_no']='';
+        $info['name']='';
+        $info['date_po']='';
+        $info['date_return']='';
+        $info['division_name']='';
+        $info['zone_name']='';
+        $info['territory_name']='';
+        if($total_type=='grand')
+        {
+            $info['territory_name']='Grand Total';
+        }
+        $info['district_name']='';
+        if($total_type=='total')
+        {
+            $info['district_name']='Total';
+        }
+        $info['crop_name']='';
+        $info['crop_type_name']='';
+        $info['variety_name']='';
+        $info['pack_size']='';
+        $info['bonus_pack_size']='';
+        if($report_type=='weight')
+        {
+            $info['po_quantity']=number_format($po_quantity/1000,3,'.','');
+            $info['bonus_quantity']=number_format($bonus_quantity/1000,3,'.','');
+            $info['return_quantity']=number_format($return_quantity/1000,3,'.','');
+            $info['bonus_return_quantity']=number_format($bonus_return_quantity/1000,3,'.','');
+            $info['total_po_quantity']=number_format($total_po_quantity/1000,3,'.','');
+            $info['actual_quantity']=number_format($actual_quantity/1000,3,'.','');
+        }
+        else
+        {
+            $info['po_quantity']=$po_quantity;
+            $info['bonus_quantity']=$bonus_quantity;
+            $info['return_quantity']=$return_quantity;
+            $info['bonus_return_quantity']=$bonus_return_quantity;
+            $info['total_po_quantity']=$total_po_quantity;
+            $info['actual_quantity']=$actual_quantity;
+        }
+
+        $info['po_price']=number_format($po_price,2);
+        $info['actual_price']=number_format($actual_price,2);
+        return $info;
+    }
+    private function get_sales_return_row($report_type,$info)
+    {
+        $row=array();
+        $row['po_no']=$info['po_no'];
+        if($info['po_no'])
+        {
+            $row['po_no']=str_pad($info['po_no'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+        }
+        $row['name']=$info['name'];
+        $row['date_po']='';
+        if($info['date_po'])
+        {
+            $row['date_po']=System_helper::display_date($info['date_po']);
+        }
+        $row['date_return']='';
+        if($info['date_return'])
+        {
+            $row['date_return']=System_helper::display_date($info['date_return']);
+        }
+        $row['division_name']=$info['division_name'];
+        $row['zone_name']=$info['zone_name'];
+        $row['territory_name']=$info['territory_name'];
+        $row['district_name']=$info['district_name'];
+        $row['crop_name']=$info['crop_name'];
+        $row['crop_type_name']=$info['crop_type_name'];
+        $row['variety_name']=$info['variety_name'];
+        $row['pack_size']=$info['pack_size'];
+        $row['po_quantity']=$info['po_quantity'];
+        $row['bonus_pack_size']=$info['bonus_pack_size'];
+        $row['bonus_quantity']=$info['bonus_quantity'];
+        $row['return_quantity']=$info['return_quantity'];
+        $row['bonus_return_quantity']=$info['bonus_return_quantity'];
+        $row['total_po_quantity']=$info['total_po_quantity'];
+        $row['actual_quantity']=$info['actual_quantity'];
+        $row['po_price']=number_format($info['po_price'],2);
+        $row['actual_price']=number_format($info['actual_price'],2);
+        if($report_type=='weight')
+        {
+            $row['po_quantity']=number_format($info['po_quantity']*$info['pack_size']/1000,3,'.','');
+            $row['bonus_quantity']=number_format($info['bonus_quantity']*$info['bonus_pack_size']/1000,3,'.','');
+            $row['return_quantity']=number_format($info['return_quantity']*$info['pack_size']/1000,3,'.','');
+            $row['bonus_return_quantity']=number_format($info['bonus_return_quantity']*$info['bonus_pack_size']/1000,3,'.','');
+            $row['total_po_quantity']=number_format($info['total_po_quantity']/1000,3,'.','');
+            $row['actual_quantity']=number_format($info['actual_quantity']*$info['pack_size']/1000,3,'.','');
+        }
+        return $row;
+    }
 }
