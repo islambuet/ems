@@ -75,7 +75,7 @@
                 { name: 'po_no', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'date_po', type: 'string' },
-                { name: 'division_name', type: 'numeric' },
+                { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
