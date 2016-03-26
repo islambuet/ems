@@ -146,10 +146,17 @@ class Reports_sales extends Root_Controller
             elseif($reports['report_name']=='sales_area')
             {
                 $data['title']="Sales Report";
-                if($reports['district_id']>0)
+                if($reports['customer_id']>0)
                 {
-                    $data['areas']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$reports['district_id']));
-                    $data['title'].='(District)';
+
+                    $data['areas']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('id ='.$reports['customer_id']));
+                    $data['title'].='(Customer)';
+                }
+                elseif($reports['district_id']>0)
+                {
+
+                    $data['areas']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$reports['district_id']));
+                    $data['title'].='(Customers)';
                 }
                 elseif($reports['territory_id']>0)
                 {
@@ -1403,11 +1410,15 @@ class Reports_sales extends Root_Controller
         $pack_size_id=$this->input->post('pack_size_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
-
-        if($district_id>0)
+        if($customer_id>0)
         {
-            $areas=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$district_id));
-            $location_type='district_id';
+            $areas=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('id ='.$customer_id));
+            $location_type='customer_id';
+        }
+        elseif($district_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$district_id));
+            $location_type='customer_id';
         }
         elseif($territory_id>0)
         {
@@ -1446,7 +1457,7 @@ class Reports_sales extends Root_Controller
 
         $this->db->select('SUM(quantity*variety_price) price');
 
-
+        $this->db->select('cus.id customer_id,cus.name customer_name');
         $this->db->select('d.name district_name,d.id district_id');
         $this->db->select('t.name territory_name,t.id territory_id');
         $this->db->select('zone.name zone_name,zone.id zone_id');
@@ -1588,7 +1599,7 @@ class Reports_sales extends Root_Controller
         $this->db->select('SUM(quantity_return) quantity');
         $this->db->select('SUM(quantity_return*variety_price) price');
 
-
+        $this->db->select('cus.id customer_id,cus.name customer_name');
         $this->db->select('d.name district_name,d.id district_id');
         $this->db->select('t.name territory_name,t.id territory_id');
         $this->db->select('zone.name zone_name,zone.id zone_id');
