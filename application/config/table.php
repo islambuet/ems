@@ -41,6 +41,7 @@ $config['table_basic_setup_arm_bank_accounts'] = 'ems_basic_setup_arm_bank_accou
 $config['table_basic_setup_fiscal_year'] = 'ems_basic_setup_fiscal_year';
 $config['table_basic_setup_competitor'] = 'ems_basic_setup_competitor';
 $config['table_basic_setup_couriers'] = 'ems_basic_setup_couriers';
+$config['table_basic_setup_vcolors'] = 'ems_basic_setup_vcolors';
 //customer setup
 $config['table_csetup_customers'] = 'ems_csetup_customers';
 $config['table_csetup_other_customers'] = 'ems_csetup_other_customers';
