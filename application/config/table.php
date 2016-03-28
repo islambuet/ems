@@ -32,6 +32,7 @@ $config['table_setup_classification_vpack_size'] = 'ems_variety_pack_size';
 $config['table_setup_classification_variety_price'] = 'ems_variety_price';
 $config['table_setup_classification_variety_bonus'] = 'ems_variety_bonus';
 $config['table_setup_classification_variety_bonus_details'] = 'ems_variety_bonus_details';
+$config['table_setup_classification_variety_time'] = 'ems_variety_time';
 //basic setup
 $config['table_basic_setup_warehouse'] = 'ems_basic_setup_warehouse';
 $config['table_basic_setup_warehouse_crops'] = 'ems_basic_setup_warehouse_crops';
