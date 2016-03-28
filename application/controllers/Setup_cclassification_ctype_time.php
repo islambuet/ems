@@ -168,6 +168,7 @@ class Setup_cclassification_ctype_time extends Root_Controller
                 $ajax['system_message']="Invalid End date.";
                 $this->jsonReturn($ajax);
             }
+            $data['date_end']+=24*3600-1;
             $this->db->trans_start();  //DB Transaction Handle START
             $this->db->where('crop_type_id',$data['crop_type_id']);
             $this->db->where('territory_id',$data['territory_id']);
