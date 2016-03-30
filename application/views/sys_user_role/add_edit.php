@@ -21,13 +21,13 @@ $CI->load->view("action_buttons",$action_data);
                 <thead>
                 <tr>
                     <th><?php echo $CI->lang->line("NAME");?></th>
-                    <th><?php echo "View"; ?></th>
-                    <th><?php echo "Add"; ?></th>
-                    <th><?php echo "Edit"; ?></th>
-                    <th><?php echo "Delete"; ?></th>
-                    <th><?php echo "Print"; ?></th>
-                    <th><?php echo "Download"; ?></th>
-                    <th><?php echo "Column Headers"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_view' class="task_header_all"><?php echo "View"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_add' class="task_header_all"><?php echo "Add"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_edit' class="task_header_all"><?php echo "Edit"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_delete' class="task_header_all"><?php echo "Delete"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_print' class="task_header_all"><?php echo "Print"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_download' class="task_header_all"><?php echo "Download"; ?></th>
+                    <th><input type="checkbox" data-type='task_action_headers' class="task_header_all"><?php echo "Column Headers"; ?></th>
                 </tr>
                 </thead>
 
@@ -55,7 +55,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="view" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['view'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][view]'>
+                                    <input type="checkbox" title="view" class="task_action_view task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['view'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][view]'>
                                     <?php
                                 }
                                 ?>
@@ -65,7 +65,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="add" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['add'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][add]'>
+                                    <input type="checkbox" title="add" class="task_action_add task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['add'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][add]'>
                                     <?php
                                 }
                                 ?>
@@ -75,7 +75,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="edit" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['edit'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][edit]'>
+                                    <input type="checkbox" title="edit" class="task_action_edit task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['edit'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][edit]'>
                                     <?php
                                 }
                                 ?>
@@ -85,7 +85,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="delete" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['delete'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][delete]'>
+                                    <input type="checkbox" title="delete" class="task_action_delete task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['delete'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][delete]'>
                                     <?php
                                 }
                                 ?>
@@ -95,7 +95,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="print" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['print'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][print]'>
+                                    <input type="checkbox" title="print" class="task_action_print task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['print'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][print]'>
                                 <?php
                                 }
                                 ?>
@@ -105,7 +105,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="download" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['download'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][download]'>
+                                    <input type="checkbox" title="download" class="task_action_download task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['download'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][download]'>
                                 <?php
                                 }
                                 ?>
@@ -115,7 +115,7 @@ $CI->load->view("action_buttons",$action_data);
                                 if($module_task['module_task']['type']=='TASK')
                                 {
                                     ?>
-                                    <input type="checkbox" title="column_headers" class="task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['column_headers'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][column_headers]'>
+                                    <input type="checkbox" title="column_headers" class="task_action_headers task_action_<?php echo $module_task['module_task']['id'];?>"  <?php if(in_array($module_task['module_task']['id'],$role_status['column_headers'])){echo 'checked';}?> value="1" name='tasks[<?php echo $module_task['module_task']['id'];?>][column_headers]'>
                                 <?php
                                 }
                                 ?>
@@ -161,6 +161,20 @@ $CI->load->view("action_buttons",$action_data);
             else
             {
                 $('.task_action_'+$(this).attr('data-id')).prop('checked', false);
+            }
+
+        });
+        $(document).on("click",'.task_header_all',function()
+        {
+            //console.log('task_action clicked');
+            if($(this).is(':checked'))
+            {
+                $('.'+$(this).attr('data-type')).prop('checked', true);
+
+            }
+            else
+            {
+                $('.'+$(this).attr('data-type')).prop('checked', false);
             }
 
         });

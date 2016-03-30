@@ -424,6 +424,7 @@ function animate_message(message)
 function turn_off_triggers()
 {
     $(document).off("click", ".task_action_all");
+    $(document).off("click", ".task_header_all");
 
     //location setup
     $(document).off("change", "#division_id");
