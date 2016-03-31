@@ -226,7 +226,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="payment[amount]" id="amount" class="form-control" value="<?php echo $payment['amount'];?>"/>
+                <input type="text" name="payment[amount]" id="amount" class="form-control float_type_positive" value="<?php echo $payment['amount'];?>"/>
             </div>
         </div>
         <div class="row show-grid">

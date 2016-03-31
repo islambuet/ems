@@ -368,6 +368,22 @@ $(document).ready(function()
 
     });
 
+    $(document).on("input", ".float_type_positive", function(event)
+    {
+        this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+    });
+    $(document).on("input", ".integer_type_positive", function(event)
+    {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    $(document).on("input", ".float_type_all", function(event)
+    {
+        this.value = this.value.replace(/[^0-9.-]/g, '').replace(/(\..*)\./g, '$1').replace(/(?!^)-/g, '');
+    });
+    $(document).on("input", ".integer_type_all", function(event)
+    {
+        this.value = this.value.replace(/[^0-9-]/g, '').replace(/(?!^)-/g, '');
+    });
 
 
 });
