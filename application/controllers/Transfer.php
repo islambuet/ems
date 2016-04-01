@@ -488,11 +488,13 @@ class Transfer extends CI_Controller {
     public function customers()
     {
         $this->db->from('ait_distributor_info di');
-        $this->db->select('di.*,d.id district_id');
+        $this->db->select('di.*,d.id district_id,ec.Balance amount');
         $this->db->order_by('di.id');
         $this->db->where('di.status','Active');
-        $this->db->join('districts d','d.old_zilla_id =di.zilla_id','INNER');
+        $this->db->join('ems_districts d','d.old_zilla_id =di.zilla_id','INNER');
+        $this->db->join('excel_customer ec','ec.CID =di.customer_code','INNER');
         $customers=$this->db->get()->result_array();
+
         $time=time();
         $this->db->trans_start();  //DB Transaction Handle START
 
@@ -517,16 +519,16 @@ class Transfer extends CI_Controller {
                 $data['date_created']=$time;
                 $data['user_created']=1;
                 $data['old_cs_id']=$customer['id'];
-                $this->db->insert('csetup_customers',$data);
+                $this->db->insert('ems_csetup_customers',$data);
 
                 $customer_id = $this->db->insert_id();
-                $payment['amount'] = 0;
+                $payment['amount'] = -1*str_replace(',','',$customer['amount']);
                 $payment['customer_id'] = $customer_id;
                 $payment['user_created'] = 1;
                 $payment['date_created'] = $time;
                 $payment['date_payment'] = $time;
                 $payment['payment_type'] = $this->config->item('system_payment_initial');
-                $this->db->insert('payment_payment',$payment);
+                $this->db->insert('ems_payment_payment',$payment);
 
             }
 
