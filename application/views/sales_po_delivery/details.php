@@ -55,7 +55,7 @@
                 <label class="control-label"><?php echo $po['customer_name'];?></label>
             </div>
         </div>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_PO');?></label>
             </div>
@@ -63,7 +63,7 @@
                 <label class="control-label"><?php echo System_helper::display_date($po['date_po']);?></label>
             </div>
         </div>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_CREATED');?></label>
             </div>
@@ -71,7 +71,7 @@
                 <label class="control-label"><?php echo System_helper::display_date_time($po['date_created']);?></label>
             </div>
         </div>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_CREATED');?></label>
             </div>
@@ -79,7 +79,7 @@
                 <label class="control-label"><?php echo $users[$po['user_created']]['name'];?></label>
             </div>
         </div>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REQUESTED');?></label>
             </div>
@@ -91,7 +91,7 @@
         if($po['status_requested']==$CI->config->item('system_status_po_request_requested'))
         {
             ?>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_REQUESTED');?></label>
                 </div>
@@ -99,7 +99,7 @@
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_requested']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_REQUESTED');?></label>
                 </div>
@@ -110,7 +110,7 @@
         <?php
         }
         ?>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_APPROVAL');?></label>
             </div>
@@ -130,7 +130,7 @@
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_approved']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_APPROVED');?></label>
                 </div>
@@ -141,7 +141,7 @@
         <?php
         }
         ?>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DELIVERY');?></label>
             </div>
@@ -153,7 +153,7 @@
         if($po['status_delivered']==$CI->config->item('system_status_po_delivery_delivered'))
         {
             ?>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_DELIVERY');?></label>
                 </div>
@@ -161,15 +161,15 @@
                     <label class="control-label"><?php echo System_helper::display_date($po['date_delivery']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_DELIVERED');?></label>
                 </div>
-                <div class="col-sm-4 col-xs-8">
+                <div class="col-sm-4 col-xs-8 hidden-print">
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_delivered']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_DELIVERED');?></label>
                 </div>
@@ -180,7 +180,7 @@
         <?php
         }
         ?>
-        <div style="" class="row show-grid">
+        <div style="" class="row show-grid hidden-print">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_RECEIVED');?></label>
             </div>
@@ -192,7 +192,7 @@
         if($po['status_received']==$CI->config->item('system_status_po_received_received'))
         {
             ?>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_RECEIVED');?></label>
                 </div>
@@ -200,7 +200,7 @@
                     <label class="control-label"><?php echo System_helper::display_date($po['date_receive']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_TIME_RECEIVED');?></label>
                 </div>
@@ -208,7 +208,7 @@
                     <label class="control-label"><?php echo System_helper::display_date_time($po['date_received']);?></label>
                 </div>
             </div>
-            <div style="" class="row show-grid">
+            <div style="" class="row show-grid hidden-print">
                 <div class="col-xs-4">
                     <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PO_USER_RECEIVED');?></label>
                 </div>
