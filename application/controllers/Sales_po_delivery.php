@@ -471,12 +471,14 @@ class Sales_po_delivery extends Root_Controller
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
+        $this->db->select('wh.name warehouse_name');
         $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->join($this->config->item('table_basic_setup_warehouse').' wh','wh.id = po.warehouse_id','INNER');
 
         $this->db->where('pod.revision',1);
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
