@@ -167,6 +167,14 @@
 
             </div>
         </div>
+        <div style="<?php if(!($payment['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="credit_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_CREDIT');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label" id="credit"><?php echo number_format($payment['credit'],2);?></label>
+            </div>
+        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PAYMENT_WAY');?><span style="color:#FF0000">*</span></label>
@@ -312,6 +320,7 @@
             $("#territory_id").val("");
             $("#district_id").val("");
             $("#customer_id").val("");
+            $('#credit_container').hide();
             var division_id=$('#division_id').val();
             if(division_id>0)
             {
@@ -349,6 +358,7 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var zone_id=$('#zone_id').val();
+            $('#credit_container').hide();
             if(zone_id>0)
             {
                 $('#territory_id_container').show();
@@ -382,6 +392,7 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var territory_id=$('#territory_id').val();
+            $('#credit_container').hide();
             if(territory_id>0)
             {
                 $('#district_id_container').show();
@@ -412,6 +423,7 @@
         {
             $("#customer_id").val("");
             var district_id=$('#district_id').val();
+            $('#credit_container').hide();
             if(district_id>0)
             {
                 $('#customer_id_container').show();
@@ -434,6 +446,35 @@
             else
             {
                 $('#customer_id_container').hide();
+            }
+        });
+        $(document).on("change","#customer_id",function()
+        {
+
+            var customer_id=$('#customer_id').val();
+
+            if(customer_id>0)
+            {
+                $('#credit_container').show();
+                $.ajax({
+                    url: base_url+"common_controller/get_credit_by_customer_id/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{customer_id:customer_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#credit_container').hide();
             }
         });
         $(document).on("change","#arm_bank_id",function()

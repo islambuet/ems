@@ -277,5 +277,19 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    public function get_credit_by_customer_id()
+    {
+        $html_container_id='#credit';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('credit_container');
+        }
+        $customer_id = $this->input->post('customer_id');
+        $this->load->model("sales_model");
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>number_format($this->sales_model->get_customer_current_credit($customer_id)),2);
+        $this->jsonReturn($ajax);
+    }
+
 
 }

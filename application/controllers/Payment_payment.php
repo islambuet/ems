@@ -106,7 +106,8 @@ class Payment_payment extends Root_Controller
                 'bank_branch' => '',
                 'arm_bank_id' => '',
                 'arm_bank_account_id' => '',
-                'date_payment' => time()
+                'date_payment' => time(),
+                'credit'=>0
             );
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
@@ -165,7 +166,7 @@ class Payment_payment extends Root_Controller
 
             $this->db->from($this->config->item('table_payment_payment').' payment');
             $this->db->select('payment.*');
-            $this->db->select('cus.name');
+            $this->db->select('cus.name,cus.id customer_id');
             $this->db->select('d.name district_name,d.id district_id');
             $this->db->select('t.name territory_name,t.id territory_id');
             $this->db->select('zone.name zone_name,zone.id zone_id');
@@ -207,6 +208,9 @@ class Payment_payment extends Root_Controller
             {
                 $data['arm_bank_accounts']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('bank_id'=>$data['payment']['arm_bank_id'],'status ="'.$this->config->item('system_status_active').'"'));
             }
+            $this->load->model("sales_model");
+            $balance=$this->sales_model->get_customer_current_credit($data['payment']['customer_id']);
+            $data['payment']['credit']=$balance-$data['payment']['amount'];
 
 
             $data['title']="Edit Payment";
