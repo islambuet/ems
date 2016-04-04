@@ -243,11 +243,6 @@ class Survey_primary_market extends Root_Controller
     }
     private function system_save()
     {
-//        echo '<PRE>';
-//        print_r($this->input->post());
-//        echo '</PRE>';
-//        die();
-
         $user = User_helper::get_user();
         if(!((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1))))
         {
@@ -453,42 +448,6 @@ class Survey_primary_market extends Root_Controller
 
     private function check_validation()
     {
-        return true;
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('po[customer_id]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
-        $this->form_validation->set_rules('po[warehouse_id]',$this->lang->line('LABEL_WAREHOUSE_NAME'),'required');
-        if($this->form_validation->run() == FALSE)
-        {
-            $this->message=validation_errors();
-            return false;
-        }
-        $po_varieties=$this->input->post('po_varieties');
-        if(!(sizeof($po_varieties)>0))
-        {
-            $this->message=$this->lang->line('MSG_MIN_ONE_PO_REQUIRED');
-            return false;
-        }
-        else
-        {
-            foreach($po_varieties as $po)
-            {
-                if(!(($po['variety_id']>0)&&($po['pack_size_id']>0)&&($po['quantity']>0)))
-                {
-                    $this->message=$this->lang->line('MSG_UNFINISHED_PO');
-                    return false;
-                }
-            }
-        }
-        $id = $this->input->post("id");
-        if($id>0)
-        {
-            $po_info=Query_helper::get_info($this->config->item('table_sales_po'),'*',array('id ='.$id),1);
-            if($po_info['status_requested']==$this->config->item('system_status_po_request_requested'))
-            {
-                $this->message=$this->lang->line('MSG_PO_EDIT_UNABLE');
-                return false;
-            }
-        }
         return true;
     }
 
