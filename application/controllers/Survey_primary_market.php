@@ -93,7 +93,7 @@ class Survey_primary_market extends Root_Controller
 
     private function system_add()
     {
-        if(isset($this->permissions['add'])&&($this->permissions['add']==1))
+        if((isset($this->permissions['add'])&&($this->permissions['add']==1))||(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
         {
             $data['title']="Market Survey";
             $data["survey"] = Array(
@@ -244,9 +244,23 @@ class Survey_primary_market extends Root_Controller
         $data['varieties_arm']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),'*',array('crop_type_id ='.$data['crop_type_id'],'status ="'.$this->config->item('system_status_active').'"','whose ="ARM"'));
         $data['varieties_competitor']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),'*',array('crop_type_id ='.$data['crop_type_id'],'status ="'.$this->config->item('system_status_active').'"','whose ="Competitor"'));
         $data['max_customers_number']=2;
+        $data['survey']=Query_helper::get_info($this->config->item('table_survey_primary'),'*',array('year ='.$data['year'],'crop_type_id ='.$data['crop_type_id'],'upazilla_id ='.$data['upazilla_id'],'status ="'.$this->config->item('system_status_active').'"'),1);
+        $data['survey_customer_survey']=array();
+        $data['survey_quantity_survey']=array();
+        if($data['survey'])
+        {
+            $data['title']="Edit Survey";
+            $data['survey_customer_survey']=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$data['survey']['id']));
+            $data['survey_quantity_survey']=Query_helper::get_info($this->config->item('table_survey_primary_quantity_survey'),'*',array('survey_id ='.$data['survey']['id']));
+        }
+        else
+        {
+            $data['title']="New Survey";//edit Survey
+        }
+
         //get info
         //if exits check my editable
-        $data['title']="New Survey";//edit Survey
+
         $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("survey_primary_market/add_edit",$data,true));
         if($this->message)
         {
@@ -257,33 +271,20 @@ class Survey_primary_market extends Root_Controller
     }
     private function system_save()
     {
-        echo '<PRE>';
-        print_r($this->input->post());
-        echo '</PRE>';
-        die();
-        $id = $this->input->post("id");
-        $user = User_helper::get_user();
-        if($id>0)
-        {
-            if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-                die();
-            }
-        }
-        else
-        {
-            if(!(isset($this->permissions['add'])&&($this->permissions['add']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-                die();
+//        echo '<PRE>';
+//        print_r($this->input->post());
+//        echo '</PRE>';
+//        die();
 
-            }
+        $user = User_helper::get_user();
+        if(!((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1))))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+            die();
         }
+
         if(!$this->check_validation())
         {
             $ajax['status']=false;
@@ -293,25 +294,47 @@ class Survey_primary_market extends Root_Controller
         else
         {
             $time=time();
-            $po=$this->input->post('po');
-            $po['date_po']=System_helper::get_time($po['date_po']);
-            $po_varieties=$this->input->post('po_varieties');
-            /*echo '<PRE>';
-            print_r($po);
-            print_r($po_varieties);
-            echo '</PRE>';
-            die();*/
-            $this->db->trans_start();  //DB Transaction Handle START
-            if($id>0)
+            $data=array();
+            $year=$this->input->post('year');
+            $crop_type_id=$this->input->post('crop_type_id');
+            $upazilla_id=$this->input->post('upazilla_id');
+            $survey=Query_helper::get_info($this->config->item('table_survey_primary'),'*',array('year ='.$year,'crop_type_id ='.$crop_type_id,'upazilla_id ='.$upazilla_id,'status ="'.$this->config->item('system_status_active').'"'),1);
+            if($survey)
             {
-                $po['user_updated'] = $user->user_id;
-                $po['date_updated'] = $time;
-                Query_helper::update($this->config->item('table_sales_po'),$po,array("id = ".$id));
-
+                $data['user_updated'] = $user->user_id;
+                $data['date_updated'] = $time;
             }
             else
             {
-                $po['user_created'] = $user->user_id;
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = $time;
+            }
+
+
+            $unions=$this->input->post('unions');
+            if(sizeof($unions)>0)
+            {
+                $data['union_ids']=json_encode($unions);
+            }
+            $customers=$this->input->post('customers');
+            if(sizeof($unions)>0)
+            {
+                $data['customers']=json_encode($customers);
+            }
+            $data['remarks']=$this->input->post('remarks');
+
+            $this->db->trans_start();  //DB Transaction Handle START
+            if($survey)
+            {
+                Query_helper::update($this->config->item('table_survey_primary'),$data,array("id = ".$survey['id']));
+            }
+            else
+            {
+                $data['year']=$year;
+                $data['crop_type_id']=$crop_type_id;
+                $data['upazilla_id']=$upazilla_id;
+                Query_helper::add($this->config->item('table_survey_primary'),$data);
+                /*$po['user_created'] = $user->user_id;
                 $po['date_created'] = $time;
                 $po_id=Query_helper::add($this->config->item('table_sales_po'),$po);
                 if($po_id===false)
@@ -325,22 +348,8 @@ class Survey_primary_market extends Root_Controller
                 else
                 {
                     $id=$po_id;
-                }
+                }*/
             }
-            $this->db->where('sales_po_id',$id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_sales_po_details'));
-            $remarks=$this->input->post('remarks');
-            foreach($po_varieties as $data)
-            {
-                $data['sales_po_id']=$id;
-                $data['remarks']=$remarks;
-                $data['revision']=1;
-                $data['user_created'] = $user->user_id;
-                $data['date_created'] = $time;
-                Query_helper::add($this->config->item('table_sales_po_details'),$data);
-            }
-
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
@@ -386,6 +395,7 @@ class Survey_primary_market extends Root_Controller
 
     private function check_validation()
     {
+        return true;
         $this->load->library('form_validation');
         $this->form_validation->set_rules('po[customer_id]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
         $this->form_validation->set_rules('po[warehouse_id]',$this->lang->line('LABEL_WAREHOUSE_NAME'),'required');

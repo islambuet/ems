@@ -2,7 +2,7 @@
     $CI = & get_instance();
 
     $action_data=array();
-    if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
+    if((isset($CI->permissions['add'])&&($CI->permissions['add']==1))||(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1)))
     {
         $action_data["action_new"]=base_url($CI->controller_url."/index/add");
         $action_data["action_edit"]=base_url($CI->controller_url."/index/edit");
@@ -39,6 +39,8 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="upazilla_name"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_crops">Number of crops</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_types">Number of types</label>
         </div>
         <?php
     }
@@ -65,7 +67,9 @@
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
-                { name: 'upazilla_name', type: 'string' }
+                { name: 'upazilla_name', type: 'string' },
+                { name: 'num_crops', type: 'string' },
+                { name: 'num_types', type: 'string' }
 
             ],
             id: 'id',
@@ -97,7 +101,9 @@
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name'}
+                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name'},
+                    { text: 'Number of crops', dataField: 'num_crops'},
+                    { text: 'Number of types', dataField: 'num_types'}
 
                 ]
             });

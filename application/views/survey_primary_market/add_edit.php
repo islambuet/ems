@@ -1,5 +1,19 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
+    $union_ids=array();
+    $customers=array();
+    $remarks='';
+    if($survey)
+    {
+        if($survey['union_ids'])
+        {
+            $union_ids=json_decode($survey['union_ids'],true);
+        }
+
+        $customers=json_decode($survey['customers'],true);
+        $remarks=$survey['remarks'];
+    }
+
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
     <input type="hidden" name="year" value="<?php echo $year; ?>" />
@@ -18,7 +32,7 @@
             foreach($unions as $union)
             {
                 ?>
-                <label class="checkbox-inline" style="font-size:12px;padding: 5px 5px 5px 25px;background-color: #0C865B; color: #fff; "><input type="checkbox"><?php echo $union['text']; ?></label>
+                <label class="checkbox-inline" style="font-size:12px;padding: 5px 5px 5px 25px;background-color: #0C865B; color: #fff; "><input type="checkbox" name="unions[]" value="<?php echo $union['value']; ?>" <?php if(in_array($union['value'],$union_ids)){echo 'checked';} ?>><?php echo $union['text']; ?></label>
                 <?php
             }
             ?>
@@ -31,9 +45,6 @@
                 <tr>
                     <th>
                         Variety
-                    </th>
-                    <th>
-                        F1/OP
                     </th>
                     <?php
                     for($i=1;$i<=$max_customers_number;$i++)
@@ -53,13 +64,13 @@
                     </th>
                 </tr>
                 <tr>
-                    <th colspan="2"></th>
+                    <th></th>
                     <?php
                     for($i=1;$i<=$max_customers_number;$i++)
                     {
                         ?>
                         <th colspan="2">
-                            <input type="text" class="form-control" value="">
+                            <input type="text" name="customers[<?php echo $i;?>]" class="form-control" value="<?php if(isset($customers[$i])){echo $customers[$i]; } ?>">
                         </th>
                     <?php
                     }
@@ -77,9 +88,6 @@
                     <tr>
                         <td>
                             <?php echo $variety['name']; ?>
-                        </td>
-                        <td>
-                            <?php echo $variety['hybrid']; ?>
                         </td>
                         <?php
                         for($i=1;$i<=$max_customers_number;$i++)
@@ -115,9 +123,6 @@
                         <td>
                             <?php echo $variety['name']; ?>
                         </td>
-                        <td>
-                            <?php echo $variety['hybrid']; ?>
-                        </td>
                         <?php
                         for($i=1;$i<=$max_customers_number;$i++)
                         {
@@ -140,6 +145,14 @@
                 ?>
             </tbody>
         </table>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea class="form-control" id="remarks" name="remarks"><?php echo $remarks; ?></textarea>
+            </div>
+        </div>
     </div>
 
     <div class="clearfix"></div>
