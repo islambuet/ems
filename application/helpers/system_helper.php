@@ -124,7 +124,7 @@ class System_helper
         $data['other_info']=$other_info;
         $data['date_created']=$time;
         $data['date_created_string']=System_helper::display_date($time);
-        $CI->db->insert('history_hack', $data);
+        $CI->db->insert('ems_history_hack', $data);
     }
     public static function get_bonus_info($variety_id,$pack_size_id,$quantity)
     {

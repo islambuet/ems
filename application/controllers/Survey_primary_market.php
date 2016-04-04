@@ -46,18 +46,10 @@ class Survey_primary_market extends Root_Controller
         {
             $this->get_survey();
         }
-        /*elseif($action=="edit")
+        elseif($action=="edit")
         {
             $this->system_edit($id);
         }
-        elseif($action=="details")
-        {
-            $this->system_details($id);
-        }
-        elseif($action=="request_approve")
-        {
-            $this->system_request_approve($id);
-        }*/
         elseif($action=="save")
         {
             $this->system_save();
@@ -145,87 +137,59 @@ class Survey_primary_market extends Root_Controller
     }
     private function system_edit($id)
     {
-        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        if((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1)))
         {
             if(($this->input->post('id')))
             {
-                $po_id=$this->input->post('id');
+                $survey_id=$this->input->post('id');
             }
             else
             {
-                $po_id=$id;
+                $survey_id=$id;
             }
-
-            $this->db->from($this->config->item('table_sales_po').' po');
-            //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
-            $this->db->select('po.*');
-            $this->db->select('cus.district_id');
-            $this->db->select('d.territory_id');
-            $this->db->select('t.zone_id zone_id');
+            $this->db->from($this->config->item('table_survey_primary').' sp');
+            $this->db->select('sp.*');
+            $this->db->select('d.id district_id');
+            $this->db->select('t.id territory_id');
+            $this->db->select('zone.id zone_id');
             $this->db->select('zone.division_id division_id');
-            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_upazillas').' upz','upz.id = sp.upazilla_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upz.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-            $this->db->where('po.id',$po_id);
-            $data['po']=$this->db->get()->row_array();
+            $this->db->where('sp.id',$survey_id);
 
-            if(!$data['po'])
+            $data['survey']=$this->db->get()->row_array();
+            if(!$data['survey'])
             {
-                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$po_id);
+                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$survey_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if(!$this->check_my_editable($data['po']))
+            if(!$this->check_my_editable($data['survey']))
             {
-                System_helper::invalid_try($this->config->item('system_edit_others'),$po_id);
+                System_helper::invalid_try($this->config->item('system_edit_others'),$survey_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if($data['po']['status_requested']==$this->config->item('system_status_po_request_requested'))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_PO_EDIT_UNABLE");
-                $this->jsonReturn($ajax);
-            }
-
+            $data['title']="Market Survey";
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['po']['division_id']));
-            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['po']['zone_id']));
-            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['po']['territory_id']));
-            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$data['po']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['survey']['division_id']));
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['survey']['zone_id']));
+            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['survey']['territory_id']));
+            $data['upazillas']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$data['survey']['district_id']));
 
+            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
-            $this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
-            $this->db->select('wc.crop_id value,c.name text');
-            $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
-            $this->db->where('wc.warehouse_id',$data['po']['warehouse_id']);
-            $this->db->where('wc.revision',1);
-            $data['crops']=$this->db->get()->result_array();
-
-            $this->db->from($this->config->item('table_sales_po_details').' spd');
-            $this->db->select('spd.*');
-            $this->db->select('v.name variety_name');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->select('crop.name crop_name');
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =spd.variety_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-            $this->db->where('spd.sales_po_id',$data['po']['id']);
-            $this->db->where('spd.revision',1);
-            $data['po_varieties']=$this->db->get()->result_array();
-            $data['remarks']=$data['po_varieties'][0]['remarks'];
-            $data['title']="Edit PO (".str_pad($data['po']['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT).')';
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("sales_po/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("survey_primary_market/search",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$po_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$survey_id);
             $this->jsonReturn($ajax);
         }
         else
@@ -250,8 +214,16 @@ class Survey_primary_market extends Root_Controller
         if($data['survey'])
         {
             $data['title']="Edit Survey";
-            $data['survey_customer_survey']=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$data['survey']['id']));
-            $data['survey_quantity_survey']=Query_helper::get_info($this->config->item('table_survey_primary_quantity_survey'),'*',array('survey_id ='.$data['survey']['id']));
+            $customer_survey=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$data['survey']['id']));
+            foreach($customer_survey as $survey)
+            {
+                $data['survey_customer_survey'][$survey['variety_id']][$survey['customer_no']]=$survey;
+            }
+            $quantity_survey=Query_helper::get_info($this->config->item('table_survey_primary_quantity_survey'),'*',array('survey_id ='.$data['survey']['id']));
+            foreach($quantity_survey as $survey)
+            {
+                $data['survey_quantity_survey'][$survey['variety_id']]=$survey;
+            }
         }
         else
         {
@@ -317,27 +289,36 @@ class Survey_primary_market extends Root_Controller
                 $data['union_ids']=json_encode($unions);
             }
             $customers=$this->input->post('customers');
-            if(sizeof($unions)>0)
-            {
-                $data['customers']=json_encode($customers);
-            }
+
             $data['remarks']=$this->input->post('remarks');
 
             $this->db->trans_start();  //DB Transaction Handle START
             if($survey)
             {
+                $survey_id=$survey['id'];
+                $old_customers=json_decode($survey['customers'],true);
+                if(sizeof($customers)>0)
+                {
+                    foreach($customers as $i=>$customer)
+                    {
+                        $old_customers[$i]=$customer;
+                    }
+                }
+                $data['customers']=json_encode($old_customers);
                 Query_helper::update($this->config->item('table_survey_primary'),$data,array("id = ".$survey['id']));
+
             }
             else
             {
                 $data['year']=$year;
                 $data['crop_type_id']=$crop_type_id;
                 $data['upazilla_id']=$upazilla_id;
-                Query_helper::add($this->config->item('table_survey_primary'),$data);
-                /*$po['user_created'] = $user->user_id;
-                $po['date_created'] = $time;
-                $po_id=Query_helper::add($this->config->item('table_sales_po'),$po);
-                if($po_id===false)
+                if(sizeof($customers)>0)
+                {
+                    $data['customers']=json_encode($customers);
+                }
+                $survey_id=Query_helper::add($this->config->item('table_survey_primary'),$data);
+                if($survey_id===false)
                 {
                     $this->db->trans_complete();
                     $ajax['status']=false;
@@ -345,11 +326,88 @@ class Survey_primary_market extends Root_Controller
                     $this->jsonReturn($ajax);
                     die();
                 }
-                else
-                {
-                    $id=$po_id;
-                }*/
             }
+            $survey_customer_survey=array();
+            $customer_survey=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$survey_id));
+            foreach($customer_survey as $survey)
+            {
+                $survey_customer_survey[$survey['variety_id']][$survey['customer_no']]=$survey;
+            }
+            $varieties=$this->input->post('varieties');
+            if(sizeof($varieties)>0)
+            {
+                foreach($varieties as $variety_id=>$variety)
+            {
+                foreach($variety as $i=>$customer)
+                {
+                    $data=array();
+                    if(isset($customer['weight_sales'])&&$customer['weight_sales']>0)
+                    {
+                        $data['weight_sales']=$customer['weight_sales'];
+                    }
+                    if(isset($customer['weight_market'])&&$customer['weight_market']>0)
+                    {
+                        $data['weight_market']=$customer['weight_market'];
+                    }
+                    if($data)
+                    {
+                        if(isset($survey_customer_survey[$variety_id][$i]))
+                        {
+                            $data['user_updated'] = $user->user_id;
+                            $data['date_updated'] = $time;
+                            Query_helper::update($this->config->item('table_survey_primary_customer_survey'),$data,array("id = ".$survey_customer_survey[$variety_id][$i]['id']));
+                        }
+                        else
+                        {
+                            $data['survey_id'] = $survey_id;
+                            $data['variety_id'] = $variety_id;
+                            $data['customer_no'] = $i;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] = $time;
+                            Query_helper::add($this->config->item('table_survey_primary_customer_survey'),$data);
+                        }
+
+                    }
+                }
+            }
+            }
+            $survey_quantity_survey=array();
+            $quantity_survey=Query_helper::get_info($this->config->item('table_survey_primary_quantity_survey'),'*',array('survey_id ='.$survey_id));
+            foreach($quantity_survey as $survey)
+            {
+                $survey_quantity_survey[$survey['variety_id']]=$survey;
+            }
+
+            $weights_assumed=$this->input->post('weight_assumed');
+            if(sizeof($weights_assumed)>0)
+            {
+                foreach($weights_assumed as $variety_id=>$weight_assumed)
+                {
+                    if($weight_assumed>0)
+                    {
+                        $data=array();
+                        $data['weight_assumed']=$weight_assumed;
+                        if(isset($survey_quantity_survey[$variety_id]))
+                        {
+                            $data['user_updated'] = $user->user_id;
+                            $data['date_updated'] = $time;
+                            Query_helper::update($this->config->item('table_survey_primary_quantity_survey'),$data,array("id = ".$survey_quantity_survey[$variety_id]['id']));
+
+                        }
+                        else
+                        {
+                            $data['survey_id'] = $survey_id;
+                            $data['variety_id'] = $variety_id;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] = $time;
+                            Query_helper::add($this->config->item('table_survey_primary_quantity_survey'),$data);
+                        }
+                    }
+
+
+                }
+            }
+
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
@@ -436,24 +494,24 @@ class Survey_primary_market extends Root_Controller
 
     public function get_items()
     {
-        /*$this->db->from($this->config->item('table_sales_po_details').' pod');
+        $this->db->from($this->config->item('table_survey_primary').' sp');
 
-        $this->db->select('SUM(pod.quantity) quantity_total');
-        $this->db->select('SUM(pod.quantity*pod.pack_size) quantity_weight');
-        $this->db->select('SUM(pod.quantity*pod.variety_price) price_total');
+        $this->db->select('COUNT(sp.crop_type_id) num_types');
+        $this->db->select('COUNT(Distinct  types.crop_id) num_crops');
+        $this->db->select('sp.*');
 
-        $this->db->select('po.*');
-        $this->db->select('cus.name,cus.customer_code');
+        $this->db->select('upz.name upazilla_name');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
-        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_upazillas').' upz','upz.id = sp.upazilla_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upz.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' types','types.id = sp.crop_type_id','INNER');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -466,23 +524,18 @@ class Survey_primary_market extends Root_Controller
                     if($this->locations['district_id']>0)
                     {
                         $this->db->where('d.id',$this->locations['district_id']);
+                        if($this->locations['upazilla_id']>0)
+                        {
+                            $this->db->where('upz.id',$this->locations['upazilla_id']);
+                        }
                     }
                 }
             }
         }
-        $this->db->where('pod.revision',1);
-        $this->db->group_by('po.id');
-        $this->db->order_by('po.id','DESC');
+        $this->db->group_by(array('sp.year','sp.upazilla_id'));
+        $this->db->order_by('sp.year','DESC');
+        $this->db->order_by('sp.id','DESC');
         $items=$this->db->get()->result_array();
-        foreach($items as &$item)
-        {
-            $item['po_no']=str_pad($item['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
-            $item['quantity_weight']=number_format($item['quantity_weight']/1000,3,'.','');
-            $item['price_total']=number_format($item['price_total'],2);
-            $item['date_po']=System_helper::display_date($item['date_po']);
-
-        }*/
-        $items=array();
         $this->jsonReturn($items);
     }
 

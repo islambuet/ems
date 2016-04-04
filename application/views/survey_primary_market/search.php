@@ -195,6 +195,7 @@
                     }
                     ?>
                     <label class="control-label"><?php echo $upazilla_name;?></label>
+                    <input type="hidden" id="upazilla_id" value="<?php echo $survey['upazilla_id']; ?>">
                 <?php
                 }
                 else

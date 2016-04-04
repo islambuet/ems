@@ -37,114 +37,473 @@
             }
             ?>
         </div>
-        <table class="table table-condensed table-striped table-bordered table-hover no-margin">
-            <thead>
-                <tr>
-                    <th colspan="50">ARM Variety</th>
-                </tr>
-                <tr>
-                    <th>
-                        Variety
-                    </th>
-                    <?php
-                    for($i=1;$i<=$max_customers_number;$i++)
-                    {
-                        ?>
-                        <th style="width: 150px;">
-                            Individual Sales Quantity
-                        </th>
-                        <th style="width: 150px;">
-                            Market Size
-                        </th>
-                        <?php
-                    }
-                    ?>
-                    <th>
-                        Assumed Market Size
-                    </th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <?php
-                    for($i=1;$i<=$max_customers_number;$i++)
-                    {
-                        ?>
-                        <th colspan="2">
-                            <input type="text" name="customers[<?php echo $i;?>]" class="form-control" value="<?php if(isset($customers[$i])){echo $customers[$i]; } ?>">
-                        </th>
-                    <?php
-                    }
-                    ?>
-                    <th>
-                        &nbsp;
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                foreach($varieties_arm as $variety)
-                {
-                    ?>
+        <div class="col-xs-12" style="overflow-x: auto;">
+            <table class="table table-hover table-bordered">
+                <thead>
                     <tr>
-                        <td>
-                            <?php echo $variety['name']; ?>
-                        </td>
+                        <th colspan="50">ARM Variety</th>
+                    </tr>
+                    <tr>
+                        <th style="width: 100px;">
+                            Variety
+                        </th>
                         <?php
                         for($i=1;$i<=$max_customers_number;$i++)
                         {
                             ?>
+                            <th style="width: 100px;">
+                                Individual Sales Quantity
+                            </th>
+                            <th style="width: 100px;">
+                                Market Size
+                            </th>
+                            <?php
+                        }
+                        ?>
+                        <th style="width: 100px;">
+                            Assumed Market Size
+                        </th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <?php
+                        for($i=1;$i<=$max_customers_number;$i++)
+                        {
+                            ?>
+                            <th colspan="2">
+                                <?php
+                                $editable=false;
+                                if(isset($customers[$i])&&strlen($customers[$i])>0)
+                                {
+                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                    {
+                                        $editable=true;
+                                    }
+                                    else
+                                    {
+                                        $editable=false;
+                                    }
+
+                                }
+                                else
+                                {
+                                    $editable=true;
+                                }
+                                if($editable)
+                                {
+                                    ?>
+                                    <input type="text" name="customers[<?php echo $i;?>]" class="form-control" value="<?php if(isset($customers[$i])){echo $customers[$i]; } ?>">
+                                    <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <label><?php echo $customers[$i]; ?></label>
+                                    <?php
+                                }
+                                ?>
+
+                            </th>
+                        <?php
+                        }
+                        ?>
+                        <th>
+                            &nbsp;
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach($varieties_arm as $variety)
+                    {
+                        ?>
+                        <tr>
                             <td>
-                                <input type="text" class="form-control integer_type_positive text-right" value="">
+                                <?php echo $variety['name']; ?>
+                            </td>
+                            <?php
+                            for($i=1;$i<=$max_customers_number;$i++)
+                            {
+                                $editable_sales=false;
+                                $editable_market=false;
+                                $sales='';
+                                $market='';
+                                if(isset($survey_customer_survey[$variety['id']][$i]))
+                                {
+                                    if($survey_customer_survey[$variety['id']][$i]['weight_sales']>0)
+                                    {
+                                        $sales=$survey_customer_survey[$variety['id']][$i]['weight_sales'];
+                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        {
+                                            $editable_sales=true;
+                                        }
+                                        else
+                                        {
+                                            $editable_sales=false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        $editable_sales=true;
+                                    }
+                                    if($survey_customer_survey[$variety['id']][$i]['weight_market']>0)
+                                    {
+                                        $market=$survey_customer_survey[$variety['id']][$i]['weight_market'];
+                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        {
+                                            $editable_market=true;
+                                        }
+                                        else
+                                        {
+                                            $editable_market=false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        $editable_market=true;
+                                    }
+                                }
+                                else
+                                {
+                                    $editable_sales=true;
+                                    $editable_market=true;
+                                }
+                                ?>
+                                <td>
+                                    <?php
+                                    if($editable_sales)
+                                    {
+                                        ?>
+                                            <input type="text" class="form-control integer_type_positive text-right" name="varieties[<?php echo $variety['id']; ?>][<?php echo $i;?>][weight_sales]" value="<?php echo $sales;?>">
+                                        <?php
+                                    }
+                                    else
+                                    {
+                                        ?>
+                                        <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $sales;?></label>
+                                        <?php
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if($editable_market)
+                                    {
+                                        ?>
+                                            <input type="text" class="form-control integer_type_positive text-right" name="varieties[<?php echo $variety['id']; ?>][<?php echo $i;?>][weight_market]" value="<?php echo $market;?>">
+                                        <?php
+                                    }
+                                    else
+                                    {
+                                        ?>
+                                        <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $market;?></label>
+                                        <?php
+                                    }
+                                    ?>
+                                </td>
+                                <?php
+                            }
+                            ?>
+                            <td>
+                                <?php
+                                $editable=false;
+                                if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])&&($survey_quantity_survey[$variety['id']]['weight_assumed']>0))
+                                {
+                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                    {
+                                        $editable=true;
+                                    }
+                                    else
+                                    {
+                                        $editable=false;
+                                    }
+
+                                }
+                                else
+                                {
+                                    $editable=true;
+                                }
+                                if($editable)
+                                {
+                                    ?>
+                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
+                                <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $survey_quantity_survey[$variety['id']]['weight_assumed'];?></label>
+                                <?php
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                    ?>
+                    <!--check variety-->
+                    <tr>
+                        <th colspan="21">
+                            Competitor Variety
+                        </th>
+                    </tr>
+                    <?php
+                    foreach($varieties_competitor as $variety)
+                    {
+                        ?>
+                        <tr>
+                            <td>
+                                <?php echo $variety['name']; ?>
+                            </td>
+                            <?php
+                            for($i=1;$i<=$max_customers_number;$i++)
+                            {
+                                $editable_sales=false;
+                                $editable_market=false;
+                                $sales='';
+                                $market='';
+                                if(isset($survey_customer_survey[$variety['id']][$i]))
+                                {
+                                    if($survey_customer_survey[$variety['id']][$i]['weight_sales']>0)
+                                    {
+                                        $sales=$survey_customer_survey[$variety['id']][$i]['weight_sales'];
+                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        {
+                                            $editable_sales=true;
+                                        }
+                                        else
+                                        {
+                                            $editable_sales=false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        $editable_sales=true;
+                                    }
+                                    if($survey_customer_survey[$variety['id']][$i]['weight_market']>0)
+                                    {
+                                        $market=$survey_customer_survey[$variety['id']][$i]['weight_market'];
+                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        {
+                                            $editable_market=true;
+                                        }
+                                        else
+                                        {
+                                            $editable_market=false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        $editable_market=true;
+                                    }
+                                }
+                                else
+                                {
+                                    $editable_sales=true;
+                                    $editable_market=true;
+                                }
+                                ?>
+                                <td>
+                                    <?php
+                                    if($editable_sales)
+                                    {
+                                        ?>
+                                        <input type="text" class="form-control integer_type_positive text-right" name="varieties[<?php echo $variety['id']; ?>][<?php echo $i;?>][weight_sales]" value="<?php echo $sales;?>">
+                                    <?php
+                                    }
+                                    else
+                                    {
+                                        ?>
+                                        <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $sales;?></label>
+                                    <?php
+                                    }
+                                    ?>
+                                </td>
+                                <td>
+                                    <?php
+                                    if($editable_market)
+                                    {
+                                        ?>
+                                        <input type="text" class="form-control integer_type_positive text-right" name="varieties[<?php echo $variety['id']; ?>][<?php echo $i;?>][weight_market]" value="<?php echo $market;?>">
+                                    <?php
+                                    }
+                                    else
+                                    {
+                                        ?>
+                                        <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $market;?></label>
+                                    <?php
+                                    }
+                                    ?>
+                                </td>
+                            <?php
+                            }
+                            ?>
+                            <td>
+                                <?php
+                                $editable=false;
+                                if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])&&($survey_quantity_survey[$variety['id']]['weight_assumed']>0))
+                                {
+                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                    {
+                                        $editable=true;
+                                    }
+                                    else
+                                    {
+                                        $editable=false;
+                                    }
+
+                                }
+                                else
+                                {
+                                    $editable=true;
+                                }
+                                if($editable)
+                                {
+                                    ?>
+                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
+                                <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $survey_quantity_survey[$variety['id']]['weight_assumed'];?></label>
+                                <?php
+                                }
+                                ?>
+                            </td>
+                        </tr>
+                    <?php
+                    }
+                    ?>
+                    <tr>
+                        <th colspan="21">
+                            Others variety
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Others
+                        </td>
+                        <?php
+                        for($i=1;$i<=$max_customers_number;$i++)
+                        {
+                            $editable_sales=false;
+                            $editable_market=false;
+                            $sales='';
+                            $market='';
+                            if(isset($survey_customer_survey[0][$i]))
+                            {
+                                if($survey_customer_survey[0][$i]['weight_sales']>0)
+                                {
+                                    $sales=$survey_customer_survey[0][$i]['weight_sales'];
+                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                    {
+                                        $editable_sales=true;
+                                    }
+                                    else
+                                    {
+                                        $editable_sales=false;
+                                    }
+                                }
+                                else
+                                {
+                                    $editable_sales=true;
+                                }
+                                if($survey_customer_survey[0][$i]['weight_market']>0)
+                                {
+                                    $market=$survey_customer_survey[0][$i]['weight_market'];
+                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                    {
+                                        $editable_market=true;
+                                    }
+                                    else
+                                    {
+                                        $editable_market=false;
+                                    }
+                                }
+                                else
+                                {
+                                    $editable_market=true;
+                                }
+                            }
+                            else
+                            {
+                                $editable_sales=true;
+                                $editable_market=true;
+                            }
+                            ?>
+                            <td>
+                                <?php
+                                if($editable_sales)
+                                {
+                                    ?>
+                                    <input type="text" class="form-control integer_type_positive text-right" name="varieties[0][<?php echo $i;?>][weight_sales]" value="<?php echo $sales;?>">
+                                <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $sales;?></label>
+                                <?php
+                                }
+                                ?>
                             </td>
                             <td>
-                                <input type="text" class="form-control integer_type_positive text-right" value="">
+                                <?php
+                                if($editable_market)
+                                {
+                                    ?>
+                                    <input type="text" class="form-control integer_type_positive text-right" name="varieties[0][<?php echo $i;?>][weight_market]" value="<?php echo $market;?>">
+                                <?php
+                                }
+                                else
+                                {
+                                    ?>
+                                    <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $market;?></label>
+                                <?php
+                                }
+                                ?>
                             </td>
                         <?php
                         }
                         ?>
                         <td>
-                            <input type="text" class="form-control integer_type_positive text-right" value="">
-                        </td>
-                    </tr>
-                    <?php
-                }
-                ?>
-                <!--check variety-->
-                <tr>
-                    <th colspan="21">
-                        Competitor Variety
-                    </th>
-                </tr>
-                <?php
-                foreach($varieties_competitor as $variety)
-                {
-                    ?>
-                    <tr>
-                        <td>
-                            <?php echo $variety['name']; ?>
-                        </td>
-                        <?php
-                        for($i=1;$i<=$max_customers_number;$i++)
-                        {
+                            <?php
+                            $editable=false;
+                            if(isset($survey_quantity_survey[0]['weight_assumed'])&&($survey_quantity_survey[0]['weight_assumed']>0))
+                            {
+                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                {
+                                    $editable=true;
+                                }
+                                else
+                                {
+                                    $editable=false;
+                                }
+
+                            }
+                            else
+                            {
+                                $editable=true;
+                            }
+                            if($editable)
+                            {
+                                ?>
+                                <input type="text" name="weight_assumed[0]" class="form-control" value="<?php if(isset($survey_quantity_survey[0]['weight_assumed'])){echo $survey_quantity_survey[0]['weight_assumed']; } ?>">
+                            <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <label class="text-right form-control" style="background-color: #F5F5F5;"><?php echo $survey_quantity_survey[0]['weight_assumed'];?></label>
+                            <?php
+                            }
                             ?>
-                            <td>
-                                <input type="text" class="form-control integer_type_positive text-right" value="">
-                            </td>
-                            <td>
-                                <input type="text" class="form-control integer_type_positive text-right" value="">
-                            </td>
-                        <?php
-                        }
-                        ?>
-                        <td>
-                            <input type="text" class="form-control integer_type_positive text-right" value="">
                         </td>
                     </tr>
-                <?php
-                }
-                ?>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
