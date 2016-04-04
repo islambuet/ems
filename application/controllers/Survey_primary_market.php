@@ -207,7 +207,7 @@ class Survey_primary_market extends Root_Controller
         $data['unions']=Query_helper::get_info($this->config->item('table_setup_location_unions'),array('id value','name text'),array('upazilla_id ='.$data['upazilla_id'],'status ="'.$this->config->item('system_status_active').'"'));
         $data['varieties_arm']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),'*',array('crop_type_id ='.$data['crop_type_id'],'status ="'.$this->config->item('system_status_active').'"','whose ="ARM"'));
         $data['varieties_competitor']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),'*',array('crop_type_id ='.$data['crop_type_id'],'status ="'.$this->config->item('system_status_active').'"','whose ="Competitor"'));
-        $data['max_customers_number']=2;
+        $data['max_customers_number']=$this->config->item('system_msurvey_customers_num');
         $data['survey']=Query_helper::get_info($this->config->item('table_survey_primary'),'*',array('year ='.$data['year'],'crop_type_id ='.$data['crop_type_id'],'upazilla_id ='.$data['upazilla_id'],'status ="'.$this->config->item('system_status_active').'"'),1);
         $data['survey_customer_survey']=array();
         $data['survey_quantity_survey']=array();
