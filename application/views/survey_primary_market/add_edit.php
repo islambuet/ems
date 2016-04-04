@@ -226,7 +226,7 @@
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
+                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control integer_type_positive text-right" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
                                 <?php
                                 }
                                 else
@@ -360,7 +360,7 @@
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
+                                    <input type="text" name="weight_assumed[<?php echo $variety['id'];?>]" class="form-control integer_type_positive text-right" value="<?php if(isset($survey_quantity_survey[$variety['id']]['weight_assumed'])){echo $survey_quantity_survey[$variety['id']]['weight_assumed']; } ?>">
                                 <?php
                                 }
                                 else
@@ -489,7 +489,7 @@
                             if($editable)
                             {
                                 ?>
-                                <input type="text" name="weight_assumed[0]" class="form-control" value="<?php if(isset($survey_quantity_survey[0]['weight_assumed'])){echo $survey_quantity_survey[0]['weight_assumed']; } ?>">
+                                <input type="text" name="weight_assumed[0]" class="form-control integer_type_positive text-right" value="<?php if(isset($survey_quantity_survey[0]['weight_assumed'])){echo $survey_quantity_survey[0]['weight_assumed']; } ?>">
                             <?php
                             }
                             else
