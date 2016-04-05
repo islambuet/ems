@@ -66,3 +66,4 @@ $config['table_survey_primary'] = 'ems_survey_primary';
 $config['table_survey_primary_customers'] = 'ems_survey_primary_customers';
 $config['table_survey_primary_customer_survey'] = 'ems_survey_primary_customer_survey';
 $config['table_survey_primary_quantity_survey'] = 'ems_survey_primary_quantity_survey';
+$config['table_survey_product'] = 'ems_survey_product';
