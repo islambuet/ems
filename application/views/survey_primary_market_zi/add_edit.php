@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
     $union_ids=array();
-    $customers=array();
+
     $remarks='';
     if($survey)
     {
@@ -9,8 +9,6 @@
         {
             $union_ids=json_decode($survey['union_ids'],true);
         }
-
-        $customers=json_decode($survey['customers'],true);
         $remarks=$survey['remarks'];
     }
 
@@ -80,9 +78,9 @@
                             <th colspan="2">
                                 <label class="text-center form-control" style="background-color: #F5F5F5;">
                                     <?php
-                                    if(isset($customers[$i])&&strlen($customers[$i])>0)
+                                    if(isset($customers[$i]['name'])&&strlen($customers[$i]['name'])>0)
                                     {
-                                        echo $customers[$i];
+                                        echo $customers[$i]['name'];
                                     }
                                     ?>
                                 </label>

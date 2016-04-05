@@ -211,9 +211,17 @@ class Survey_primary_market extends Root_Controller
         $data['survey']=Query_helper::get_info($this->config->item('table_survey_primary'),'*',array('year ='.$data['year'],'crop_type_id ='.$data['crop_type_id'],'upazilla_id ='.$data['upazilla_id'],'status ="'.$this->config->item('system_status_active').'"'),1);
         $data['survey_customer_survey']=array();
         $data['survey_quantity_survey']=array();
+        $data['customers']=array();
+        $customers=Query_helper::get_info($this->config->item('table_survey_primary_customers'),'*',array('year ='.$data['year'],'upazilla_id ='.$data['upazilla_id']));
+        foreach($customers as $customer)
+        {
+            $data['customers'][$customer['customer_no']]=$customer;
+        }
         if($data['survey'])
         {
             $data['title']="Edit Survey";
+
+
             $customer_survey=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$data['survey']['id']));
             foreach($customer_survey as $survey)
             {
@@ -283,7 +291,7 @@ class Survey_primary_market extends Root_Controller
             {
                 $data['union_ids']=json_encode($unions);
             }
-            $customers=$this->input->post('customers');
+
 
             $data['remarks']=$this->input->post('remarks');
 
@@ -291,15 +299,6 @@ class Survey_primary_market extends Root_Controller
             if($survey)
             {
                 $survey_id=$survey['id'];
-                $old_customers=json_decode($survey['customers'],true);
-                if(sizeof($customers)>0)
-                {
-                    foreach($customers as $i=>$customer)
-                    {
-                        $old_customers[$i]=$customer;
-                    }
-                }
-                $data['customers']=json_encode($old_customers);
                 Query_helper::update($this->config->item('table_survey_primary'),$data,array("id = ".$survey['id']));
 
             }
@@ -308,10 +307,6 @@ class Survey_primary_market extends Root_Controller
                 $data['year']=$year;
                 $data['crop_type_id']=$crop_type_id;
                 $data['upazilla_id']=$upazilla_id;
-                if(sizeof($customers)>0)
-                {
-                    $data['customers']=json_encode($customers);
-                }
                 $survey_id=Query_helper::add($this->config->item('table_survey_primary'),$data);
                 if($survey_id===false)
                 {
@@ -320,6 +315,40 @@ class Survey_primary_market extends Root_Controller
                     $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
                     $this->jsonReturn($ajax);
                     die();
+                }
+            }
+            $survey_customers=array();
+            $customers=Query_helper::get_info($this->config->item('table_survey_primary_customers'),'*',array('year ='.$year,'upazilla_id ='.$upazilla_id));
+            foreach($customers as $customer)
+            {
+                $survey_customers[$customer['customer_no']]=$customer;
+            }
+            $customers=$this->input->post('customers');
+            if(sizeof($customers)>0)
+            {
+                foreach($customers as $i=>$customer)
+                {
+                    if(strlen($customer)>0)
+                    {
+                        $data=array();
+                        $data['name']=$customer;
+                        if(isset($survey_customers[$i]))
+                        {
+                            $data['user_updated'] = $user->user_id;
+                            $data['date_updated'] = $time;
+                            Query_helper::update($this->config->item('table_survey_primary_customers'),$data,array("id = ".$survey_customers[$i]['id']));
+                        }
+                        else
+                        {
+                            $data['year'] = $year;
+                            $data['upazilla_id'] = $upazilla_id;
+                            $data['customer_no'] = $i;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] = $time;
+                            Query_helper::add($this->config->item('table_survey_primary_customers'),$data);
+                        }
+                    }
+
                 }
             }
             $survey_customer_survey=array();
@@ -332,39 +361,39 @@ class Survey_primary_market extends Root_Controller
             if(sizeof($varieties)>0)
             {
                 foreach($varieties as $variety_id=>$variety)
-            {
-                foreach($variety as $i=>$customer)
                 {
-                    $data=array();
-                    if(isset($customer['weight_sales'])&&$customer['weight_sales']>0)
+                    foreach($variety as $i=>$customer)
                     {
-                        $data['weight_sales']=$customer['weight_sales'];
-                    }
-                    if(isset($customer['weight_market'])&&$customer['weight_market']>0)
-                    {
-                        $data['weight_market']=$customer['weight_market'];
-                    }
-                    if($data)
-                    {
-                        if(isset($survey_customer_survey[$variety_id][$i]))
+                        $data=array();
+                        if(isset($customer['weight_sales'])&&$customer['weight_sales']>0)
                         {
-                            $data['user_updated'] = $user->user_id;
-                            $data['date_updated'] = $time;
-                            Query_helper::update($this->config->item('table_survey_primary_customer_survey'),$data,array("id = ".$survey_customer_survey[$variety_id][$i]['id']));
+                            $data['weight_sales']=$customer['weight_sales'];
                         }
-                        else
+                        if(isset($customer['weight_market'])&&$customer['weight_market']>0)
                         {
-                            $data['survey_id'] = $survey_id;
-                            $data['variety_id'] = $variety_id;
-                            $data['customer_no'] = $i;
-                            $data['user_created'] = $user->user_id;
-                            $data['date_created'] = $time;
-                            Query_helper::add($this->config->item('table_survey_primary_customer_survey'),$data);
+                            $data['weight_market']=$customer['weight_market'];
                         }
+                        if($data)
+                        {
+                            if(isset($survey_customer_survey[$variety_id][$i]))
+                            {
+                                $data['user_updated'] = $user->user_id;
+                                $data['date_updated'] = $time;
+                                Query_helper::update($this->config->item('table_survey_primary_customer_survey'),$data,array("id = ".$survey_customer_survey[$variety_id][$i]['id']));
+                            }
+                            else
+                            {
+                                $data['survey_id'] = $survey_id;
+                                $data['variety_id'] = $variety_id;
+                                $data['customer_no'] = $i;
+                                $data['user_created'] = $user->user_id;
+                                $data['date_created'] = $time;
+                                Query_helper::add($this->config->item('table_survey_primary_customer_survey'),$data);
+                            }
 
+                        }
                     }
                 }
-            }
             }
             $survey_quantity_survey=array();
             $quantity_survey=Query_helper::get_info($this->config->item('table_survey_primary_quantity_survey'),'*',array('survey_id ='.$survey_id));

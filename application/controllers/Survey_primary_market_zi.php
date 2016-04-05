@@ -221,6 +221,12 @@ class Survey_primary_market_zi extends Root_Controller
         else
         {
             $data['title']="ZI Edit Survey";
+            $data['customers']=array();
+            $customers=Query_helper::get_info($this->config->item('table_survey_primary_customers'),'*',array('year ='.$data['year'],'upazilla_id ='.$data['upazilla_id']));
+            foreach($customers as $customer)
+            {
+                $data['customers'][$customer['customer_no']]=$customer;
+            }
             $customer_survey=Query_helper::get_info($this->config->item('table_survey_primary_customer_survey'),'*',array('survey_id ='.$data['survey']['id']));
             foreach($customer_survey as $survey)
             {

@@ -63,5 +63,6 @@ $config['table_sales_po_receives'] = 'ems_sales_po_receives';
 $config['table_sales_po_returns'] = 'ems_sales_po_returns';
 //primary market survey
 $config['table_survey_primary'] = 'ems_survey_primary';
+$config['table_survey_primary_customers'] = 'ems_survey_primary_customers';
 $config['table_survey_primary_customer_survey'] = 'ems_survey_primary_customer_survey';
 $config['table_survey_primary_quantity_survey'] = 'ems_survey_primary_quantity_survey';

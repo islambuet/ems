@@ -1,7 +1,7 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
     $union_ids=array();
-    $customers=array();
+
     $remarks='';
     if($survey)
     {
@@ -9,8 +9,6 @@
         {
             $union_ids=json_decode($survey['union_ids'],true);
         }
-
-        $customers=json_decode($survey['customers'],true);
         $remarks=$survey['remarks'];
     }
 
@@ -73,7 +71,7 @@
                             <th colspan="2">
                                 <?php
                                 $editable=false;
-                                if(isset($customers[$i])&&strlen($customers[$i])>0)
+                                if(isset($customers[$i]['name'])&&strlen($customers[$i]['name'])>0)
                                 {
                                     if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
                                     {
@@ -92,13 +90,13 @@
                                 if($editable)
                                 {
                                     ?>
-                                    <input type="text" name="customers[<?php echo $i;?>]" class="form-control" value="<?php if(isset($customers[$i])){echo $customers[$i]; } ?>">
+                                    <input type="text" name="customers[<?php echo $i;?>]" class="form-control" value="<?php if(isset($customers[$i])){echo $customers[$i]['name']; } ?>">
                                     <?php
                                 }
                                 else
                                 {
                                     ?>
-                                    <label><?php echo $customers[$i]; ?></label>
+                                    <label><?php echo $customers[$i]['name']; ?></label>
                                     <?php
                                 }
                                 ?>
