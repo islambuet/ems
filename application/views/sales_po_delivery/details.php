@@ -2,6 +2,10 @@
     $CI = & get_instance();
     $action_data=array();
     $action_data["action_back"]=base_url($CI->controller_url);
+    if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
+    {
+        $action_data["action_print_page"]='PO LIST';
+    }
     $CI->load->view("action_buttons",$action_data);
 
 ?>

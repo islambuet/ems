@@ -166,6 +166,16 @@
     }
     ?>
     <?php
+    if(isset($action_print_page))
+    {
+        ?>
+        <div class="action_button">
+            <button onClick="window.print()" class="btn" data-title="<?php echo $action_print_page; ?>"><?php echo $CI->lang->line("ACTION_PRINT"); ?></button>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if(isset($action_csv))
     {
         ?>
