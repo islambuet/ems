@@ -238,53 +238,71 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
-                    <th style="min-width: 100px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></th>
+                    <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_PRICE_PACK'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_BONUS_QUANTITY_PIECES'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_BONUS_PACK_NAME'); ?></th>
+                    <th style="min-width: 80px;"><?php echo $CI->lang->line('LABEL_BONUS_WEIGHT_KG'); ?></th>
 
                 </tr>
                 </thead>
                 <tbody>
                 <?php
-
-                foreach($po_varieties as $index=>$po_variety)
+                $total_total_quantity=0;
+                $total_total_weight=0;
+                $total_total_price=0;
+                $total_total_bonus_quantity=0;
+                $total_total_bonus_weight=0;
+                foreach($po_varieties as $detail)
                 {
-
+                    $total_total_quantity+=$detail['quantity'];
+                    $total_total_weight+=$detail['pack_size']*$detail['quantity'];
+                    $total_total_price+=$detail['variety_price']*$detail['quantity'];
+                    $total_total_bonus_quantity+=$detail['quantity_bonus'];
+                    if($detail['bonus_details_id']>0)
+                    {
+                        $total_total_bonus_weight+=$detail['quantity_bonus']*$detail['bonus_pack_size'];
+                    }
                     ?>
                     <tr>
                         <td>
-                            <label><?php echo $po_variety['crop_name']; ?></label>
+                            <label><?php echo $detail['crop_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $po_variety['crop_type_name']; ?></label>
+                            <label><?php echo $detail['crop_type_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $po_variety['variety_name']; ?></label>
+                            <label><?php echo $detail['variety_name']; ?></label>
                         </td>
                         <td>
-                            <label><?php echo $po_variety['pack_size']; ?></label>
-                        </td>
-
-                        <td class="text-right">
-                            <label><?php echo $po_variety['quantity']; ?></label>
+                            <label><?php echo $detail['pack_size']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php echo number_format($po_variety['pack_size']*$po_variety['quantity']/1000,3,'.',''); ?></label>
+                            <label><?php echo $detail['variety_price']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php echo $po_variety['quantity_bonus']; ?></label>
+                            <label><?php echo $detail['quantity']; ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php if($po_variety['bonus_details_id']>0){echo $po_variety['bonus_pack_size'];}else{echo 'N/A';} ?></label>
+                            <label><?php echo number_format($detail['pack_size']*$detail['quantity']/1000,3,'.',''); ?></label>
                         </td>
                         <td class="text-right">
-                            <label><?php echo number_format($po_variety['quantity_bonus']*$po_variety['bonus_pack_size']/1000,3,'.',''); ?></label>
+                            <label><?php echo number_format($detail['variety_price']*$detail['quantity'],2); ?></label>
+                        </td>
+                        <td class="text-right">
+                            <label><?php echo $detail['quantity_bonus']; ?></label>
+                        </td>
+                        <td class="text-right">
+                            <label><?php if($detail['bonus_details_id']>0){echo $detail['bonus_pack_size'];}else{echo 'N/A';} ?></label>
+                        </td>
+                        <td class="text-right">
+                            <label><?php echo number_format($detail['quantity_bonus']*$detail['bonus_pack_size']/1000,3,'.',''); ?></label>
                         </td>
                     </tr>
                 <?php
@@ -292,7 +310,21 @@
                 ?>
 
                 </tbody>
+                <tfoot>
+                <tr>
+                    <td class="text-right" colspan="5"><label><?php echo $CI->lang->line('LABEL_TOTAL'); ?></label></td>
+                    <td class="text-right"><label id="total_total_quantity"><?php echo number_format($total_total_quantity,0,'.',''); ?></label></td>
+                    <td class="text-right"><label id="total_total_weight"><?php echo number_format($total_total_weight/1000,3,'.',''); ?></label></td>
+                    <td class="text-right"><label id="total_total_price"><?php echo number_format($total_total_price,2); ?></label></td>
+                    <td class="text-right"><label id="total_total_bonus_quantity"><?php echo number_format($total_total_bonus_quantity,0,'.',''); ?></label></td>
+                    <td>&nbsp;</td>
+                    <td class="text-right"><label id="total_total_bonus_weight"><?php echo number_format($total_total_bonus_weight/1000,3,'.',''); ?></label></td>
+                    <td>&nbsp;</td>
+
+                </tr>
+                </tfoot>
             </table>
+            
         </div>
         <div class="widget-header">
             <div class="title">
