@@ -208,7 +208,7 @@
                         else
                         {
                             ?>
-                            <select id="upazilla_id" class="form-control">
+                            <select id="upazilla_id" name="report[upazilla_id]" class="form-control">
                                 <option value=""><?php echo $this->lang->line('SELECT');?></option>
                                 <?php
                                 foreach($upazillas as $upazilla)
@@ -313,7 +313,7 @@
                 $('#variety_id_container').show();
 
                 $.ajax({
-                    url: base_url+"common_controller/get_dropdown_armvarieties_by_croptypeid/",
+                    url: base_url+"common_controller/get_dropdown_varieties_by_croptypeid/",
                     type: 'POST',
                     datatype: "JSON",
                     data:{crop_type_id:crop_type_id},
