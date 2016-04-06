@@ -324,7 +324,7 @@
                 </tr>
                 </tfoot>
             </table>
-            
+
         </div>
         <div class="widget-header">
             <div class="title">
