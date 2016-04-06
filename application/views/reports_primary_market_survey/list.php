@@ -32,6 +32,9 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_name"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="weight_assumed">Assumed Market Size</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="weight_final">ZI Assumed Market Size</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="unions">Unions</label>
         </div>
     <?php
     }
