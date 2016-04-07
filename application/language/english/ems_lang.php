@@ -209,3 +209,4 @@ $lang['LABEL_EXCESS'] = 'Excess';
 $lang['LABEL_DATE_SOWING'] = 'Sowing Date';
 $lang['LABEL_NUM_PICTURE'] = 'Number of Pictures';
 $lang['LABEL_INTERVAL'] = 'Interval (Days)';
+$lang['LABEL_FEEDBACK'] = 'Feedback';

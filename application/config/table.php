@@ -70,4 +70,5 @@ $config['table_survey_product'] = 'ems_survey_product';
 
 //task management
 $config['table_tm_farmers'] = 'ems_tm_farmers';
+$config['table_tm_visits'] = 'ems_tm_visits';
 
