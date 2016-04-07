@@ -206,3 +206,6 @@ $lang['LABEL_DATE_RETURNED'] = 'Returned Date';
 $lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
 $lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
 $lang['LABEL_EXCESS'] = 'Excess';
+$lang['LABEL_DATE_SOWING'] = 'Sowing Date';
+$lang['LABEL_NUM_PICTURE'] = 'Number of Pictures';
+$lang['LABEL_INTERVAL'] = 'Interval (Days)';
