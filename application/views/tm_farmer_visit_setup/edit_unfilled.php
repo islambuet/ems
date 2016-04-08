@@ -7,7 +7,7 @@
     $action_data["action_clear"]='#save_form';
     $CI->load->view("action_buttons",$action_data);
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_unfilled');?>" method="post">
     <input type="hidden" id="id" name="id" value="<?php echo $fsetup['id']; ?>" />
     <input type="hidden" id="system_save_new_status" name="system_save_new_status" value="0" />
     <div class="row widget">
@@ -18,209 +18,71 @@
             <div class="clearfix"></div>
         </div>
 
-        <div style="" class="row show-grid">
+        <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['division_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['division_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="division_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($divisions as $division)
-                        {?>
-                            <option value="<?php echo $division['value']?>" <?php if($division['value']==$fsetup['division_id']){ echo "selected";}?>><?php echo $division['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
+                <label class="control-label"><?php echo $fsetup['division_name'];?></label>
             </div>
         </div>
 
-        <div style="<?php if(!(sizeof($zones)>0)){echo 'display:none';} ?>" class="row show-grid" id="zone_id_container">
+        <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['zone_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['zone_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="zone_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($zones as $zone)
-                        {?>
-                            <option value="<?php echo $zone['value']?>" <?php if($zone['value']==$fsetup['zone_id']){ echo "selected";}?>><?php echo $zone['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
+                <label class="control-label"><?php echo $fsetup['zone_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($territories)>0)){echo 'display:none';} ?>" class="row show-grid" id="territory_id_container">
+        <div class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['territory_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['territory_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="territory_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($territories as $territory)
-                        {?>
-                            <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$fsetup['territory_id']){ echo "selected";}?>><?php echo $territory['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
-
+                <label class="control-label"><?php echo $fsetup['territory_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($districts)>0)){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
+        <div class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['district_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['district_name'];?></label>
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="district_id" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($districts as $district)
-                        {?>
-                            <option value="<?php echo $district['value']?>" <?php if($district['value']==$fsetup['district_id']){ echo "selected";}?>><?php echo $district['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
-
+                <label class="control-label"><?php echo $fsetup['district_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!(sizeof($upazillas)>0)){echo 'display:none';} ?>" class="row show-grid" id="upazilla_id_container">
+        <div class="row show-grid" id="upazilla_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <?php
-                if($CI->locations['upazilla_id']>0)
-                {
-                    ?>
-                    <label class="control-label"><?php echo $CI->locations['upazilla_name'];?></label>
-                    <input type="hidden" id="upazilla_id" name="fsetup[upazilla_id]" value="<?php echo $CI->locations['upazilla_id']; ?>">
-                <?php
-                }
-                else
-                {
-                    ?>
-                    <select id="upazilla_id" name="fsetup[upazilla_id]" class="form-control">
-                        <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        <?php
-                        foreach($upazillas as $upazilla)
-                        {?>
-                            <option value="<?php echo $upazilla['value']?>" <?php if($upazilla['value']==$fsetup['upazilla_id']){ echo "selected";}?>><?php echo $upazilla['text'];?></option>
-                        <?php
-                        }
-                        ?>
-                    </select>
-                <?php
-                }
-                ?>
+                <label class="control-label"><?php echo $fsetup['upazilla_name'];?></label>
+                <input type="hidden" id="upazilla_id" name="fsetup[upazilla_id]" value="<?php echo $fsetup['upazilla_id']; ?>">
             </div>
         </div>
-        <div style="<?php if(!($fsetup['upazilla_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="crop_id_container">
+        <div class="row show-grid" id="crop_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($crops as $crop)
-                    {?>
-                        <option value="<?php echo $crop['value']?>" <?php if($crop['value']==$fsetup['crop_id']){ echo "selected";}?>><?php echo $crop['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                <label class="control-label"><?php echo $fsetup['crop_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!($fsetup['crop_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="crop_type_id_container">
+        <div class="row show-grid" id="crop_type_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="crop_type_id" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($types as $type)
-                    {?>
-                        <option value="<?php echo $type['value']?>" <?php if($type['value']==$fsetup['type_id']){ echo "selected";}?>><?php echo $type['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                <label class="control-label"><?php echo $fsetup['crop_type_name'];?></label>
             </div>
         </div>
-        <div style="<?php if(!($fsetup['type_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="variety_id_container">
+        <div class="row show-grid" id="variety_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="variety_id" name="fsetup[variety_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($varieties as $variety)
-                    {?>
-                        <option value="<?php echo $variety['value']?>" <?php if($variety['value']==$fsetup['variety_id']){ echo "selected";}?>><?php echo $variety['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                <label class="control-label"><?php echo $fsetup['variety_name'];?></label>
+                <input type="hidden" id="variety_id" name="fsetup[variety_id]" value="<?php echo $fsetup['variety_id']; ?>">
             </div>
         </div>
         <div class="row show-grid">
@@ -228,7 +90,7 @@
                 <label class="control-label pull-right">Farmer's Name<span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="fsetup[name]" class="form-control" value="<?php echo $fsetup['name']; ?>">
+                <label class="control-label"><?php echo $fsetup['name'];?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -252,7 +114,7 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="fsetup[date_sowing]" class="form-control datepicker" value="<?php echo System_helper::display_date($fsetup['date_sowing']); ?>">
+                <label class="control-label"><?php echo System_helper::display_date($fsetup['date_sowing']); ?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -268,16 +130,7 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="num_picture" name="fsetup[num_picture]" class="form-control">
-                    <?php
-                    for($i=0;$i<=30;$i++)
-                    {
-                        ?>
-                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['num_picture']){ echo "selected";}?>><?php echo $i;?></option>
-                        <?php
-                    }
-                    ?>
-                </select>
+                <label class="control-label"><?php echo $fsetup['num_picture'];?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -285,16 +138,7 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="interval" name="fsetup[interval]" class="form-control">
-                    <?php
-                    for($i=0;$i<=30;$i++)
-                    {
-                        ?>
-                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['interval']){ echo "selected";}?>><?php echo $i;?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
+                <label class="control-label"><?php echo $fsetup['interval'];?></label>
             </div>
         </div>
     </div>

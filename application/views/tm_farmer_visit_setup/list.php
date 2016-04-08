@@ -6,7 +6,7 @@
     {
         $action_data["action_new"]=base_url($CI->controller_url."/index/add");
     }
-    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+    if((isset($CI->permissions['add'])&&($CI->permissions['add']==1))||(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1)))
     {
         $action_data["action_edit"]=base_url($CI->controller_url."/index/edit");
     }

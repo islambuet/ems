@@ -57,6 +57,10 @@ class Tm_farmer_visit_setup extends Root_Controller
         {
             $this->system_save();
         }
+        elseif($action=="save_unfilled")
+        {
+            $this->system_save_unfilled();
+        }
         else
         {
             $this->system_list($id);
@@ -105,6 +109,7 @@ class Tm_farmer_visit_setup extends Root_Controller
                 'address' => '',
                 'contact_no' => '',
                 'date_sowing' => time(),
+                'date_transplant' => '',
                 'num_picture' => 1,
                 'interval' => 2
 
@@ -153,7 +158,7 @@ class Tm_farmer_visit_setup extends Root_Controller
     private function system_edit($id)
     {
 
-        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        if((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1)))
         {
             if(($this->input->post('id')))
             {
@@ -171,8 +176,9 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->select('t.name territory_name,t.id territory_id');
             $this->db->select('zone.name zone_name,zone.id zone_id');
             $this->db->select('division.name division_name,division.id division_id');
-            $this->db->select('crop_type.id type_id');
-            $this->db->select('crop_type.crop_id crop_id');
+            $this->db->select('crop_type.id type_id,crop_type.name crop_type_name');
+            $this->db->select('crop.id crop_id,crop.name crop_name');
+            $this->db->select('v.name variety_name');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -180,6 +186,7 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
             $this->db->where('tmf.id',$setup_id);
             $this->db->where('tmf.status','Active');
             $data['fsetup']=$this->db->get()->row_array();
@@ -216,7 +223,14 @@ class Tm_farmer_visit_setup extends Root_Controller
 
             $data['title']="Edit Farmer and Field Visit Setup";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/add_edit",$data,true));
+            if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+            {
+                $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/add_edit",$data,true));
+            }
+            elseif(isset($this->permissions['add'])&&($this->permissions['add']==1))
+            {
+                $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/edit_unfilled",$data,true));
+            }
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -367,6 +381,7 @@ class Tm_farmer_visit_setup extends Root_Controller
         {
             $data=$this->input->post('fsetup');
             $data['date_sowing']=System_helper::get_time($data['date_sowing']);
+            $data['date_transplant']=System_helper::get_time($data['date_transplant']);
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -383,6 +398,50 @@ class Tm_farmer_visit_setup extends Root_Controller
                 $data['date_created'] = time();
                 Query_helper::add($this->config->item('table_tm_farmers'),$data);
             }
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $save_and_new=$this->input->post('system_save_new_status');
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                if($save_and_new==1)
+                {
+                    $this->system_add();
+                }
+                else
+                {
+                    $this->system_list();
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+    }
+    private function system_save_unfilled()
+    {
+        $id = $this->input->post("id");
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['add'])&&($this->permissions['add']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+            die();
+
+        }
+
+        {
+            $data=$this->input->post('fsetup');
+            $data['date_transplant']=System_helper::get_time($data['date_transplant']);
+            $this->db->trans_start();  //DB Transaction Handle START
+            $data['user_updated'] = $user->user_id;
+            $data['date_updated'] = time();
+
+            Query_helper::update($this->config->item('table_tm_farmers'),$data,array("id = ".$id));
+
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
             {
