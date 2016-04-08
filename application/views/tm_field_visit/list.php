@@ -91,6 +91,9 @@
             id: 'id',
             url: url
         };
+        var tooltiprenderer = function (element) {
+            $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
+        };
 
         var dataAdapter = new $.jqx.dataAdapter(source);
         // create jqxgrid.
@@ -120,9 +123,9 @@
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150'},
                     { text: 'Contact No', dataField: 'contact_no',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'100',cellsalign: 'right',rendered: tooltiprenderer}
                 ]
             });
     });

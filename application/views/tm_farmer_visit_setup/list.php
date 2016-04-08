@@ -125,9 +125,9 @@
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150'},
                     { text: 'Contact No', dataField: 'contact_no',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right'}
                 ]
             });
     });

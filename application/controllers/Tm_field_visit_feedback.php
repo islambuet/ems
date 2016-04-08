@@ -360,6 +360,7 @@ class Tm_field_visit_feedback extends Root_Controller
         $this->db->select('crop.name crop_name');
         $this->db->select('crop_type.name crop_type_name');
         $this->db->select('v.name variety_name');
+        $this->db->select('COUNT(visits.setup_id) num_visit');
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -369,6 +370,7 @@ class Tm_field_visit_feedback extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+        $this->db->join($this->config->item('table_tm_visits').' visits','tmf.id =visits.setup_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
