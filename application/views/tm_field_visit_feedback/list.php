@@ -129,7 +129,7 @@
                 altrows: true,
                 autoheight: true,
                 enabletooltips: true,
-                autorowheight:true,
+                rowsheight: 35,
                 columns: [
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
