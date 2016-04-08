@@ -398,6 +398,7 @@ class Tm_field_visit_feedback extends Root_Controller
         }
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('id','DESC');
+        $this->db->group_by('tmf.id');
 
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
