@@ -105,6 +105,14 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_TRANSPLANT');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php if($fsetup['date_transplant']>0){echo System_helper::display_date($fsetup['date_transplant']); }?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">

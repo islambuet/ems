@@ -49,6 +49,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_sowing"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_picture"><?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit"><?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?></label>
             </div>
         </div>
     <?php
@@ -83,7 +84,8 @@
                 { name: 'contact_no', type: 'string' },
                 { name: 'date_sowing', type: 'string' },
                 { name: 'num_picture', type: 'string' },
-                { name: 'interval', type: 'string' }
+                { name: 'interval', type: 'string' },
+                { name: 'num_visit', type: 'string' }
 
             ],
             id: 'id',
@@ -119,7 +121,8 @@
                     { text: 'Contact No', dataField: 'contact_no',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'150'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'150'}
                 ]
             });
     });

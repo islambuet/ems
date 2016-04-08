@@ -208,6 +208,7 @@ $lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
 $lang['LABEL_EXCESS'] = 'Excess';
 $lang['LABEL_DATE_SOWING'] = 'Sowing Date';
 $lang['LABEL_NUM_PICTURE'] = 'Number of Pictures';
+$lang['LABEL_NUM_VISIT'] = 'Number of visits done';
 $lang['LABEL_INTERVAL'] = 'Interval (Days)';
 $lang['LABEL_FEEDBACK'] = 'Feedback';
 $lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
