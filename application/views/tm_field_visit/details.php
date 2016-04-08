@@ -195,6 +195,14 @@
                             <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($fsetup['date_sowing']+24*3600*$i*$fsetup['interval']); ?></label>
                         </div>
                     </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right">Visit Entry Time</label>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="form-control" style="background-color: #F5F5F5;"><?php if(isset($visits[$i]['date_created'])){ echo System_helper::display_date_time($fsetup['date_created']);} ?></label>
+                        </div>
+                    </div>
 
                 <?php
             }

@@ -294,6 +294,8 @@ class Tm_field_visit_feedback extends Root_Controller
                 {
                     $data['user_updated'] = $user->user_id;
                     $data['date_updated'] = $time;
+                    $data['user_feedback'] = $user->user_id;
+                    $data['date_feedback'] = $time;
                     Query_helper::update($this->config->item('table_tm_visits'),$data,array("id = ".$visits[$i]['id']));
                 }
                 else
@@ -302,6 +304,8 @@ class Tm_field_visit_feedback extends Root_Controller
                     $data['day_no'] = $i;
                     $data['user_created'] = $user->user_id;
                     $data['date_created'] = $time;
+                    $data['user_feedback'] = $user->user_id;
+                    $data['date_feedback'] = $time;
                     Query_helper::add($this->config->item('table_tm_visits'),$data);
                 }
             }
@@ -361,6 +365,7 @@ class Tm_field_visit_feedback extends Root_Controller
         $this->db->select('crop_type.name crop_type_name');
         $this->db->select('v.name variety_name');
         $this->db->select('COUNT(visits.setup_id) num_visit');
+        $this->db->select('COUNT(visits.feedback) num_feedback');
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');

@@ -84,11 +84,29 @@
                 { name: 'date_sowing', type: 'string' },
                 { name: 'num_picture', type: 'string' },
                 { name: 'interval', type: 'string' },
-                { name: 'num_visit', type: 'string' }
+                { name: 'num_visit', type: 'string' },
+                { name: 'num_feedback', type: 'string' }
 
             ],
             id: 'id',
             url: url
+        };
+        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
+        {
+            var element = $(defaultHtml);
+            // console.log(defaultHtml);
+
+            if (record.num_visit>record.num_feedback)
+            {
+                element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+
+            return element[0].outerHTML;
+
         };
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
@@ -111,21 +129,23 @@
                 altrows: true,
                 autoheight: true,
                 enabletooltips: true,
+                autorowheight:true,
                 columns: [
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150'},
-                    { text: 'Contact No', dataField: 'contact_no',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'100',cellsalign: 'right',rendered: tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150',cellsrenderer: cellsrenderer},
+                    { text: 'Contact No', dataField: 'contact_no',width:'150',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_FEEDBACK'); ?>', dataField: 'num_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer}
                 ]
             });
     });
