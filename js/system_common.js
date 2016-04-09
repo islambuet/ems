@@ -470,5 +470,7 @@ function turn_off_triggers()
     //stock out
     $(document).off("change", "#purpose");
     $(document).off("change", "#customer_id");
+    //for pop up
+    $(document).off("click", ".jqxpopup");
 
 }
