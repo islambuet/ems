@@ -57,6 +57,7 @@
                 { name: 'id', type: 'int' },
                 { name: 'crop_info', type: 'string' },
                 { name: 'location', type: 'string' },
+                { name: 'images', type: 'string' },
                 { name: 'details', type: 'string' }
 
             ],
@@ -107,7 +108,7 @@
                 columns: [
                     { text: 'Crop Info', dataField: 'crop_info',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: 'Locations', dataField: 'location',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
-                    { text: 'Details', dataField: 'details',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                    { text: 'Images', dataField: 'images',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]
             });
     });

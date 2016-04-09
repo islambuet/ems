@@ -169,6 +169,7 @@ class Reports_popular_variety extends Root_Controller
         $this->db->where('tmpvd.revision',1);
         $results=$this->db->get()->result_array();
         $pvs=array();
+
         foreach($results as $result)
         {
             $crop_info=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>';
@@ -187,22 +188,50 @@ class Reports_popular_variety extends Root_Controller
             {
                 $image=$result['picture'];
             }
-            //$pvs[$result['id']]['details'][]=array('remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'picture'=>base_url().$image);
-            if(!isset($pvs[$result['id']]['details']))
-            {
-                $pvs[$result['id']]['details']='';
-            }
 
-            $html='';
-            $html.='<div style="height: 125px;width: 133px;margin-right:10px;  float: left;" title="'.$result['remarks'].'">';
-            $html.='<div style="height:100px;"><img src="'.base_url().$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-            $html.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($result['date_remarks']).'</div>';
-            $html.='</div>';
-            $pvs[$result['id']]['details'].=$html;
+            $pvs[$result['id']]['infos'][]=array('image'=>$image,'remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']));
+            //$pvs[$result['id']]['images'][]=$image;
+            //$pvs[$result['id']]['remarks'][]=$result['remarks'];
+            //$pvs[$result['id']]['details'][]=array('remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'picture'=>base_url().$image);
+//            if(!isset($pvs[$result['id']]['images']))
+//            {
+//
+//            }
+//
+//            $html='';
+//            $html.='<div class="jqxpopup" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;" title="'.$result['remarks'].'">';
+//            $html.='<div style="height:100px;"><img src="'.base_url().$image.'" style="max-height: 100px;max-width: 133px;"></div>';
+//            $html.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($result['date_remarks']).'</div>';
+//            $html.='</div>';
+//            $pvs[$result['id']]['details'].=$html;
         }
         foreach($pvs as $pv)
         {
-            $items[]=$pv;
+            $item=array();
+            $item['crop_info']=$pv['crop_info'];
+            $item['location']=$pv['location'];
+            $html_row='';
+            $details=array();
+
+            foreach($pv['infos'] as $i=>$info)
+            {
+                $html_row.='<div class="jqxpopup" data-item-no="'.sizeof($items).'" data-info-no="'.$i.'" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;">';
+                $html_row.='<div style="height:100px;"><img src="'.base_url().$info['image'].'" style="max-height: 100px;max-width: 133px;"></div>';
+                $html_row.='<div style="height: 25px;text-align: center; ">'.$info['date_remarks'].'</div>';
+                $html_row.='</div>';
+                $html_tooltip='';
+                $html_tooltip.='<div style="width: 600px;">';
+                $html_tooltip.='<div><img src="'.base_url().$info['image'].'" style="max-width: 600px;"></div>';
+                $html_tooltip.='<div>Date: '.$info['date_remarks'].'</div>';
+                $html_tooltip.='<div>Remarks: '.$info['remarks'].'</div>';
+                $html_tooltip.='</div>';
+                $details[]=$html_tooltip;
+
+            }
+            $item['images']=$html_row;
+            $item['details']=$details;
+            $items[]=$item;
+
         }
         $this->jsonReturn($items);
     }

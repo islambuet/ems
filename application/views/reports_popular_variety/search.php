@@ -233,11 +233,38 @@
 <div id="system_report_container">
 
 </div>
+<div id="popup_window">
+    <div>Details</div>
+    <div id="popup_content" style="overflow: auto;">
+    </div>
+</div>
 <script type="text/javascript">
 
     jQuery(document).ready(function()
     {
         turn_off_triggers();
+        $("#popup_window").jqxWindow({
+            width: 630,height:550, resizable: true,  isModal: true, autoOpen: false, modalOpacity: 0.01,position: { x: 60, y: 60 }
+        });
+        $(document).on("click", ".jqxpopup", function(event)
+        {
+
+            var left=((($(window).width() - 630) / 2) +$(window).scrollLeft());
+            var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
+
+            //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
+            $("#popup_window").jqxWindow({position: { x: left, y: top  }});
+            var row=$(this).attr('data-item-no');
+            var info_no=$(this).attr('data-info-no');
+            var details = $("#system_jqx_container").jqxGrid('getrowdata', row);
+            console.log(details.details[info_no]);
+            $('#popup_content').html(details.details[info_no]);
+            $("#popup_window").jqxWindow('open');
+
+
+        });
+
+
         $(document).on("change","#crop_id",function()
         {
             $("#crop_type_id").val("");
