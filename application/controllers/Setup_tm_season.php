@@ -42,7 +42,7 @@ class Setup_tm_season extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Crops";
+            $data['title']="Seasons";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_season/list",$data,true));
             if($this->message)
