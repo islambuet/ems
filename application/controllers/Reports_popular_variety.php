@@ -143,7 +143,7 @@ class Reports_popular_variety extends Root_Controller
 
         $this->db->from($this->config->item('table_tm_popular_variety').' tmpv');
         $this->db->select('tmpv.*');
-        $this->db->select('tmpvd.date_remarks,tmpvd.picture_url,tmpvd.remarks');
+        $this->db->select('tmpvd.date_remarks,tmpvd.picture_url,tmpvd.remarks,tmpvd.date_created date_created_remarks');
 
         $this->db->select('upazilla.name upazilla_name');
         $this->db->select('d.name district_name');
@@ -223,7 +223,7 @@ class Reports_popular_variety extends Root_Controller
             {
                 $image=$result['picture_url'];
             }
-            $pvs[$result['id']]['infos'][]=array('image'=>$image,'remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'date_created'=>System_helper::display_date_time($result['date_created']));
+            $pvs[$result['id']]['infos'][]=array('image'=>$image,'remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'date_created_remarks'=>System_helper::display_date_time($result['date_created_remarks']));
         }
         foreach($pvs as $pv)
         {
@@ -241,9 +241,9 @@ class Reports_popular_variety extends Root_Controller
                 $html_row.='</div>';
                 $html_tooltip='';
                 $html_tooltip.='<div>';
-                $html_tooltip.='<div><img src="'.$info['image'].'" style="width: 100%;"></div>';
+                $html_tooltip.='<div><img src="'.$info['image'].'" style="max-width: 100%;"></div>';
                 $html_tooltip.='<div>Date: '.$info['date_remarks'].'</div>';
-                $html_tooltip.='<div>Date Created: '.$info['date_created'].'</div>';
+                $html_tooltip.='<div>Date Created: '.$info['date_created_remarks'].'</div>';
                 $html_tooltip.='<div>Remarks: '.$info['remarks'].'</div>';
                 $html_tooltip.='</div>';
                 $details[]=$html_tooltip;
