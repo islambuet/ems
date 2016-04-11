@@ -288,13 +288,13 @@
                         <td>
                             <div class="image_container" id="image_<?php echo $index+1;?>">
                                 <?php
-                                $image='images/no_image.jpg';
-                                if(strlen($detail['picture'])>0)
+                                $image=base_url().'images/no_image.jpg';
+                                if(strlen($detail['picture_url'])>0)
                                 {
-                                    $image=$detail['picture'];
+                                    $image=$detail['picture_url'];
                                 }
                                 ?>
-                                <img style="max-width: 250px;" src="<?php echo base_url().$image;?>">
+                                <img style="max-width: 250px;" src="<?php echo $image;?>">
                                 <?php
                                 if(strlen($detail['picture_file_name'])>0)
                                 {

@@ -415,6 +415,7 @@ class Tm_popular_variety extends Root_Controller
                 if(!$file['status'])
                 {
                     $this->db->trans_rollback();
+                    $this->db->trans_complete();
                     $ajax['status']=false;
                     $ajax['system_message']=$file['message'];
                     $this->jsonReturn($ajax);
@@ -435,12 +436,14 @@ class Tm_popular_variety extends Root_Controller
                 $data['remarks']=$detail['remarks'];
                 if(isset($uploaded_files['image_'.$i]))
                 {
-                    $data['picture']=$file_folder.'/'.$uploaded_files['image_'.$i]['info']['file_name'];
+                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['image_'.$i]['info']['file_name'];
+                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['image_'.$i]['info']['file_name'];
                     $data['picture_file_name']=$uploaded_files['image_'.$i]['info']['file_name'];
                 }
                 elseif(isset($detail['old_picture']))
                 {
-                    $data['picture']=$file_folder.'/'.$detail['old_picture'];
+                    $data['picture_url']=base_url().$file_folder.'/'.$detail['old_picture'];
+                    $data['picture_file_full']=$file_folder.'/'.$detail['old_picture'];
                     $data['picture_file_name']=$detail['old_picture'];
                 }
                 $data['user_created'] = $user->user_id;
@@ -568,7 +571,6 @@ class Tm_popular_variety extends Root_Controller
                 return false;
             }
         }
-        else
         {
 
             $upazilla_id=$pv['upazilla_id'];
@@ -580,6 +582,7 @@ class Tm_popular_variety extends Root_Controller
                 $this->db->from($this->config->item('table_tm_popular_variety').' tmpv');
                 $this->db->where('upazilla_id',$upazilla_id);
                 $this->db->where('variety_id',$variety_id);
+                $this->db->where('tmpv.id !=',$id);
                 $result=$this->db->get()->row_array();
             }
             else
@@ -588,6 +591,7 @@ class Tm_popular_variety extends Root_Controller
                 $this->db->where('upazilla_id',$upazilla_id);
                 $this->db->where('crop_type_id',$crop_type_id);
                 $this->db->where('other_variety_name',$other_variety_name);
+                $this->db->where('tmpv.id !=',$id);
                 $result=$this->db->get()->row_array();
             }
             if($result)
