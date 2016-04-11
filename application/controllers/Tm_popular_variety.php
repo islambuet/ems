@@ -215,7 +215,7 @@ class Tm_popular_variety extends Root_Controller
             $data['types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['pv']['crop_id'],'status ="'.$this->config->item('system_status_active').'"'));
             $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['pv']['type_id'],'status ="'.$this->config->item('system_status_active').'"'));
 
-            $data['details']=Query_helper::get_info($this->config->item('table_tm_popular_variety_details'),'*',array('setup_id ='.$setup_id,'revision =1'));
+            $data['details']=Query_helper::get_info($this->config->item('table_tm_popular_variety_details'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="Edit Popular Variety";
             $ajax['status']=true;
@@ -287,7 +287,7 @@ class Tm_popular_variety extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['details']=Query_helper::get_info($this->config->item('table_tm_popular_variety_details'),'*',array('setup_id ='.$setup_id,'revision =1'));
+            $data['details']=Query_helper::get_info($this->config->item('table_tm_popular_variety_details'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
             $data['title']="Detail of Popular Variety";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_popular_variety/details",$data,true));
@@ -423,14 +423,13 @@ class Tm_popular_variety extends Root_Controller
                 }
             }
 
+            $final_details=array();
 
-            $this->db->where('setup_id',$setup_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_tm_popular_variety_details'));
             $details=$this->input->post('details');
             foreach($details as $i=>$detail)
             {
                 $data=array();
+                $data['id']=0;
                 $data['setup_id']=$setup_id;
                 $data['date_remarks']=System_helper::get_time($detail['date_remarks']);
                 $data['remarks']=$detail['remarks'];
@@ -448,9 +447,43 @@ class Tm_popular_variety extends Root_Controller
                 }
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = $time;
-                $data['revision'] = 1;
-                Query_helper::add($this->config->item('table_tm_popular_variety_details'),$data);
+                $final_details[]=$data;
+
             }
+            $old_details=Query_helper::get_info($this->config->item('table_tm_popular_variety_details'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+
+            foreach($old_details as $i=>$detail)
+            {
+                if(isset($final_details[$i]))
+                {
+                    $final_details[$i]['id']=$detail['id'];
+                    $final_details[$i]['user_created']=$detail['user_created'];
+                    $final_details[$i]['date_created']=$detail['date_created'];
+                    $final_details[$i]['user_updated'] = $user->user_id;
+                    $final_details[$i]['date_updated'] = $time;
+                }
+                else
+                {
+                    $detail['status']=$this->config->item('system_status_delete');
+                    $detail['user_updated'] = $user->user_id;
+                    $detail['date_updated'] = $time;
+                    $final_details[]=$detail;
+                }
+            }
+            foreach($final_details as $detail)
+            {
+                $detail_id=$detail['id'];
+                unset($detail['id']);
+                if($detail_id>0)
+                {
+                    Query_helper::update($this->config->item('table_tm_popular_variety_details'),$detail,array("id = ".$detail_id));
+                }
+                else
+                {
+                    Query_helper::add($this->config->item('table_tm_popular_variety_details'),$detail);
+                }
+            }
+
 
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
