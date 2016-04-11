@@ -183,7 +183,7 @@ class Tm_popular_variety extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmpv.variety_id','LEFT');
 
             $this->db->where('tmpv.id',$setup_id);
-            $this->db->where('tmpv.status','Active');
+            $this->db->where('tmpv.status',$this->config->item('system_status_active'));
             $data['pv']=$this->db->get()->row_array();
 
 
@@ -268,7 +268,7 @@ class Tm_popular_variety extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmpv.variety_id','LEFT');
 
             $this->db->where('tmpv.id',$setup_id);
-            $this->db->where('tmpv.status','Active');
+            $this->db->where('tmpv.status',$this->config->item('system_status_active'));
             $data['pv']=$this->db->get()->row_array();
 
 
