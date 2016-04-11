@@ -240,7 +240,8 @@ class Survey_product_arm extends Root_Controller
             {
                 if($uploaded_files['image']['status'])
                 {
-                    $data['picture']=$file_folder.'/'.$uploaded_files['image']['info']['file_name'];
+                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['image']['info']['file_name'];
+                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['image']['info']['file_name'];
                     $data['picture_file_name']=$uploaded_files['image']['info']['file_name'];
                 }
                 else
@@ -290,7 +291,7 @@ class Survey_product_arm extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_setup_classification_varieties').' v');
-        $this->db->select('sp.characteristics,sp.picture,sp.picture_file_name');
+        $this->db->select('sp.characteristics,sp.picture_file_name');
         $this->db->select('v.id,v.name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
