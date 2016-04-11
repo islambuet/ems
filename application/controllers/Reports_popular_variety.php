@@ -143,7 +143,7 @@ class Reports_popular_variety extends Root_Controller
 
         $this->db->from($this->config->item('table_tm_popular_variety').' tmpv');
         $this->db->select('tmpv.*');
-        $this->db->select('tmpvd.date_remarks,tmpvd.picture,tmpvd.remarks');
+        $this->db->select('tmpvd.date_remarks,tmpvd.picture_url,tmpvd.remarks');
 
         $this->db->select('upazilla.name upazilla_name');
         $this->db->select('d.name district_name');
@@ -166,7 +166,42 @@ class Reports_popular_variety extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =tmpv.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmpv.variety_id','LEFT');
-        $this->db->where('tmpvd.revision',1);
+        if($division_id>0)
+        {
+            $this->db->where('division.id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('d.id',$district_id);
+                        if($upazilla_id>0)
+                        {
+                            $this->db->where('upazilla.id',$upazilla_id);
+                        }
+                    }
+                }
+            }
+        }
+        if($crop_id>0)
+        {
+            $this->db->where('crop.id',$crop_id);
+            if($crop_type_id>0)
+            {
+                $this->db->where('crop_type.id',$crop_type_id);
+                if($variety_id>0)
+                {
+                    $this->db->where('tmpv.variety_id',$variety_id);
+                }
+            }
+        }
+
+
+        $this->db->where('tmpv.status',$this->config->item('system_status_active'));
+        $this->db->where('tmpvd.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
         $pvs=array();
 
@@ -183,27 +218,12 @@ class Reports_popular_variety extends Root_Controller
             }
             $pvs[$result['id']]['crop_info']=$crop_info;
             $pvs[$result['id']]['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'];
-            $image='images/no_image.jpg';
-            if(strlen($result['picture'])>0)
+            $image=base_url().'images/no_image.jpg';
+            if(strlen($result['picture_url'])>0)
             {
-                $image=$result['picture'];
+                $image=$result['picture_url'];
             }
-
-            $pvs[$result['id']]['infos'][]=array('image'=>$image,'remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']));
-            //$pvs[$result['id']]['images'][]=$image;
-            //$pvs[$result['id']]['remarks'][]=$result['remarks'];
-            //$pvs[$result['id']]['details'][]=array('remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'picture'=>base_url().$image);
-//            if(!isset($pvs[$result['id']]['images']))
-//            {
-//
-//            }
-//
-//            $html='';
-//            $html.='<div class="jqxpopup" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;" title="'.$result['remarks'].'">';
-//            $html.='<div style="height:100px;"><img src="'.base_url().$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-//            $html.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($result['date_remarks']).'</div>';
-//            $html.='</div>';
-//            $pvs[$result['id']]['details'].=$html;
+            $pvs[$result['id']]['infos'][]=array('image'=>$image,'remarks'=>$result['remarks'],'date_remarks'=>System_helper::display_date($result['date_remarks']),'date_created'=>System_helper::display_date_time($result['date_created']));
         }
         foreach($pvs as $pv)
         {
@@ -215,14 +235,15 @@ class Reports_popular_variety extends Root_Controller
 
             foreach($pv['infos'] as $i=>$info)
             {
-                $html_row.='<div class="jqxpopup" data-item-no="'.sizeof($items).'" data-info-no="'.$i.'" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;">';
-                $html_row.='<div style="height:100px;"><img src="'.base_url().$info['image'].'" style="max-height: 100px;max-width: 133px;"></div>';
+                $html_row.='<div class="popular_popup" data-item-no="'.sizeof($items).'" data-info-no="'.$i.'" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;">';
+                $html_row.='<div style="height:100px;"><img src="'.$info['image'].'" style="max-height: 100px;max-width: 133px;"></div>';
                 $html_row.='<div style="height: 25px;text-align: center; ">'.$info['date_remarks'].'</div>';
                 $html_row.='</div>';
                 $html_tooltip='';
-                $html_tooltip.='<div style="width: 600px;">';
-                $html_tooltip.='<div><img src="'.base_url().$info['image'].'" style="max-width: 600px;"></div>';
+                $html_tooltip.='<div>';
+                $html_tooltip.='<div><img src="'.$info['image'].'" style="width: 100%;"></div>';
                 $html_tooltip.='<div>Date: '.$info['date_remarks'].'</div>';
+                $html_tooltip.='<div>Date Created: '.$info['date_created'].'</div>';
                 $html_tooltip.='<div>Remarks: '.$info['remarks'].'</div>';
                 $html_tooltip.='</div>';
                 $details[]=$html_tooltip;

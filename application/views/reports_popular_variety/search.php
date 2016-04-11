@@ -243,13 +243,15 @@
     jQuery(document).ready(function()
     {
         turn_off_triggers();
+        $(document).off("click", ".popular_popup");
+
         $("#popup_window").jqxWindow({
-            width: 630,height:550, resizable: true,  isModal: true, autoOpen: false, modalOpacity: 0.01,position: { x: 60, y: 60 }
+            width: 550,height:550, resizable: true,  isModal: true, autoOpen: false, modalOpacity: 0.01,position: { x: 60, y: 60 }
         });
-        $(document).on("click", ".jqxpopup", function(event)
+        $(document).on("click", ".popular_popup", function(event)
         {
 
-            var left=((($(window).width() - 630) / 2) +$(window).scrollLeft());
+            var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
             var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
 
             //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
