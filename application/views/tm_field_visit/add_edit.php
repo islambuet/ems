@@ -353,18 +353,138 @@
                 </h4>
             </div>
             <div id="collapse_disease_picture" class="panel-collapse collapse">
-                hi there 3
+                <div id="disease_container">
+                    <?php
+                    foreach($disease_picture as $index=>$detail)
+                    {
+                        ?>
+                        <div class="system_add_more_item">
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right">Picture</label>
+                                </div>
+                                <div class="col-xs-4">
+                                    <div class="disease_image_container" id="disease_image_<?php echo $index+1;?>">
+                                        <?php
+                                        $image=base_url().'images/no_image.jpg';
+                                        if(strlen($detail['picture_url'])>0)
+                                        {
+                                            $image=$detail['picture_url'];
+                                        }
+                                        ?>
+                                        <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                        <?php
+                                        if(strlen($detail['picture_file_name'])>0)
+                                        {
+                                            ?>
+                                            <input type="hidden" name="disease[<?php echo $index+1; ?>][old_disease_picture]" value="<?php echo $detail['picture_file_name']; ?>">
+                                        <?php
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                                <div class="col-xs-4">
+                                    <input type="file" id="disease_image_<?php echo $index+1; ?>" name="disease_image_<?php echo $index+1; ?>" data-current-id="<?php echo $index+1;?>" data-preview-container="#disease_image_<?php echo $index+1;?>" class="browse_button"><br>
+                                    <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+
+                                </div>
+                            </div>
+                            <div class="row show-grid">
+                                <div class="col-xs-4">
+                                    <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+                                </div>
+                                <div class="col-xs-4">
+                                    <textarea id="disease_remarks_<?php echo $index+1;?>" name="disease[<?php echo $index+1; ?>][remarks]" data-current-id="<?php echo $index+1;?>" class="form-control remarks"><?php echo $detail['remarks']; ?></textarea>
+                                </div>
+                                <div class="col-xs-4">
+                                </div>
+                            </div>
+                        </div>
+                        <?php
+                    }
+                    ?>
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-4">
+
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-warning system_button_add_more" data-current-id="<?php echo sizeof($disease_picture);?>"><?php echo $CI->lang->line('LABEL_ADD_MORE');?></button>
+                    </div>
+                    <div class="col-xs-4">
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="clearfix"></div>
 </form>
+<div id="system_content_add_more" style="display: none;">
+    <div class="system_add_more_item">
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Picture</label>
+            </div>
+            <div class="col-xs-4">
+                <div class="disease_image_container"><img style="max-width: 250px;" src="<?php echo base_url().'images/no_image.jpg';?>"></div>
+            </div>
+            <div class="col-xs-4">
+                <input type="file" class="browse_button_new"><br>
+                <button type="button" class="btn btn-danger system_button_add_delete"><?php echo $CI->lang->line('DELETE'); ?></button>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+            </div>
+            <div class="col-xs-4">
+                <textarea class="form-control remarks"></textarea>
+            </div>
+            <div class="col-xs-4">
+            </div>
+        </div>
+    </div>
+</div>
 <script type="text/javascript">
 
     jQuery(document).ready(function()
     {
         turn_off_triggers();
         $(".browse_button").filestyle({input: false,icon: false,buttonText: "Upload",buttonName: "btn-primary"});
+
+        $(document).on("click", ".system_button_add_more", function(event)
+        {
+            var current_id=parseInt($(this).attr('data-current-id'));
+            current_id=current_id+1;
+            $(this).attr('data-current-id',current_id);
+            var content_id='#system_content_add_more';
+
+
+            $(content_id+' .remarks').attr('id','disease_remarks_'+current_id);
+            $(content_id+' .remarks').attr('data-current-id',current_id);
+            $(content_id+' .remarks').attr('name','disease['+current_id+'][remarks]');
+
+            $(content_id+' .browse_button_new').attr('data-preview-container','#disease_image_'+current_id);
+            $(content_id+' .browse_button_new').attr('name','disease_image_'+current_id);
+            $(content_id+' .browse_button_new').attr('id','disease_browse_'+current_id);
+            $(content_id+' .disease_image_container').attr('id','disease_image_'+current_id);
+
+            var html=$(content_id).html();
+            $("#disease_container").append(html);
+
+            $(content_id+' .remarks').removeAttr('id');
+            $(content_id+' .browse_button_new').removeAttr('name');
+            $(content_id+' .browse_button_new').removeAttr('data-preview-container');
+            $(content_id+' .browse_button_new').removeAttr('id');
+            $(content_id+' .disease_image_container').removeAttr('id');
+            $('#disease_browse_'+current_id).filestyle({input: false,icon: false,buttonText: "Upload",buttonName: "btn-primary"});
+
+        });
+        $(document).on("click", ".system_button_add_delete", function(event)
+        {
+            $(this).closest('.system_add_more_item').remove();
+        });
 
     });
 </script>

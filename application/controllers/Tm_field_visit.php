@@ -143,7 +143,7 @@ class Tm_field_visit extends Root_Controller
             {
                 $data['fruits_picture'][$visit['picture_id']]=$visit;
             }
-
+            $data['disease_picture']=Query_helper::get_info($this->config->item('table_tm_visits_disease_picture'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
             $data['title']="Edit Field Visit";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_field_visit/add_edit",$data,true));
@@ -313,6 +313,53 @@ class Tm_field_visit extends Root_Controller
         }
         $fruit_remarks=$this->input->post('fruit_remarks');
 
+        $final_details=array();
+
+        $details=$this->input->post('disease');
+        foreach($details as $i=>$detail)
+        {
+            $data=array();
+            $data['id']=0;
+            $data['setup_id']=$setup_id;
+            $data['remarks']=$detail['remarks'];
+            if(isset($uploaded_files['disease_image_'.$i]))
+            {
+                $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
+                $data['picture_file_full']=$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
+                $data['picture_file_name']=$uploaded_files['disease_image_'.$i]['info']['file_name'];
+            }
+            elseif(isset($detail['old_disease_picture']))
+            {
+                $data['picture_url']=base_url().$file_folder.'/'.$detail['old_disease_picture'];
+                $data['picture_file_full']=$file_folder.'/'.$detail['old_disease_picture'];
+                $data['picture_file_name']=$detail['old_disease_picture'];
+            }
+            $data['user_created'] = $user->user_id;
+            $data['date_created'] = $time;
+            $final_details[]=$data;
+
+        }
+        $old_details=Query_helper::get_info($this->config->item('table_tm_visits_disease_picture'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+
+        foreach($old_details as $i=>$detail)
+        {
+            if(isset($final_details[$i]))
+            {
+                $final_details[$i]['id']=$detail['id'];
+                $final_details[$i]['user_created']=$detail['user_created'];
+                $final_details[$i]['date_created']=$detail['date_created'];
+                $final_details[$i]['user_updated'] = $user->user_id;
+                $final_details[$i]['date_updated'] = $time;
+            }
+            else
+            {
+                $detail['status']=$this->config->item('system_status_delete');
+                $detail['user_updated'] = $user->user_id;
+                $detail['date_updated'] = $time;
+                $final_details[]=$detail;
+            }
+        }
+
         $this->db->trans_start();
         for($i=1;$i<=$fsetup['num_visits'];$i++)
         {
@@ -376,7 +423,19 @@ class Tm_field_visit extends Root_Controller
                 }
             }
         }
-
+        foreach($final_details as $detail)
+        {
+            $detail_id=$detail['id'];
+            unset($detail['id']);
+            if($detail_id>0)
+            {
+                Query_helper::update($this->config->item('table_tm_visits_disease_picture'),$detail,array("id = ".$detail_id));
+            }
+            else
+            {
+                Query_helper::add($this->config->item('table_tm_visits_disease_picture'),$detail);
+            }
+        }
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
@@ -433,6 +492,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->select('v.name variety_name');
         $this->db->select('count(distinct case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.id end) num_visit_done',true);
         $this->db->select('count(distinct case when vfp.remarks IS NOT NULL or vfp.picture_url IS NOT NULL then vfp.id end) num_fruit_picture',false);
+        $this->db->select('count(distinct case when vdp.status="Active" then vdp.id end) num_disease_picture',false);
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -444,6 +504,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
         $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
         $this->db->join($this->config->item('table_tm_visits_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
+        $this->db->join($this->config->item('table_tm_visits_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
