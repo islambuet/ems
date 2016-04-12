@@ -17,10 +17,25 @@
             </div>
             <div class="clearfix"></div>
         </div>
-
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['year'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['season_name'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['division_name'];?></label>
@@ -29,7 +44,7 @@
 
         <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['zone_name'];?></label>
@@ -37,7 +52,7 @@
         </div>
         <div class="row show-grid" id="territory_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['territory_name'];?></label>
@@ -45,7 +60,7 @@
         </div>
         <div class="row show-grid" id="district_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['district_name'];?></label>
@@ -53,7 +68,7 @@
         </div>
         <div class="row show-grid" id="upazilla_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['upazilla_name'];?></label>
@@ -62,7 +77,7 @@
         </div>
         <div class="row show-grid" id="crop_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['crop_name'];?></label>
@@ -70,7 +85,7 @@
         </div>
         <div class="row show-grid" id="crop_type_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['crop_type_name'];?></label>
@@ -78,7 +93,7 @@
         </div>
         <div class="row show-grid" id="variety_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['variety_name'];?></label>
@@ -87,7 +102,7 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Farmer's Name<span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Farmer's Name</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['name'];?></label>
@@ -111,7 +126,7 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DATE_SOWING');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo System_helper::display_date($fsetup['date_sowing']); ?></label>
@@ -127,15 +142,15 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $fsetup['num_picture'];?></label>
+                <label class="control-label"><?php echo $fsetup['num_visits'];?></label>
             </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $fsetup['interval'];?></label>

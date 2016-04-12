@@ -45,6 +45,8 @@
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name">Farmer Name</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="year"><?php echo $CI->lang->line('LABEL_YEAR'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="season_name"><?php echo $CI->lang->line('LABEL_SEASON'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
@@ -55,7 +57,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="contact_no">Contact No</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_sowing"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_picture"><?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
             </div>
         </div>
@@ -80,6 +82,8 @@
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'name', type: 'string' },
+                { name: 'year', type: 'string' },
+                { name: 'season_name', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
@@ -90,7 +94,7 @@
                 { name: 'variety_name', type: 'string' },
                 { name: 'contact_no', type: 'string' },
                 { name: 'date_sowing', type: 'string' },
-                { name: 'num_picture', type: 'string' },
+                { name: 'num_visits', type: 'string' },
                 { name: 'interval', type: 'string' }
 
             ],
@@ -116,6 +120,8 @@
                 autoheight: true,
                 columns: [
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'100',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
@@ -126,7 +132,7 @@
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150'},
                     { text: 'Contact No', dataField: 'contact_no',width:'150'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'100',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right'}
                 ]
             });

@@ -11,6 +11,22 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['year'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['season_name'];?></label>
+            </div>
+        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
@@ -110,10 +126,10 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $fsetup['num_picture'];?></label>
+                <label class="control-label"><?php echo $fsetup['num_visits'];?></label>
             </div>
         </div>
         <div class="row show-grid">

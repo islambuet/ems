@@ -17,7 +17,32 @@
             </div>
             <div class="clearfix"></div>
         </div>
-
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['year'];?></label>
+                <input type="hidden" name="fsetup[year]" value="<?php echo $fsetup['year']; ?>" />
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="season_id" name="fsetup[season_id]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <?php
+                    foreach($seasons as $season)
+                    {?>
+                        <option value="<?php echo $season['value']?>" <?php if($season['value']==$fsetup['season_id']){ echo "selected";}?>><?php echo $season['text'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
@@ -265,15 +290,15 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <select id="num_picture" name="fsetup[num_picture]" class="form-control">
+                <select id="num_picture" name="fsetup[num_visits]" class="form-control">
                     <?php
                     for($i=0;$i<=30;$i++)
                     {
                         ?>
-                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['num_picture']){ echo "selected";}?>><?php echo $i;?></option>
+                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['num_visits']){ echo "selected";}?>><?php echo $i;?></option>
                         <?php
                     }
                     ?>

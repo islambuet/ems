@@ -70,6 +70,7 @@ $lang['LABEL_QUANTITY'] = 'Quantity';
 $lang['LABEL_TOTAL'] = 'Total';
 $lang['LABEL_SEARCH'] = 'Search';
 $lang['LABEL_ADDRESS'] = 'address';
+$lang['LABEL_SEASON'] = 'Season';
 //Assign User
 $lang['LABEL_USERNAME'] = 'User name';
 $lang['LABEL_EMPLOYEE_ID'] = 'Employee id';
@@ -208,6 +209,7 @@ $lang['LABEL_STARTING_STOCK'] = 'Initial Stock';
 $lang['LABEL_EXCESS'] = 'Excess';
 $lang['LABEL_DATE_SOWING'] = 'Sowing Date';
 $lang['LABEL_NUM_PICTURE'] = 'Number of Pictures';
+$lang['LABEL_NUM_VISITS'] = 'Number of Visits';
 $lang['LABEL_NUM_VISIT'] = 'Number of visits done';
 $lang['LABEL_NUM_FEEDBACK'] = 'Number of Feedback done';
 $lang['LABEL_INTERVAL'] = 'Interval (Days)';
