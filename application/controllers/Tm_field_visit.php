@@ -101,6 +101,7 @@ class Tm_field_visit extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->select('crop_type.name crop_type_name');
             $this->db->select('v.name variety_name');
+            $this->db->select('season.name season_name');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -109,6 +110,7 @@ class Tm_field_visit extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->where('tmf.id',$setup_id);
             $this->db->where('tmf.status','Active');
             $data['fsetup']=$this->db->get()->row_array();
@@ -128,11 +130,11 @@ class Tm_field_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['visits']=array();
-            $visits=Query_helper::get_info($this->config->item('table_tm_visits'),'*',array('setup_id ='.$setup_id));
+            $data['visits_picture']=array();
+            $visits=Query_helper::get_info($this->config->item('table_tm_visits_picture'),'*',array('setup_id ='.$setup_id));
             foreach($visits as $visit)
             {
-                $data['visits'][$visit['day_no']]=$visit;
+                $data['visits_picture'][$visit['day_no']]=$visit;
             }
 
             $data['title']="Edit Field Visit";
@@ -229,7 +231,6 @@ class Tm_field_visit extends Root_Controller
 
     private function system_save()
     {
-
         $setup_id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
@@ -288,34 +289,34 @@ class Tm_field_visit extends Root_Controller
                 die();
             }
         }
-        $visits=array();
-        $infos=Query_helper::get_info($this->config->item('table_tm_visits'),'*',array('setup_id ='.$setup_id));
+        $visits_picture=array();
+        $infos=Query_helper::get_info($this->config->item('table_tm_visits_picture'),'*',array('setup_id ='.$setup_id));
         foreach($infos as $info)
         {
-            $visits[$info['day_no']]=$info;
+            $visits_picture[$info['day_no']]=$info;
         }
-        $remarks=$this->input->post('remarks');
-
+        $remarks=$this->input->post('visit_remarks');
         $this->db->trans_start();
-        for($i=1;$i<=$fsetup['num_picture'];$i++)
+        for($i=1;$i<=$fsetup['num_visits'];$i++)
         {
             $data=array();
             if(isset($remarks[$i]) && (strlen($remarks[$i])>0))
             {
                 $data['remarks']=$remarks[$i];
             }
-            if(isset($uploaded_files['image_'.$i]))
+            if(isset($uploaded_files['visit_image_'.$i]))
             {
-                $data['picture']=$file_folder.'/'.$uploaded_files['image_'.$i]['info']['file_name'];
-                $data['picture_file_name']=$uploaded_files['image_'.$i]['info']['file_name'];
+                $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['visit_image_'.$i]['info']['file_name'];
+                $data['picture_file_full']=$file_folder.'/'.$uploaded_files['visit_image_'.$i]['info']['file_name'];
+                $data['picture_file_name']=$uploaded_files['visit_image_'.$i]['info']['file_name'];
             }
             if($data)
             {
-                if(isset($visits[$i]))
+                if(isset($visits_picture[$i]))
                 {
                     $data['user_updated'] = $user->user_id;
                     $data['date_updated'] = $time;
-                    Query_helper::update($this->config->item('table_tm_visits'),$data,array("id = ".$visits[$i]['id']));
+                    Query_helper::update($this->config->item('table_tm_visits_picture'),$data,array("id = ".$visits_picture[$i]['id']));
                 }
                 else
                 {
@@ -323,7 +324,7 @@ class Tm_field_visit extends Root_Controller
                     $data['day_no'] = $i;
                     $data['user_created'] = $user->user_id;
                     $data['date_created'] = $time;
-                    Query_helper::add($this->config->item('table_tm_visits'),$data);
+                    Query_helper::add($this->config->item('table_tm_visits_picture'),$data);
                 }
             }
         }
@@ -381,7 +382,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->select('crop.name crop_name');
         $this->db->select('crop_type.name crop_type_name');
         $this->db->select('v.name variety_name');
-        $this->db->select('COUNT(visits.setup_id) num_visit');
+        $this->db->select('count(case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.setup_id end) num_visit_done',true);
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -391,7 +392,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-        $this->db->join($this->config->item('table_tm_visits').' visits','tmf.id =visits.setup_id','LEFT');
+        $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -415,6 +416,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('tmf.id','DESC');
         $this->db->group_by('tmf.id');
+
 
         $items=$this->db->get()->result_array();
         foreach($items as &$item)

@@ -70,7 +70,9 @@ $config['table_survey_product'] = 'ems_survey_product';
 
 //task management
 $config['table_tm_farmers'] = 'ems_tm_farmers';
-$config['table_tm_visits'] = 'ems_tm_visits';
+$config['table_tm_visits_picture'] = 'ems_tm_visits_picture';
+$config['table_tm_visits_fruit_picture'] = 'ems_tm_visits_fruit_picture';
+$config['table_tm_visits_disease_picture'] = 'ems_tm_visits_disease_picture';
 $config['table_tm_popular_variety'] = 'ems_tm_popular_variety';
 $config['table_tm_popular_variety_details'] = 'ems_tm_popular_variety_details';
 $config['table_setup_tm_seasons'] = 'ems_setup_tm_seasons';

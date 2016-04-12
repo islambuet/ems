@@ -14,6 +14,22 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['year'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SEASON');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label><?php echo $fsetup['season_name'];?></label>
+            </div>
+        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
@@ -113,10 +129,10 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_PICTURE');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $fsetup['num_picture'];?></label>
+                <label class="control-label"><?php echo $fsetup['num_visits'];?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -129,111 +145,132 @@
         </div>
 
     </div>
-    <div class="row widget">
-        <div class="widget-header">
-            <div class="title">
-                Visit Details
+    <div class="panel-group" id="accordion">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_visits_picture" href="#">Visit Picture and remarks</a>
+                </h4>
             </div>
-            <div class="clearfix"></div>
+            <div id="collapse_visits_picture" class="panel-collapse collapse in">
+                <?php
+                for($i=1;$i<=$fsetup['num_visits'];$i++)
+                {
+                    ?>
+
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right">Picture - <?php echo $i;?></label>
+                        </div>
+                        <div class="col-xs-4" id="visit_image_<?php echo $i; ?>">
+                            <?php
+                            $editable=false;
+                            $image=base_url().'images/no_image.jpg';
+                            if(isset($visits_picture[$i]['picture_url'])&&strlen($visits_picture[$i]['picture_url'])>0)
+                            {
+                                $image=$visits_picture[$i]['picture_url'];
+                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                {
+                                    $editable=true;
+                                }
+                                else
+                                {
+                                    $editable=false;
+                                }
+                            }
+                            else
+                            {
+                                $editable=true;
+                            }
+                            ?>
+                            <img style="max-width: 250px;" src="<?php echo $image;?>">
+                        </div>
+                        <div class="col-xs-4">
+                            <?php
+                            if($editable)
+                            {
+                                ?>
+                                <input type="file" class="browse_button" data-preview-container="#visit_image_<?php echo $i; ?>" name="visit_image_<?php echo $i; ?>">
+                            <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+                        </div>
+                        <div class="col-xs-4">
+                            <?php
+                            $editable=false;
+                            $remarks='';
+                            if(isset($visits_picture[$i]['remarks'])&&strlen($visits_picture[$i]['remarks'])>0)
+                            {
+                                $remarks=$visits_picture[$i]['remarks'];
+                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                {
+                                    $editable=true;
+                                }
+                                else
+                                {
+                                    $editable=false;
+                                }
+                            }
+                            else
+                            {
+                                $editable=true;
+                            }
+                            ?>
+                            <?php
+                            if($editable)
+                            {
+                                ?>
+                                <textarea class="form-control" name="visit_remarks[<?php echo $i; ?>]"><?php echo $remarks; ?></textarea>
+                            <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <?php echo $remarks; ?>
+                            <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($fsetup['date_sowing']+24*3600*$i*$fsetup['interval']); ?></label>
+                        </div>
+                    </div>
+                <?php
+                }
+                ?>
+            </div>
         </div>
-
-        <?php
-        for($i=1;$i<=$fsetup['num_picture'];$i++)
-        {
-            ?>
-
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right">Picture - <?php echo $i;?></label>
-                    </div>
-                    <div class="col-xs-4" id="image_<?php echo $i; ?>">
-                        <?php
-                        $editable=false;
-                        $image='images/no_image.jpg';
-                        if(isset($visits[$i]['picture'])&&strlen($visits[$i]['picture'])>0)
-                        {
-                            $image=$visits[$i]['picture'];
-                            if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
-                            {
-                                $editable=true;
-                            }
-                            else
-                            {
-                                $editable=false;
-                            }
-                        }
-                        else
-                        {
-                            $editable=true;
-                        }
-                        ?>
-                        <img style="max-width: 250px;" src="<?php echo base_url().$image;?>">
-                    </div>
-                    <div class="col-xs-4">
-                        <?php
-                        if($editable)
-                        {
-                            ?>
-                            <input type="file" class="browse_button" data-preview-container="#image_<?php echo $i; ?>" name="image_<?php echo $i; ?>">
-                            <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
-                    </div>
-                    <div class="col-xs-4">
-                        <?php
-                        $editable=false;
-                        $remarks='';
-                        if(isset($visits[$i]['remarks'])&&strlen($visits[$i]['remarks'])>0)
-                        {
-                            $remarks=$visits[$i]['remarks'];
-                            if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
-                            {
-                                $editable=true;
-                            }
-                            else
-                            {
-                                $editable=false;
-                            }
-                        }
-                        else
-                        {
-                            $editable=true;
-                        }
-                        ?>
-                        <?php
-                        if($editable)
-                        {
-                            ?>
-                            <textarea class="form-control" name="remarks[<?php echo $i; ?>]"><?php echo $remarks; ?></textarea>
-                            <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <?php echo $remarks; ?>
-                            <?php
-                        }
-                        ?>
-                    </div>
-                </div>
-                <div class="row show-grid">
-                    <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label>
-                    </div>
-                    <div class="col-xs-4">
-                        <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($fsetup['date_sowing']+24*3600*$i*$fsetup['interval']); ?></label>
-                    </div>
-                </div>
-            <?php
-        }
-        ?>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_fruit_picture" href="#">Fruit Picture and remarks</a>
+                </h4>
+            </div>
+            <div id="collapse_fruit_picture" class="panel-collapse collapse">
+                hi there 2
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a class="accordion-toggle external" data-toggle="collapse"  data-target="#collapse_disease_picture" href="#">Disease Picture and remarks</a>
+                </h4>
+            </div>
+            <div id="collapse_disease_picture" class="panel-collapse collapse">
+                hi there 3
+            </div>
+        </div>
     </div>
-
     <div class="clearfix"></div>
 </form>
 <script type="text/javascript">
