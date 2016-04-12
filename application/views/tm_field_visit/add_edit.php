@@ -257,7 +257,93 @@
                 </h4>
             </div>
             <div id="collapse_fruit_picture" class="panel-collapse collapse">
-                hi there 2
+                <?php
+                foreach($fruits_picture_headers as $headers)
+                {
+                    ?>
+
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right"><?php echo $headers['name'];?></label>
+                        </div>
+                        <div class="col-xs-4" id="fruit_image_<?php echo $headers['id']; ?>">
+                            <?php
+                            $editable=false;
+                            $image=base_url().'images/no_image.jpg';
+                            if(isset($fruits_picture[$headers['id']]['picture_url'])&&strlen($fruits_picture[$headers['id']]['picture_url'])>0)
+                            {
+                                $image=$fruits_picture[$headers['id']]['picture_url'];
+                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                {
+                                    $editable=true;
+                                }
+                                else
+                                {
+                                    $editable=false;
+                                }
+                            }
+                            else
+                            {
+                                $editable=true;
+                            }
+                            ?>
+                            <img style="max-width: 250px;" src="<?php echo $image;?>">
+                        </div>
+                        <div class="col-xs-4">
+                            <?php
+                            if($editable)
+                            {
+                                ?>
+                                <input type="file" class="browse_button" data-preview-container="#fruit_image_<?php echo $headers['id']; ?>" name="fruit_image_<?php echo $headers['id']; ?>">
+                            <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-4">
+                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
+                        </div>
+                        <div class="col-xs-4">
+                            <?php
+                            $editable=false;
+                            $remarks='';
+                            if(isset($fruits_picture[$headers['id']]['remarks'])&&strlen($fruits_picture[$headers['id']]['remarks'])>0)
+                            {
+                                $remarks=$fruits_picture[$headers['id']]['remarks'];
+                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                {
+                                    $editable=true;
+                                }
+                                else
+                                {
+                                    $editable=false;
+                                }
+                            }
+                            else
+                            {
+                                $editable=true;
+                            }
+                            ?>
+                            <?php
+                            if($editable)
+                            {
+                                ?>
+                                <textarea class="form-control" name="fruit_remarks[<?php echo $headers['id']; ?>]"><?php echo $remarks; ?></textarea>
+                            <?php
+                            }
+                            else
+                            {
+                                ?>
+                                <?php echo $remarks; ?>
+                            <?php
+                            }
+                            ?>
+                        </div>
+                    </div>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="panel panel-default">

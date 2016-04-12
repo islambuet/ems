@@ -136,6 +136,13 @@ class Tm_field_visit extends Root_Controller
             {
                 $data['visits_picture'][$visit['day_no']]=$visit;
             }
+            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_setup_tm_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['fruits_picture']=array();
+            $visits=Query_helper::get_info($this->config->item('table_tm_visits_fruit_picture'),'*',array('setup_id ='.$setup_id));
+            foreach($visits as $visit)
+            {
+                $data['fruits_picture'][$visit['picture_id']]=$visit;
+            }
 
             $data['title']="Edit Field Visit";
             $ajax['status']=true;
@@ -295,14 +302,24 @@ class Tm_field_visit extends Root_Controller
         {
             $visits_picture[$info['day_no']]=$info;
         }
-        $remarks=$this->input->post('visit_remarks');
+        $visit_remarks=$this->input->post('visit_remarks');
+
+        $fruits_picture_headers=Query_helper::get_info($this->config->item('table_setup_tm_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
+        $fruits_picture=array();
+        $infos=Query_helper::get_info($this->config->item('table_tm_visits_fruit_picture'),'*',array('setup_id ='.$setup_id));
+        foreach($infos as $info)
+        {
+            $fruits_picture[$info['picture_id']]=$info;
+        }
+        $fruit_remarks=$this->input->post('fruit_remarks');
+
         $this->db->trans_start();
         for($i=1;$i<=$fsetup['num_visits'];$i++)
         {
             $data=array();
-            if(isset($remarks[$i]) && (strlen($remarks[$i])>0))
+            if(isset($visit_remarks[$i]) && (strlen($visit_remarks[$i])>0))
             {
-                $data['remarks']=$remarks[$i];
+                $data['remarks']=$visit_remarks[$i];
             }
             if(isset($uploaded_files['visit_image_'.$i]))
             {
@@ -328,6 +345,38 @@ class Tm_field_visit extends Root_Controller
                 }
             }
         }
+        foreach($fruits_picture_headers as $header)
+        {
+            $data=array();
+            if(isset($fruit_remarks[$header['id']]) && (strlen($fruit_remarks[$header['id']])>0))
+            {
+                $data['remarks']=$fruit_remarks[$header['id']];
+            }
+            if(isset($uploaded_files['fruit_image_'.$header['id']]))
+            {
+                $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id']]['info']['file_name'];
+                $data['picture_file_full']=$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id']]['info']['file_name'];
+                $data['picture_file_name']=$uploaded_files['fruit_image_'.$header['id']]['info']['file_name'];
+            }
+            if($data)
+            {
+                if(isset($fruits_picture[$header['id']]))
+                {
+                    $data['user_updated'] = $user->user_id;
+                    $data['date_updated'] = $time;
+                    Query_helper::update($this->config->item('table_tm_visits_fruit_picture'),$data,array("id = ".$visits_picture[$header['id']]['id']));
+                }
+                else
+                {
+                    $data['setup_id'] = $setup_id;
+                    $data['picture_id'] = $header['id'];
+                    $data['user_created'] = $user->user_id;
+                    $data['date_created'] = $time;
+                    Query_helper::add($this->config->item('table_tm_visits_fruit_picture'),$data);
+                }
+            }
+        }
+
         $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
@@ -382,7 +431,8 @@ class Tm_field_visit extends Root_Controller
         $this->db->select('crop.name crop_name');
         $this->db->select('crop_type.name crop_type_name');
         $this->db->select('v.name variety_name');
-        $this->db->select('count(case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.setup_id end) num_visit_done',true);
+        $this->db->select('count(distinct case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.id end) num_visit_done',true);
+        $this->db->select('count(distinct case when vfp.remarks IS NOT NULL or vfp.picture_url IS NOT NULL then vfp.id end) num_fruit_picture',false);
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -393,6 +443,7 @@ class Tm_field_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
         $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
+        $this->db->join($this->config->item('table_tm_visits_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -416,9 +467,8 @@ class Tm_field_visit extends Root_Controller
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('tmf.id','DESC');
         $this->db->group_by('tmf.id');
-
-
         $items=$this->db->get()->result_array();
+        //echo $this->db->last_query();
         foreach($items as &$item)
         {
             $item['date_sowing']=System_helper::display_date($item['date_sowing']);
