@@ -316,29 +316,33 @@ class Tm_field_visit extends Root_Controller
         $final_details=array();
 
         $details=$this->input->post('disease');
-        foreach($details as $i=>$detail)
+        if(sizeof($details)>0)
         {
-            $data=array();
-            $data['id']=0;
-            $data['setup_id']=$setup_id;
-            $data['remarks']=$detail['remarks'];
-            if(isset($uploaded_files['disease_image_'.$i]))
+            foreach($details as $i=>$detail)
             {
-                $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
-                $data['picture_file_full']=$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
-                $data['picture_file_name']=$uploaded_files['disease_image_'.$i]['info']['file_name'];
-            }
-            elseif(isset($detail['old_disease_picture']))
-            {
-                $data['picture_url']=base_url().$file_folder.'/'.$detail['old_disease_picture'];
-                $data['picture_file_full']=$file_folder.'/'.$detail['old_disease_picture'];
-                $data['picture_file_name']=$detail['old_disease_picture'];
-            }
-            $data['user_created'] = $user->user_id;
-            $data['date_created'] = $time;
-            $final_details[]=$data;
+                $data=array();
+                $data['id']=0;
+                $data['setup_id']=$setup_id;
+                $data['remarks']=$detail['remarks'];
+                if(isset($uploaded_files['disease_image_'.$i]))
+                {
+                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
+                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['disease_image_'.$i]['info']['file_name'];
+                    $data['picture_file_name']=$uploaded_files['disease_image_'.$i]['info']['file_name'];
+                }
+                elseif(isset($detail['old_disease_picture']))
+                {
+                    $data['picture_url']=base_url().$file_folder.'/'.$detail['old_disease_picture'];
+                    $data['picture_file_full']=$file_folder.'/'.$detail['old_disease_picture'];
+                    $data['picture_file_name']=$detail['old_disease_picture'];
+                }
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = $time;
+                $final_details[]=$data;
 
+            }
         }
+
         $old_details=Query_helper::get_info($this->config->item('table_tm_visits_disease_picture'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
 
         foreach($old_details as $i=>$detail)
