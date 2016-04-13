@@ -173,7 +173,6 @@ class Tm_field_visit extends Root_Controller
             {
                 $setup_id=$id;
             }
-
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
             $this->db->select('tmf.*');
             $this->db->select('upazilla.name upazilla_name');
@@ -184,6 +183,7 @@ class Tm_field_visit extends Root_Controller
             $this->db->select('crop.name crop_name');
             $this->db->select('crop_type.name crop_type_name');
             $this->db->select('v.name variety_name');
+            $this->db->select('season.name season_name');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -192,10 +192,10 @@ class Tm_field_visit extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->where('tmf.id',$setup_id);
             $this->db->where('tmf.status','Active');
             $data['fsetup']=$this->db->get()->row_array();
-
             if(!$data['fsetup'])
             {
                 System_helper::invalid_try($this->config->item('system_edit_not_exists'),$setup_id);
@@ -211,14 +211,44 @@ class Tm_field_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['visits']=array();
-            $visits=Query_helper::get_info($this->config->item('table_tm_visits'),'*',array('setup_id ='.$setup_id));
+            $user_ids=array();
+
+            $user_ids[$data['fsetup']['user_created']]=$data['fsetup']['user_created'];
+            $data['visits_picture']=array();
+            $visits=Query_helper::get_info($this->config->item('table_tm_visits_picture'),'*',array('setup_id ='.$setup_id));
             foreach($visits as $visit)
             {
-                $data['visits'][$visit['day_no']]=$visit;
+                $data['visits_picture'][$visit['day_no']]=$visit;
+                $user_ids[$visit['user_created']]=$visit['user_created'];
+                if($visit['user_feedback'])
+                {
+                    $user_ids[$visit['user_feedback']]=$visit['user_feedback'];
+                }
             }
+            $data['fruits_picture_headers']=Query_helper::get_info($this->config->item('table_setup_tm_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+            $data['fruits_picture']=array();
+            $visits=Query_helper::get_info($this->config->item('table_tm_visits_fruit_picture'),'*',array('setup_id ='.$setup_id));
+            foreach($visits as $visit)
+            {
+                $data['fruits_picture'][$visit['picture_id']]=$visit;
+                $user_ids[$visit['user_created']]=$visit['user_created'];
+                if($visit['user_feedback'])
+                {
+                    $user_ids[$visit['user_feedback']]=$visit['user_feedback'];
+                }
+            }
+            $data['disease_picture']=Query_helper::get_info($this->config->item('table_tm_visits_disease_picture'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+            foreach($data['disease_picture'] as $visit)
+            {
+                $user_ids[$visit['user_created']]=$visit['user_created'];
+                if($visit['user_feedback'])
+                {
+                    $user_ids[$visit['user_feedback']]=$visit['user_feedback'];
+                }
+            }
+            $data['users']=System_helper::get_users_info($user_ids);
 
-            $data['title']="Edit Field Visit";
+            $data['title']="Details of Field Visit";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_field_visit/details",$data,true));
             if($this->message)

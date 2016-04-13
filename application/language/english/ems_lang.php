@@ -215,3 +215,5 @@ $lang['LABEL_NUM_FEEDBACK'] = 'Number of Feedback done';
 $lang['LABEL_INTERVAL'] = 'Interval (Days)';
 $lang['LABEL_FEEDBACK'] = 'Feedback';
 $lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
+$lang['LABEL_ENTRY_TIME'] = 'Entry Time';
+$lang['LABEL_FEEDBACK_NOT_GIVEN'] = 'Pending';
