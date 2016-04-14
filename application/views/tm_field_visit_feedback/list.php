@@ -37,6 +37,8 @@
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name">Farmer Name</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="year"><?php echo $CI->lang->line('LABEL_YEAR'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="season_name"><?php echo $CI->lang->line('LABEL_SEASON'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
@@ -47,8 +49,14 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="contact_no">Contact No</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_sowing"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_picture"><?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done">Number of visit done</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done_feedback">Number of visit feedback</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture">Number of Fruit Picture</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture_feedback">Number of Fruit Picture Feedback</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture">Number Of Disease</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture_feedback">Number Of Disease_feedback</label>
             </div>
         </div>
     <?php
@@ -72,6 +80,8 @@
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'name', type: 'string' },
+                { name: 'year', type: 'string' },
+                { name: 'season_name', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
@@ -82,10 +92,14 @@
                 { name: 'variety_name', type: 'string' },
                 { name: 'contact_no', type: 'string' },
                 { name: 'date_sowing', type: 'string' },
-                { name: 'num_picture', type: 'string' },
+                { name: 'num_visits', type: 'string' },
                 { name: 'interval', type: 'string' },
-                { name: 'num_visit', type: 'string' },
-                { name: 'num_feedback', type: 'string' }
+                { name: 'num_visit_done', type: 'string' },
+                { name: 'num_visit_done_feedback', type: 'string' },
+                { name: 'num_fruit_picture', type: 'string' },
+                { name: 'num_fruit_picture_feedback', type: 'string' },
+                { name: 'num_disease_picture', type: 'string' },
+                { name: 'num_disease_picture_feedback', type: 'string' }
 
             ],
             id: 'id',
@@ -96,7 +110,7 @@
             var element = $(defaultHtml);
             // console.log(defaultHtml);
 
-            if (record.num_visit>record.num_feedback)
+            if ((record.num_visit_done!=record.num_visit_done_feedback)||(record.num_fruit_picture!=record.num_fruit_picture_feedback)||(record.num_disease_picture!=record.num_disease_picture_feedback))
             {
                 element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
@@ -131,7 +145,9 @@
                 enabletooltips: true,
                 rowsheight: 35,
                 columns: [
-                    { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
+                    { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer},
@@ -142,10 +158,14 @@
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150',cellsrenderer: cellsrenderer},
                     { text: 'Contact No', dataField: 'contact_no',width:'150',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_PICTURE'); ?>', dataField: 'num_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISIT'); ?>', dataField: 'num_visit',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_FEEDBACK'); ?>', dataField: 'num_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer}
+                    { text: 'Number of visit done', dataField: 'num_visit_done',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Number of visit feedback', dataField: 'num_visit_done_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Number of Fruit Picture', dataField: 'num_fruit_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Number of Fruit Picture Feedback', dataField: 'num_fruit_picture_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Number Of Disease', dataField: 'num_disease_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Number Of Disease Feedback', dataField: 'num_disease_picture_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer}
                 ]
             });
     });
