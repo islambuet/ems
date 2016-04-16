@@ -629,6 +629,7 @@ class Tm_field_visit_feedback extends Root_Controller
         $this->db->select('crop.name crop_name');
         $this->db->select('crop_type.name crop_type_name');
         $this->db->select('v.name variety_name');
+        $this->db->select('season.name season_name');
         $this->db->select('count(distinct case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.id end) num_visit_done',true);
         $this->db->select('count(distinct case when vp.feedback IS NOT NULL then vp.id end) num_visit_done_feedback',true);
         $this->db->select('count(distinct case when vfp.remarks IS NOT NULL or vfp.picture_url IS NOT NULL then vfp.id end) num_fruit_picture',false);
@@ -644,6 +645,7 @@ class Tm_field_visit_feedback extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
         $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
         $this->db->join($this->config->item('table_tm_visits_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
         $this->db->join($this->config->item('table_tm_visits_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
