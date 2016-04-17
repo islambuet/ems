@@ -78,4 +78,5 @@ $config['table_tm_popular_variety_details'] = 'ems_tm_popular_variety_details';
 $config['table_setup_tm_seasons'] = 'ems_setup_tm_seasons';
 $config['table_setup_tm_shifts'] = 'ems_setup_tm_shifts';
 $config['table_setup_tm_fruit_picture'] = 'ems_setup_tm_fruit_picture';
+$config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';
 

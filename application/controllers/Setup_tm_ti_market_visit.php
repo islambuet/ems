@@ -53,10 +53,6 @@ class Setup_tm_ti_market_visit extends Root_Controller
         {
             $this->system_details($id);
         }
-        elseif($action=="delete")
-        {
-            $this->system_delete();
-        }
         elseif($action=="save")
         {
             $this->system_save();
@@ -131,87 +127,46 @@ class Setup_tm_ti_market_visit extends Root_Controller
     private function system_edit($id)
     {
 
-        if((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1)))
+        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
             if(($this->input->post('id')))
             {
-                $setup_id=$this->input->post('id');
+                $territory_id=$this->input->post('id');
             }
             else
             {
-                $setup_id=$id;
+                $territory_id=$id;
             }
-
-            $this->db->from($this->config->item('table_tm_farmers').' tmf');
-            $this->db->select('tmf.*');
-            $this->db->select('upazilla.name upazilla_name');
-            $this->db->select('d.name district_name,d.id district_id');
-            $this->db->select('t.name territory_name,t.id territory_id');
-            $this->db->select('zone.name zone_name,zone.id zone_id');
-            $this->db->select('division.name division_name,division.id division_id');
-            $this->db->select('crop_type.id type_id,crop_type.name crop_type_name');
-            $this->db->select('crop.id crop_id,crop.name crop_name');
-            $this->db->select('v.name variety_name');
-            $this->db->select('season.name season_name');
-            $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
+            $this->db->select('stmv.territory_id territory_id');
+            $this->db->select('zone.id zone_id');
+            $this->db->select('zone.division_id division_id');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+            $this->db->group_by('t.id');
+            $this->db->where('stmv.territory_id',$territory_id);
+            $data['setup']=$this->db->get()->row_array();
 
-            $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
-            $this->db->where('tmf.id',$setup_id);
-            $this->db->where('tmf.status','Active');
-            $data['fsetup']=$this->db->get()->row_array();
-
-            if(!$data['fsetup'])
+            if(!$data['setup'])
             {
-                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$setup_id);
+                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$territory_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-
-            if(!$this->check_my_editable($data['fsetup']))
-            {
-                System_helper::invalid_try($this->config->item('system_edit_others'),$setup_id);
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-            }
-
 
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['fsetup']['division_id']));
-            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['fsetup']['zone_id']));
-            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['fsetup']['territory_id']));
+            $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['setup']['division_id']));
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['setup']['zone_id']));
 
-            $data['upazillas']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$data['fsetup']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
-
-            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['fsetup']['crop_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['fsetup']['type_id'],'status ="'.$this->config->item('system_status_active').'"'));
-
-            $data['seasons']=Query_helper::get_info($this->config->item('table_setup_tm_seasons'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-
-            $data['title']="Edit Farmer and Field Visit Setup";
+            $data['title']="Territory In-Charge Market Visit Setup";
             $ajax['status']=true;
-            if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
-            {
-                $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/add_edit",$data,true));
-            }
-            elseif(isset($this->permissions['add'])&&($this->permissions['add']==1))
-            {
-                $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/edit_unfilled",$data,true));
-            }
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_ti_market_visit/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$setup_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/edit/'.$territory_id);
             $this->jsonReturn($ajax);
         }
         else
@@ -288,6 +243,90 @@ class Setup_tm_ti_market_visit extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
+
+    private function system_save()
+    {
+        $territory_id = $this->input->post("territory_id");
+        $time=time();
+        $user = User_helper::get_user();
+        $setup_exists=Query_helper::get_info($this->config->item('table_setup_tm_market_visit'),'*',array('territory_id ='.$territory_id,'revision =1'),1);
+        if($setup_exists)
+        {
+            if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+                die();
+            }
+        }
+        else
+        {
+            if(!(isset($this->permissions['add'])&&($this->permissions['add']==1)))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+                die();
+
+            }
+        }
+        $customers=$this->input->post('customers');
+        if(sizeof($customers)>0)
+        {
+
+            $this->db->trans_start();  //DB Transaction Handle START
+            $this->db->where('territory_id',$territory_id);
+            $this->db->set('revision', 'revision+1', FALSE);
+            $this->db->update($this->config->item('table_setup_tm_market_visit'));
+            foreach($customers as $day_no=>$days)
+            {
+                foreach($days as $shift_id=>$day)
+                {
+                    foreach($day as $customer_id)
+                    {
+                        $data=array();
+                        $data['territory_id']=$territory_id;
+                        $data['day_no']=$day_no;
+                        $data['shift_id']=$shift_id;
+                        $data['shift_id']=$shift_id;
+                        $data['customer_id']=$customer_id;
+                        $data['revision']=1;
+                        $data['user_created'] = $user->user_id;
+                        $data['date_created'] =$time;
+                        Query_helper::add($this->config->item('table_setup_tm_market_visit'),$data);
+
+                    }
+                }
+            }
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $save_and_new=$this->input->post('system_save_new_status');
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                if($save_and_new==1)
+                {
+                    $this->system_add();
+                }
+                else
+                {
+                    $this->system_list();
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']="No customer was selected";
+            $this->jsonReturn($ajax);
+        }
+    }
     private function get_schedule($id)
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
@@ -315,212 +354,6 @@ class Setup_tm_ti_market_visit extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
-    private function system_delete()
-    {
-        if(isset($this->permissions['delete'])&&($this->permissions['delete']==1))
-        {
-            $ids = $this->input->post("ids");
-            $user = User_helper::get_user();
-            $this->db->trans_start();  //DB Transaction Handle START
-            $time=time();
-            foreach($ids as $id)
-            {
-                Query_helper::update($this->config->item('table_tm_farmers'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
-            }
-            $this->db->trans_complete();   //DB Transaction Handle END
-
-            if ($this->db->trans_status() === TRUE)
-            {
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                $this->system_list();
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->jsonReturn($ajax);
-            }
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->jsonReturn($ajax);
-        }
-
-    }
-
-
-    private function system_save()
-    {
-        echo '<PRE>';
-        print_r($this->input->post());
-        echo '</PRE>';
-        die();
-        $id = $this->input->post("id");
-        $user = User_helper::get_user();
-        if($id>0)
-        {
-            if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-                die();
-            }
-        }
-        else
-        {
-            if(!(isset($this->permissions['add'])&&($this->permissions['add']==1)))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-                die();
-
-            }
-        }
-        if(!$this->check_validation())
-        {
-            $ajax['status']=false;
-            $ajax['system_message']=$this->message;
-            $this->jsonReturn($ajax);
-        }
-        else
-        {
-            $data=$this->input->post('fsetup');
-            $data['date_sowing']=System_helper::get_time($data['date_sowing']);
-            $data['date_transplant']=System_helper::get_time($data['date_transplant']);
-            $this->db->trans_start();  //DB Transaction Handle START
-            if($id>0)
-            {
-                $data['user_updated'] = $user->user_id;
-                $data['date_updated'] = time();
-
-                Query_helper::update($this->config->item('table_tm_farmers'),$data,array("id = ".$id));
-
-            }
-            else
-            {
-
-                $data['user_created'] = $user->user_id;
-                $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_tm_farmers'),$data);
-            }
-            $this->db->trans_complete();   //DB Transaction Handle END
-            if ($this->db->trans_status() === TRUE)
-            {
-                $save_and_new=$this->input->post('system_save_new_status');
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                if($save_and_new==1)
-                {
-                    $this->system_add();
-                }
-                else
-                {
-                    $this->system_list();
-                }
-            }
-            else
-            {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->jsonReturn($ajax);
-            }
-        }
-    }
-
-    private function check_my_editable($customer)
-    {
-
-        if(($this->locations['division_id']>0)&&($this->locations['division_id']!=$customer['division_id']))
-        {
-            return false;
-        }
-        if(($this->locations['zone_id']>0)&&($this->locations['zone_id']!=$customer['zone_id']))
-        {
-            return false;
-        }
-
-        if(($this->locations['territory_id']>0)&&($this->locations['territory_id']!=$customer['territory_id']))
-        {
-            return false;
-        }
-        if(($this->locations['district_id']>0)&&($this->locations['district_id']!=$customer['district_id']))
-        {
-            return false;
-        }
-
-        if(($this->locations['upazilla_id']>0)&&($this->locations['upazilla_id']!=$customer['upazilla_id']))
-        {
-            return false;
-        }
-
-        return true;
-    }
-    private function check_validation()
-    {
-        return true;
-    }
-    public function get_items()
-    {
-        $items=array();
-        $this->jsonReturn($items);
-        //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
-        $this->db->from($this->config->item('table_tm_farmers').' tmf');
-        $this->db->select('tmf.*');
-        $this->db->select('upazilla.name upazilla_name');
-        $this->db->select('d.name district_name');
-        $this->db->select('t.name territory_name');
-        $this->db->select('zone.name zone_name');
-        $this->db->select('division.name division_name');
-        $this->db->select('crop.name crop_name');
-        $this->db->select('crop_type.name crop_type_name');
-        $this->db->select('v.name variety_name');
-
-        $this->db->select('season.name season_name');
-        $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-
-        $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('division.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zone.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('t.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('d.id',$this->locations['district_id']);
-                        if($this->locations['upazilla_id']>0)
-                        {
-                            $this->db->where('upazilla.id',$this->locations['upazilla_id']);
-                        }
-                    }
-                }
-            }
-        }
-        $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('id','DESC');
-
-        $items=$this->db->get()->result_array();
-        foreach($items as &$item)
-        {
-            $item['date_sowing']=System_helper::display_date($item['date_sowing']);
-        }
-
-        $this->jsonReturn($items);
-    }
     public function get_customers()
     {
         $district_id=$this->input->post('district_id');
@@ -530,8 +363,39 @@ class Setup_tm_ti_market_visit extends Root_Controller
         $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$customer_container,"html"=>$this->load->view("setup_tm_ti_market_visit/customer_selection",$data,true));
-        //$ajax['system_content'][]=array("id"=>$customer_container,"html"=>$shift_id.' '.$day_no);
         $this->jsonReturn($ajax);
     }
+    public function get_items()
+    {
+
+        $this->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
+        $this->db->select('t.id id');
+        $this->db->select('t.name territory_name');
+        $this->db->select('zone.name zone_name');
+        $this->db->select('division.name division_name');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('division.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zone.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('t.id',$this->locations['territory_id']);
+                }
+            }
+        }
+        $this->db->where('stmv.revision',1);
+        $this->db->group_by('t.id');
+        $this->db->order_by('stmv.id','DESC');
+
+        $items=$this->db->get()->result_array();
+
+        $this->jsonReturn($items);
+    }
+
 
 }
