@@ -3,6 +3,15 @@
 
 ?>
 <form class="form_valid" id="report_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
+    <input type="hidden" name="report[year]" value="<?php echo $report['year'] ?>">
+    <input type="hidden" name="report[season_id]" value="<?php echo $report['season_id'] ?>">
+    <input type="hidden" name="report[crop_id]" value="<?php echo $report['crop_id'] ?>">
+    <input type="hidden" name="report[crop_type_id]" value="<?php echo $report['crop_type_id'] ?>">
+    <input type="hidden" name="report[division_id]" value="<?php echo $report['division_id'] ?>">
+    <input type="hidden" name="report[zone_id]" value="<?php echo $report['zone_id'] ?>">
+    <input type="hidden" name="report[territory_id]" value="<?php echo $report['territory_id'] ?>">
+    <input type="hidden" name="report[district_id]" value="<?php echo $report['district_id'] ?>">
+    <input type="hidden" name="report[upazilla_id]" value="<?php echo $report['upazilla_id'] ?>">
     <div class="row widget">
         <div class="row show-grid">
             <div class="col-xs-6">
@@ -16,11 +25,11 @@
                     <label><input type="checkbox" id="select_all_arm">SELECT ALL</label>
                 </div>
                 <?php
-                foreach($arm_varieties as $setup)
+                foreach($arm_varieties as $variety)
                 {
                     ?>
                     <div class="checkbox">
-                        <label><input type="checkbox" class="setup_arm" name="setup_ids[]" value="<?php echo $setup['id']; ?>"><?php echo $setup['variety_name']; ?></label>
+                        <label><input type="checkbox" class="setup_arm" name="variety_ids[]" value="<?php echo $variety['variety_id']; ?>"><?php echo $variety['variety_name']; ?></label>
                     </div>
                 <?php
                 }
@@ -37,11 +46,11 @@
                     <label><input type="checkbox" id="select_all_competitor">SELECT ALL</label>
                 </div>
                 <?php
-                foreach($competitor_varieties as $setup)
+                foreach($competitor_varieties as $variety)
                 {
                     ?>
                     <div class="checkbox">
-                        <label><input type="checkbox" class="setup_competitor" name="setup_ids[]" value="<?php echo $setup['id']; ?>"><?php echo $setup['variety_name']; ?></label>
+                        <label><input type="checkbox" class="setup_competitor" name="variety_ids[]" value="<?php echo $variety['variety_id']; ?>"><?php echo $variety['variety_name']; ?></label>
                     </div>
                 <?php
                 }

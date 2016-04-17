@@ -74,16 +74,6 @@
                         </select>
                     </div>
                 </div>
-                <div style="display: none;" class="row show-grid" id="variety_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="variety_id" name="report[variety_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        </select>
-                    </div>
-                </div>
             </div>
             <div class="col-xs-6">
                 <div style="" class="row show-grid">
@@ -270,11 +260,38 @@
 <div id="system_report_container">
 
 </div>
+<div id="popup_window">
+    <div>Details</div>
+    <div id="popup_content" style="overflow: auto;">
+    </div>
+</div>
 <script type="text/javascript">
 
     jQuery(document).ready(function()
     {
         turn_off_triggers();
+        $(document).off("click", ".pop_up");
+
+        $("#popup_window").jqxWindow({
+            width: 550,height:550, resizable: true,  isModal: true, autoOpen: false, modalOpacity: 0.01,position: { x: 60, y: 60 }
+        });
+        $(document).on("click", ".pop_up", function(event)
+        {
+
+            var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
+            var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
+
+            //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
+            $("#popup_window").jqxWindow({position: { x: left, y: top  }});
+            var row=$(this).attr('data-item-no');
+            var key=$(this).attr('data-key');
+            var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
+            $('#popup_content').html(row_info.details[key]);
+            $("#popup_window").jqxWindow('open');
+
+
+        });
+
         $(document).off("change", "#select_all_arm");
         $(document).off("change", "#select_all_competitor");
 

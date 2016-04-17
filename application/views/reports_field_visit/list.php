@@ -189,19 +189,19 @@
                     { text: 'Locations', dataField: 'location',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                         <?php
                             for($i=1;$i<=$max_visits;$i++)
-                            {?>{ columngroup: 'visit_images',text: '<?php echo $i;?>', dataField: '<?php echo 'visit_pictures_'.$i;?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                            {?>{ columngroup: 'visit_images',text: '<?php echo $i;?>', dataField: '<?php echo 'visit_pictures_'.$i;?>',align:'center',cellsalign: 'right',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         }
                     ?>,
                         <?php
                             foreach($fruits_picture_headers as $headers)
-                            {?>{ columngroup: 'fruit_images',text: '<?php echo $headers['name'];?>', dataField: '<?php echo 'fruit_pictures_'.$headers['id'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                            {?>{ columngroup: 'fruit_images',text: '<?php echo $headers['name'];?>', dataField: '<?php echo 'fruit_pictures_'.$headers['id'];?>',align:'center',cellsalign: 'right',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         }
                     ?>,
                         <?php
                             for($i=0;$i<$max_diseases;$i++)
-                            {?>{ columngroup: 'disease_images',text: '<?php echo $i+1;?>', dataField: '<?php echo 'disease_pictures_'.$i;?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                            {?>{ columngroup: 'disease_images',text: '<?php echo $i+1;?>', dataField: '<?php echo 'disease_pictures_'.$i;?>',align:'center',cellsalign: 'right',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         }
                     ?>
