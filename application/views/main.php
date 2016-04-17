@@ -89,6 +89,11 @@ $CI = & get_instance();
         </footer>
         <div id="system_loading"><img src="<?php echo base_url(); ?>images/spinner.gif"></div>
         <div id="system_message"></div>
+        <div id="popup_window">
+            <div id="popup_window_title">Details</div>
+            <div id="popup_content" style="overflow: auto;">
+            </div>
+        </div>
         <script type="text/javascript" src="<?php echo base_url(); ?>js/system_common.js"></script>
     </body>
 </html>

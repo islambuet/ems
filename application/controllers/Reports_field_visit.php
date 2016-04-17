@@ -392,6 +392,7 @@ class Reports_field_visit extends Root_Controller
     public function get_items()
     {
         $items=array();
+        $user_ids=array();
 
         $year=$this->input->post('year');
         $season_id=$this->input->post('season_id');
@@ -478,22 +479,6 @@ class Reports_field_visit extends Root_Controller
             $item['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'];
             $item['date_sowing']=$result['date_sowing'];
             $item['interval']=$result['interval'];
-            /*if(isset($visit_infos[$result['id']]))
-            {
-                foreach($visit_infos[$result['id']] as $visit)
-                {
-                    $image=base_url().'images/no_image.jpg';
-                    if(strlen($visit['picture_url'])>0)
-                    {
-                        $image=$visit['picture_url'];
-                    }
-                    $html_row='<div class="popular_popup" style="height: 125px;width: 133px;">';
-                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
-                    $html_row.='<div style="height: 25px;text-align: center; ">'.$visit['date_created'].'</div>';
-                    $html_row.='</div>';
-                    $item['visit_pictures_'.$visit['day_no']]=$html_row;
-                }
-            }*/
             $items[]=$item;
         }
         $this->db->from($this->config->item('table_tm_visits_picture').' vp');
@@ -505,26 +490,49 @@ class Reports_field_visit extends Root_Controller
         foreach($results as $result)
         {
             $visit_infos[$result['setup_id']][$result['day_no']]=$result;
+            $user_ids[$result['user_created']]=$result['user_created'];
+            if($result['user_feedback'])
+            {
+                $user_ids[$result['user_feedback']]=$result['user_feedback'];
+            }
         }
+
+        $this->db->from($this->config->item('table_tm_visits_fruit_picture').' vfp');
+        $this->db->select('vfp.*');
+        $this->db->where_in('vfp.setup_id',$setup_ids);
+        $this->db->order_by('vfp.picture_id','ASC');
+        $results=$this->db->get()->result_array();
+        $fruit_infos=array();
+        foreach($results as $result)
+        {
+            $fruit_infos[$result['setup_id']][$result['picture_id']]=$result;
+            $user_ids[$result['user_created']]=$result['user_created'];
+            if($result['user_feedback'])
+            {
+                $user_ids[$result['user_feedback']]=$result['user_feedback'];
+            }
+        }
+        $this->db->from($this->config->item('table_tm_visits_disease_picture').' vdp');
+        $this->db->select('vdp.*');
+        $this->db->where_in('vdp.setup_id',$setup_ids);
+        $results=$this->db->get()->result_array();
+        $disease_infos=array();
+        foreach($results as $result)
+        {
+            $disease_infos[$result['setup_id']][]=$result;
+            $user_ids[$result['user_created']]=$result['user_created'];
+            if($result['user_feedback'])
+            {
+                $user_ids[$result['user_feedback']]=$result['user_feedback'];
+            }
+        }
+        $users=System_helper::get_users_info($user_ids);
         foreach($items as $i=>&$item)
         {
             if(isset($visit_infos[$item['id']]))
             {
                 foreach($visit_infos[$item['id']] as $visit)
                 {
-                    /*$html_row.='<div class="popular_popup" data-item-no="'.sizeof($items).'" data-info-no="'.$i.'" style="height: 125px;width: 133px;margin-right:10px;  float: left;cursor:pointer;">';
-                    $html_row.='<div style="height:100px;"><img src="'.$info['image'].'" style="max-height: 100px;max-width: 133px;"></div>';
-                    $html_row.='<div style="height: 25px;text-align: center; ">'.$info['date_remarks'].'</div>';
-                    $html_row.='</div>';
-                    $html_tooltip='';
-                    $html_tooltip.='<div>';
-                    $html_tooltip.='<div><img src="'.$info['image'].'" style="max-width: 100%;"></div>';
-                    $html_tooltip.='<div>Date: '.$info['date_remarks'].'</div>';
-                    $html_tooltip.='<div>Date Created: '.$info['date_created_remarks'].'</div>';
-                    $html_tooltip.='<div>Remarks: '.$info['remarks'].'</div>';
-                    $html_tooltip.='</div>';
-                    $details[]=$html_tooltip;*/
-
                     $image=base_url().'images/no_image.jpg';
                     if(strlen($visit['picture_url'])>0)
                     {
@@ -541,14 +549,113 @@ class Reports_field_visit extends Root_Controller
                     $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($item['date_sowing']+24*3600*$visit['day_no']*$item['interval']).'</div>';
                     $html_tooltip.='<div style="width:50%;float:left;">';
                     $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
-                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': '.System_helper::display_date($visit['date_created']).'</div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
                     $html_tooltip.='</div>';
                     $html_tooltip.='<div style="width:50%;float: right;">';
-                    $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
-                    $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' '.$this->lang->line('LABEL_ENTRY_TIME').': '.System_helper::display_date($visit['date_created']).'</div>';
+                    $feedback=$this->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
+                    $feedback_date='';
+                    if(strlen($visit['feedback'])>0)
+                    {
+                        $feedback=$visit['feedback'];
+                        $feedback_date=System_helper::display_date_time($visit['date_feedback']);
+                    }
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').': <div  style="font-size: 15px;font-weight:bold;">'.$feedback.'</div></div>';
+                    if($feedback_date)
+                    {
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.$feedback_date.'</div></div>';
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' By: <div>'.$users[$visit['user_feedback']]['name'].'</div></div>';
+                    }
+
                     $html_tooltip.='</div>';
                     $html_tooltip.='</div>';
                     $item['details']['visit_pictures_'.$visit['day_no']]=$html_tooltip;
+                }
+            }
+            if(isset($fruit_infos[$item['id']]))
+            {
+                foreach($fruit_infos[$item['id']] as $visit)
+                {
+                    $image=base_url().'images/no_image.jpg';
+                    if(strlen($visit['picture_url'])>0)
+                    {
+                        $image=$visit['picture_url'];
+                    }
+                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-key="fruit_pictures_'.$visit['picture_id'].'" style="height: 125px;width: 133px;cursor:pointer;">';
+                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
+                    $html_row.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($visit['date_created']).'</div>';
+                    $html_row.='</div>';
+                    $item['fruit_pictures_'.$visit['picture_id']]=$html_row;
+                    $html_tooltip='';
+                    $html_tooltip.='<div>';
+                    $html_tooltip.='<div><img src="'.$image.'" style="max-width: 100%;"></div>';
+                    $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($visit['date_created']).'</div>';
+                    $html_tooltip.='<div style="width:50%;float:left;">';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
+                    $html_tooltip.='</div>';
+                    $html_tooltip.='<div style="width:50%;float: right;">';
+                    $feedback=$this->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
+                    $feedback_date='';
+                    if(strlen($visit['feedback'])>0)
+                    {
+                        $feedback=$visit['feedback'];
+                        $feedback_date=System_helper::display_date_time($visit['date_feedback']);
+                    }
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').': <div  style="font-size: 15px;font-weight:bold;">'.$feedback.'</div></div>';
+                    if($feedback_date)
+                    {
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.$feedback_date.'</div></div>';
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' By: <div>'.$users[$visit['user_feedback']]['name'].'</div></div>';
+                    }
+
+                    $html_tooltip.='</div>';
+                    $html_tooltip.='</div>';
+                    $item['details']['fruit_pictures_'.$visit['picture_id']]=$html_tooltip;
+                }
+            }
+            if(isset($disease_infos[$item['id']]))
+            {
+                foreach($disease_infos[$item['id']] as $index=>$visit)
+                {
+                    $image=base_url().'images/no_image.jpg';
+                    if(strlen($visit['picture_url'])>0)
+                    {
+                        $image=$visit['picture_url'];
+                    }
+                    $html_row='<div class="pop_up" data-item-no="'.$i.'" data-key="disease_pictures_'.$index.'" style="height: 125px;width: 133px;cursor:pointer;">';
+                    $html_row.='<div style="height:100px;"><img src="'.$image.'" style="max-height: 100px;max-width: 133px;"></div>';
+                    $html_row.='<div style="height: 25px;text-align: center; ">'.System_helper::display_date($visit['date_created']).'</div>';
+                    $html_row.='</div>';
+                    $item['disease_pictures_'.$index]=$html_row;
+                    $html_tooltip='';
+                    $html_tooltip.='<div>';
+                    $html_tooltip.='<div><img src="'.$image.'" style="max-width: 100%;"></div>';
+                    $html_tooltip.='<div style="text-align:center;margin-bottom:5px;">Date: '.System_helper::display_date($visit['date_created']).'</div>';
+                    $html_tooltip.='<div style="width:50%;float:left;">';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').': <div  style="font-size: 15px;font-weight:bold;">'.$visit['remarks'].'</div></div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.System_helper::display_date_time($visit['date_created']).'</div></div>';
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_REMARKS').' By: <div>'.$users[$visit['user_created']]['name'].'</div></div>';
+                    $html_tooltip.='</div>';
+                    $html_tooltip.='<div style="width:50%;float: right;">';
+                    $feedback=$this->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
+                    $feedback_date='';
+                    if(strlen($visit['feedback'])>0)
+                    {
+                        $feedback=$visit['feedback'];
+                        $feedback_date=System_helper::display_date_time($visit['date_feedback']);
+                    }
+                    $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').': <div  style="font-size: 15px;font-weight:bold;">'.$feedback.'</div></div>';
+                    if($feedback_date)
+                    {
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' '.$this->lang->line('LABEL_ENTRY_TIME').': <div>'.$feedback_date.'</div></div>';
+                        $html_tooltip.='<div>'.$this->lang->line('LABEL_FEEDBACK').' By: <div>'.$users[$visit['user_feedback']]['name'].'</div></div>';
+                    }
+
+                    $html_tooltip.='</div>';
+                    $html_tooltip.='</div>';
+                    $item['details']['disease_pictures_'.$index]=$html_tooltip;
                 }
             }
 

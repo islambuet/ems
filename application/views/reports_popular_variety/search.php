@@ -233,11 +233,6 @@
 <div id="system_report_container">
 
 </div>
-<div id="popup_window">
-    <div>Details</div>
-    <div id="popup_content" style="overflow: auto;">
-    </div>
-</div>
 <script type="text/javascript">
 
     jQuery(document).ready(function()
@@ -245,9 +240,6 @@
         turn_off_triggers();
         $(document).off("click", ".popular_popup");
 
-        $("#popup_window").jqxWindow({
-            width: 550,height:550, resizable: true,  isModal: true, autoOpen: false, modalOpacity: 0.01,position: { x: 60, y: 60 }
-        });
         $(document).on("click", ".popular_popup", function(event)
         {
 
