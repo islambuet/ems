@@ -182,58 +182,39 @@ class Setup_tm_ti_market_visit extends Root_Controller
         {
             if(($this->input->post('id')))
             {
-                $setup_id=$this->input->post('id');
+                $territory_id=$this->input->post('id');
             }
             else
             {
-                $setup_id=$id;
+                $territory_id=$id;
             }
-
-            $this->db->from($this->config->item('table_tm_farmers').' tmf');
-            $this->db->select('tmf.*');
-            $this->db->select('upazilla.name upazilla_name');
-            $this->db->select('d.name district_name,d.id district_id');
-            $this->db->select('t.name territory_name,t.id territory_id');
-            $this->db->select('zone.name zone_name,zone.id zone_id');
-            $this->db->select('division.name division_name,division.id division_id');
-            $this->db->select('crop.name crop_name');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->select('v.name variety_name');
-            $this->db->select('season.name season_name');
-            $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
+            $this->db->select('stmv.territory_id territory_id');
+            $this->db->select('t.name territory_name');
+            $this->db->select('zone.id zone_id,zone.name zone_name');
+            $this->db->select('division.id division_id,division.name division_name');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-            $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
-            $this->db->where('tmf.id',$setup_id);
-            $this->db->where('tmf.status','Active');
-            $data['fsetup']=$this->db->get()->row_array();
-            if(!$data['fsetup'])
+            $this->db->group_by('t.id');
+            $this->db->where('stmv.territory_id',$territory_id);
+            $data['setup']=$this->db->get()->row_array();
+
+            if(!$data['setup'])
             {
-                System_helper::invalid_try($this->config->item('system_view_not_exists'),$setup_id);
+                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$territory_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            if(!$this->check_my_editable($data['fsetup']))
-            {
-                System_helper::invalid_try($this->config->item('system_view_others'),$setup_id);
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-            }
-            $data['title']="Detail Farmer and Field Visit Setup";
+            $data['title']="Details of Territory In-Charge Market Visit Setup";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_ti_market_visit/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$setup_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$territory_id);
             $this->jsonReturn($ajax);
         }
         else
