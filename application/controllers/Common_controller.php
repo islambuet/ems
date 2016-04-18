@@ -19,7 +19,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$division_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$division_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -33,7 +33,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$zone_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$zone_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -47,7 +47,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -61,7 +61,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -75,7 +75,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_unions'),array('id value','name text'),array('upazilla_id ='.$upazilla_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_unions'),array('id value','name text'),array('upazilla_id ='.$upazilla_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -93,7 +93,7 @@ class Common_controller extends Root_Controller
         //$this->db->select('id value');
         //$this->db->select('CONCAT(customer_code,"-",name) text',false);
         //$data['items']=$this->db->get()->result_array();
-        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
