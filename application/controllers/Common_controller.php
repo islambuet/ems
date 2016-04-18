@@ -124,7 +124,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$crop_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$crop_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -138,7 +138,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -152,7 +152,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"','whose ="ARM"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"','whose ="ARM"'),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
@@ -172,6 +172,7 @@ class Common_controller extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
         $this->db->where('wc.warehouse_id',$warehouse_id);
         $this->db->where('wc.revision',1);
+        $this->db->order_by('c.ordering ASC');
         $data['items']=$this->db->get()->result_array();
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
@@ -185,7 +186,7 @@ class Common_controller extends Root_Controller
         {
             $html_container_id=$this->input->post('html_container_id');
         }
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array(),0,0,array('ordering ASC'));
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
 
