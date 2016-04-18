@@ -13,7 +13,7 @@
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $setup['division_name'];?></label>
@@ -22,19 +22,10 @@
 
         <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $setup['zone_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid" id="territory_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $setup['territory_name'];?></label>
-
             </div>
         </div>
     </div>
@@ -42,24 +33,26 @@
     <div class="clearfix"></div>
     <div id="system_report_container">
     <?php
-    $territory_id=$setup['territory_id'];
+    $zone_id=$setup['zone_id'];
     $shifts=Query_helper::get_info($this->config->item('table_setup_tm_shifts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-    //$districts=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id));
 
-    $CI->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
+    $CI->db->from($this->config->item('table_setup_tm_market_visit_zi').' stmv');
     $CI->db->select('stmv.*');
     $CI->db->select('cus.district_id');
     $CI->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text');
     $this->db->select('d.name district_name');
+    $this->db->select('t.name territory_name');
     $CI->db->join($this->config->item('table_csetup_customers').' cus','cus.id = stmv.customer_id','INNER');
     $CI->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+    $CI->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
     $CI->db->where('stmv.revision',1);
-    $CI->db->where('stmv.territory_id',$territory_id);
+    $CI->db->where('stmv.zone_id',$zone_id);
     $results=$CI->db->get()->result_array();
     $old_customers=array();
     foreach($results as $result)
     {
         $old_customers[$result['day_no']][$result['shift_id']]['district_name']=$result['district_name'];
+        $old_customers[$result['day_no']][$result['shift_id']]['territory_name']=$result['territory_name'];
         $old_customers[$result['day_no']][$result['shift_id']]['customers'][]=$result['text'];
     }
     ?>
@@ -76,6 +69,7 @@
                     <tr>
                         <th style="width: 200px;">Day</th>
                         <th style="width: 200px;">Shift</th>
+                        <th style="width: 200px;">Territory</th>
                         <th style="width: 200px;">District</th>
                         <th>Customers</th>
                     </tr>
@@ -100,6 +94,18 @@
                                 </td>
                                 <td>
                                     <label class="label <?php if($shift_index%2){echo 'label-warning';}else{echo 'label-info';}?>"><?php echo $shift['text']; ?></label>
+                                </td>
+                                <td>
+                                    <?php
+                                    if(isset($old_customers[$day%7][$shift['value']]))
+                                    {
+                                        ?>
+                                        <label class="control-label"><?php echo $old_customers[$day%7][$shift['value']]['territory_name'];?></label>
+                                    <?php
+                                    }
+
+                                    ?>
+
                                 </td>
                                 <td>
                                     <?php

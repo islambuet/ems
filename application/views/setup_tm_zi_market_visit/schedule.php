@@ -1,19 +1,32 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
     $shifts=Query_helper::get_info($this->config->item('table_setup_tm_shifts'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-    $districts=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id));
+    $territories=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$zone_id));
 
-    $CI->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
+    $CI->db->from($this->config->item('table_setup_location_districts').' d');
+    $CI->db->select('d.id value,d.name text,d.territory_id');
+    $CI->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+    $CI->db->where('t.zone_id',$zone_id);
+    $results=$CI->db->get()->result_array();
+    $districts=array();
+    foreach($results as $result)
+    {
+        $districts[$result['territory_id']][]=$result;
+    }
+    $CI->db->from($this->config->item('table_setup_tm_market_visit_zi').' stmv');
     $CI->db->select('stmv.*');
     $CI->db->select('cus.district_id');
+    $CI->db->select('d.territory_id');
     $CI->db->join($this->config->item('table_csetup_customers').' cus','cus.id = stmv.customer_id','INNER');
-    $CI->db->where('revision',1);
-    $CI->db->where('territory_id',$territory_id);
+    $CI->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+    $CI->db->where('stmv.revision',1);
+    $CI->db->where('stmv.zone_id',$zone_id);
     $results=$CI->db->get()->result_array();
     $old_customers=array();
     foreach($results as $result)
     {
         $old_customers[$result['day_no']][$result['shift_id']]['district_id']=$result['district_id'];
+        $old_customers[$result['day_no']][$result['shift_id']]['territory_id']=$result['territory_id'];
         $old_customers[$result['day_no']][$result['shift_id']]['customers'][]=$result['customer_id'];
     }
     $customers=array();
@@ -23,7 +36,8 @@
         $CI->db->select('cus.district_id');
         $CI->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-        $CI->db->where('d.territory_id',$territory_id);
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $CI->db->where('t.zone_id',$zone_id);
         $results=$CI->db->get()->result_array();
         foreach($results as $result)
         {
@@ -34,7 +48,7 @@
 
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" name="territory_id" value="<?php echo $territory_id; ?>" />
+    <input type="hidden" name="zone_id" value="<?php echo $zone_id; ?>" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -48,6 +62,7 @@
                     <tr>
                         <th style="width: 200px;">Day</th>
                         <th style="width: 200px;">Shift</th>
+                        <th style="width: 200px;">Territory</th>
                         <th style="width: 200px;">District</th>
                         <th>Customers</th>
                     </tr>
@@ -74,21 +89,47 @@
                                     <label class="label <?php if($shift_index%2){echo 'label-warning';}else{echo 'label-info';}?>"><?php echo $shift['text']; ?></label>
                                 </td>
                                 <td>
-                                    <select class="form-control district_id" data-day="<?php echo ($day%7); ?>" data-shift-id="<?php echo $shift['value']; ?>" data-customer-container="#customers_container_<?php echo ($day%7); ?>_<?php echo $shift['value']; ?>">
+                                    <select class="form-control territory_id" data-day="<?php echo ($day%7); ?>" data-shift-id="<?php echo $shift['value']; ?>">
                                         <option value=""><?php echo $CI->lang->line('SELECT');?></option>
                                         <?php
-                                        $district_id='';
+                                        $territory_id='';
                                         if(isset($old_customers[$day%7][$shift['value']]))
                                         {
-                                            $district_id=$old_customers[$day%7][$shift['value']]['district_id'];
+                                            $territory_id=$old_customers[$day%7][$shift['value']]['territory_id'];
                                         }
-                                        foreach($districts as $district)
+                                        foreach($territories as $territory)
                                         {?>
-                                            <option value="<?php echo $district['value']?>" <?php if($district['value']==$district_id){echo 'selected';} ?>><?php echo $district['text'];?></option>
+                                            <option value="<?php echo $territory['value']?>" <?php if($territory['value']==$territory_id){echo 'selected';} ?>><?php echo $territory['text'];?></option>
                                         <?php
                                         }
                                         ?>
                                     </select>
+                                </td>
+                                <td>
+                                    <div id="district_container_<?php echo ($day%7); ?>_<?php echo $shift['value']; ?>">
+                                        <?php
+                                        if($territory_id>0)
+                                        {
+                                            ?>
+                                            <select class="form-control district_id" data-day="<?php echo ($day%7); ?>" data-shift-id="<?php echo $shift['value']; ?>">
+                                                <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                                                <?php
+                                                $district_id='';
+                                                if(isset($old_customers[$day%7][$shift['value']]))
+                                                {
+                                                    $district_id=$old_customers[$day%7][$shift['value']]['district_id'];
+                                                }
+                                                foreach($districts[$territory_id] as $district)
+                                                {?>
+                                                    <option value="<?php echo $district['value']?>" <?php if($district['value']==$district_id){echo 'selected';} ?>><?php echo $district['text'];?></option>
+                                                <?php
+                                                }
+                                                ?>
+                                            </select>
+                                            <?php
+                                        }
+                                        ?>
+                                    </div>
                                 </td>
                                 <td>
                                     <div id="customers_container_<?php echo ($day%7); ?>_<?php echo $shift['value']; ?>">
