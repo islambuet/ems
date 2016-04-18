@@ -67,13 +67,13 @@ $CI->load->view("action_buttons",$action_data);
             </div>
             <div class="col-xs-4" id="image">
                 <?php
-                $image='images/no_image.jpg';
-                if(strlen($survey['picture'])>0)
+                $image=base_url().'images/no_image.jpg';
+                if(strlen($survey['picture_url'])>0)
                 {
-                    $image=$survey['picture'];
+                    $image=$survey['picture_url'];
                 }
                 ?>
-                <img style="max-width: 250px;" src="<?php echo base_url().$image;?>">
+                <img style="max-width: 250px;" src="<?php echo $image;?>">
             </div>
         </div>
         <div class="row show-grid">

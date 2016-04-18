@@ -100,7 +100,9 @@ class Survey_product_arm extends Root_Controller
             {
                 $data['survey']['characteristics']='';
                 $data['survey']['remarks']='';
-                $data['survey']['picture']='';
+                $data['survey']['picture_file_name']='';
+                $data['survey']['picture_file_full']='';
+                $data['survey']['picture_url']='';
                 $data['survey']['date_start']=time();
                 $data['survey']['date_end']=time();
             }
@@ -164,7 +166,9 @@ class Survey_product_arm extends Root_Controller
             {
                 $data['survey']['characteristics']='';
                 $data['survey']['remarks']='';
-                $data['survey']['picture']='';
+                $data['survey']['picture_file_name']='';
+                $data['survey']['picture_file_full']='';
+                $data['survey']['picture_url']='';
                 $data['survey']['date_start']=time();
                 $data['survey']['date_end']=time();
             }
