@@ -84,4 +84,5 @@ $config['table_tm_popular_variety'] = 'ems_tm_popular_variety';
 $config['table_tm_popular_variety_details'] = 'ems_tm_popular_variety_details';
 $config['table_tm_market_visit_ti'] = 'ems_tm_market_visit_ti';
 $config['table_tm_market_visit_zi'] = 'ems_tm_market_visit_zi';
+$config['table_tm_market_visit_solution_ti'] = 'ems_tm_market_visit_solution_ti';
 

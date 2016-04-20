@@ -266,7 +266,15 @@ class Tm_ti_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']='Edit Visit';
+            $data['title']='Visit Details';
+            $user_ids=array();
+            $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
+            $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_ti'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
+            foreach($data['previous_solutions'] as $solution)
+            {
+                $user_ids[$solution['user_created']]=$solution['user_created'];
+            }
+            $data['users']=System_helper::get_users_info($user_ids);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/details",$data,true));
             if($this->message)
@@ -430,16 +438,16 @@ class Tm_ti_market_visit extends Root_Controller
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
-                $data['user_updated'] = $user->user_id;
-                $data['date_updated'] = time();
+                $visit['user_updated'] = $user->user_id;
+                $visit['date_updated'] = time();
                 Query_helper::update($this->config->item('table_tm_market_visit_ti'),$visit,array("id = ".$id));
 
             }
             else
             {
 
-                $data['user_created'] = $user->user_id;
-                $data['date_created'] = time();
+                $visit['user_created'] = $user->user_id;
+                $visit['date_created'] = time();
                 Query_helper::add($this->config->item('table_tm_market_visit_ti'),$visit);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
