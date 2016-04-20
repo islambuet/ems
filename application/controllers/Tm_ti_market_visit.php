@@ -71,7 +71,7 @@ class Tm_ti_market_visit extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Varieties";
+            $data['title']="Visit List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/list",$data,true));
             if($this->message)
