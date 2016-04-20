@@ -26,6 +26,7 @@ $lang['ACTION_PRINT'] = 'Print';
 $lang['ACTION_CSV'] = 'Download as CSV';
 $lang['ACTION_APPROVE_REJECT'] = 'Approve/Reject';
 $lang['ACTION_REPORT'] = 'View Report';
+$lang['LABEL_ACTION'] = 'Action';
 
 //****MODULE TASK//
 
@@ -218,3 +219,5 @@ $lang['LABEL_FEEDBACK'] = 'Feedback';
 $lang['LABEL_DATE_TRANSPLANT'] = 'Transplanting date';
 $lang['LABEL_ENTRY_TIME'] = 'Entry Time';
 $lang['LABEL_FEEDBACK_NOT_GIVEN'] = 'Pending';
+$lang['LABEL_DAY'] = 'Day';
+$lang['LABEL_SHIFT'] = 'Shift';

@@ -68,6 +68,13 @@ $config['table_survey_primary_customer_survey'] = 'ems_survey_primary_customer_s
 $config['table_survey_primary_quantity_survey'] = 'ems_survey_primary_quantity_survey';
 $config['table_survey_product'] = 'ems_survey_product';
 
+//tm setup
+$config['table_setup_tm_seasons'] = 'ems_setup_tm_seasons';
+$config['table_setup_tm_shifts'] = 'ems_setup_tm_shifts';
+$config['table_setup_tm_fruit_picture'] = 'ems_setup_tm_fruit_picture';
+$config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';
+$config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';//for ti
+$config['table_setup_tm_market_visit_zi'] = 'ems_setup_tm_market_visit_zi';//for zi
 //task management
 $config['table_tm_farmers'] = 'ems_tm_farmers';
 $config['table_tm_visits_picture'] = 'ems_tm_visits_picture';
@@ -75,10 +82,6 @@ $config['table_tm_visits_fruit_picture'] = 'ems_tm_visits_fruit_picture';
 $config['table_tm_visits_disease_picture'] = 'ems_tm_visits_disease_picture';
 $config['table_tm_popular_variety'] = 'ems_tm_popular_variety';
 $config['table_tm_popular_variety_details'] = 'ems_tm_popular_variety_details';
-$config['table_setup_tm_seasons'] = 'ems_setup_tm_seasons';
-$config['table_setup_tm_shifts'] = 'ems_setup_tm_shifts';
-$config['table_setup_tm_fruit_picture'] = 'ems_setup_tm_fruit_picture';
-$config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';
-$config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';//for ti
-$config['table_setup_tm_market_visit_zi'] = 'ems_setup_tm_market_visit_zi';//for zi
+$config['table_tm_market_visit_ti'] = 'ems_tm_market_visit_ti';
+$config['table_tm_market_visit_zi'] = 'ems_tm_market_visit_zi';
 
