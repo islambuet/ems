@@ -238,7 +238,7 @@ class Tm_ti_market_visit extends Root_Controller
     }
     private function system_details($id)
     {
-        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
             if(($this->input->post('id')))
             {
