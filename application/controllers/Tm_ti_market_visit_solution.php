@@ -256,6 +256,7 @@ class Tm_ti_market_visit_solution extends Root_Controller
             }
         }
         $this->db->group_by('mvt.id');
+        $this->db->order_by('mvt.id DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
