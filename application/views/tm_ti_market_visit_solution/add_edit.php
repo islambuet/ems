@@ -151,7 +151,7 @@ $CI->load->view("action_buttons",$action_data);
                 ?>
                 <div style="" class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right">Solution given by <?php echo $users[$solution['user_created']]['name'].' at '.System_helper::display_date_time($solution['date_created']);?></label>
+                        <label class="control-label pull-right"><?php echo $users[$solution['user_created']]['name'].' at '.System_helper::display_date_time($solution['date_created']);?></label>
 
                     </div>
                     <div class="col-sm-4 col-xs-8">
