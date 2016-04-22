@@ -77,6 +77,7 @@ $lang['LABEL_USERNAME'] = 'User name';
 $lang['LABEL_EMPLOYEE_ID'] = 'Employee id';
 $lang['LABEL_USER_GROUP'] = 'User Group';
 $lang['LABEL_LOAD_VARIETY'] = 'Load Variety';
+$lang['LABEL_SL_NO'] = 'SL#';
 
 //location setup
 //Create zone
