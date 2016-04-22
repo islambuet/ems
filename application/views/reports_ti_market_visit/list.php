@@ -109,14 +109,14 @@
                     { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', dataField: 'sl_no',pinned:true,width:'40',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>', dataField: 'date_visit',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Locations', dataField: 'location',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true, dataField: 'shift_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>',pinned:true, dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Activities', dataField: 'activities',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true,width:'150', dataField: 'shift_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>',pinned:true,width:'150', dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Activities', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Activities Picture', dataField: 'activities_picture',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Problem', dataField: 'problem',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Problem', dataField: 'problem',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Problem Picture', dataField: 'problem_picture',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Recommendation', dataField: 'recommendation',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Solution', dataField: 'solution',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                    { text: 'Recommendation', dataField: 'recommendation',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Solution', dataField: 'solution',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]
 
             });
