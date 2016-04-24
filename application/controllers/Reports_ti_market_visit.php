@@ -238,7 +238,7 @@ class Reports_ti_market_visit extends Root_Controller
             $visit['solution']=$html_row;
             $html_tooltip='';
             $html_tooltip.='<div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_DATE').': '.$visit['date'].'</div>';
+            $html_tooltip.='<div>'.$this->lang->line('LABEL_DATE').': '.System_helper::display_date($visit['date']).'</div>';
             $html_tooltip.='<div>'.$this->lang->line('LABEL_DAY').': '.date('l',$visit['date']).'</div>';
             $html_tooltip.='<div>'.$this->lang->line('LABEL_SHIFT').': '.$visit['shift_name'].'</div>';
             $html_tooltip.='<div>'.$this->lang->line('LABEL_CUSTOMER_NAME').': '.$visit['customer_name'].'</div>';
