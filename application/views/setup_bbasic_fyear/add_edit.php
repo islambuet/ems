@@ -63,7 +63,7 @@
             dateFormat : display_date_format,
             changeMonth: true,
             changeYear: true,
-            yearRange: "-2:+2",
+            yearRange: "c-2:c+2",
             onClose: function( selectedDate ) {
                 $( "#date_end" ).datepicker( "option", "minDate", selectedDate );
             }
@@ -71,7 +71,7 @@
         $( "#date_end" ).datepicker({
             changeMonth: true,
             changeYear: true,
-            yearRange: "-2:+2",
+            yearRange: "c-2:c+2",
             dateFormat : display_date_format,
             onClose: function( selectedDate ) {
                 $( "#date_start" ).datepicker( "option", "maxDate", selectedDate );
