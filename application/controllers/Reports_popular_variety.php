@@ -217,7 +217,7 @@ class Reports_popular_variety extends Root_Controller
                 $crop_info.=$result['other_variety_name'];
             }
             $pvs[$result['id']]['crop_info']=$crop_info;
-            $pvs[$result['id']]['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'];
+            $pvs[$result['id']]['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'].'<br>'.$result['name'];
             $image=base_url().'images/no_image.jpg';
             if(strlen($result['picture_url'])>0)
             {

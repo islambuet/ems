@@ -476,7 +476,7 @@ class Reports_field_visit extends Root_Controller
             $setup_ids[]=$result['id'];
             $item['year_season']=$result['year'].'<br>'.$result['season_name'];
             $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'];
-            $item['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'];
+            $item['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'].'<br>'.$result['name'];
             $item['date_sowing']=$result['date_sowing'];
             $item['interval']=$result['interval'];
             $items[]=$item;
