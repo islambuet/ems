@@ -74,6 +74,8 @@ $config['table_setup_tm_shifts'] = 'ems_setup_tm_shifts';
 $config['table_setup_tm_fruit_picture'] = 'ems_setup_tm_fruit_picture';
 $config['table_setup_tm_market_visit'] = 'ems_setup_tm_market_visit';//for ti
 $config['table_setup_tm_market_visit_zi'] = 'ems_setup_tm_market_visit_zi';//for zi
+$config['table_setup_tm_market_visit_di'] = 'ems_setup_tm_market_visit_di';//for di different from ti zi
+$config['table_setup_tm_market_visit_trainer'] = 'ems_setup_tm_market_visit_trainer';//same as di
 //task management
 $config['table_tm_farmers'] = 'ems_tm_farmers';
 $config['table_tm_visits_picture'] = 'ems_tm_visits_picture';
