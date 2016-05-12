@@ -87,4 +87,4 @@ $config['table_tm_market_visit_ti'] = 'ems_tm_market_visit_ti';
 $config['table_tm_market_visit_zi'] = 'ems_tm_market_visit_zi';
 $config['table_tm_market_visit_solution_ti'] = 'ems_tm_market_visit_solution_ti';
 $config['table_tm_market_visit_solution_zi'] = 'ems_tm_market_visit_solution_zi';
-
+$config['table_tm_market_visit_di'] = 'ems_tm_market_visit_di';
