@@ -24,18 +24,34 @@ $CI->load->view("action_buttons",$action_data);
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DAY');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo date('l',$visit['date']);?></label>
+                <label class="control-label"><?php echo $visit['division_name'];?></label>
             </div>
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_SHIFT');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $visit['shift_name'];?></label>
+                <label class="control-label"><?php echo $visit['zone_name'];?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $visit['territory_name'];?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $visit['district_name'];?></label>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -43,7 +59,7 @@ $CI->load->view("action_buttons",$action_data);
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $visit['customer_name'];?></label>
+                <label class="control-label"><?php if($visit['customer_id']>0){echo $visit['cus_name'];}else{echo $visit['customer_name'];}?></label>
             </div>
         </div>
         <div class="row show-grid">
