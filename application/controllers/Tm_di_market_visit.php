@@ -339,22 +339,7 @@ class Tm_di_market_visit extends Root_Controller
     }
     private function system_details($id)
     {
-        /*$this->db->select('CONCAT(cus.customer_code," - ",cus.name) cus_name');
-        $this->db->select('d.name district_name');
-        $this->db->select('t.name territory_name');
-        $this->db->select('zone.name zone_name');
-        $this->db->select('division.name division_name');
-
-
-
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvdi.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = mvdi.division_id','INNER');
-
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvdi.customer_id','LEFT');*/
-
-        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
             if(($this->input->post('id')))
             {
@@ -365,20 +350,22 @@ class Tm_di_market_visit extends Root_Controller
                 $visit_id=$id;
             }
             $this->db->from($this->config->item('table_tm_market_visit_di').' mvdi');
+
             $this->db->select('mvdi.*');
             $this->db->select('CONCAT(cus.customer_code," - ",cus.name) cus_name');
             $this->db->select('d.name district_name');
-            $this->db->select('t.id territory_id,t.name territory_name');
-            $this->db->select('zone.id zone_id,zone.name zone_name');
-            $this->db->select('division.id division_id,division.name division_name');
+            $this->db->select('t.name territory_name');
+            $this->db->select('zone.name zone_name');
+            $this->db->select('division.name division_name');
+
+            $this->db->select('count(mvsdi.id) total_solution',false);
 
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvdi.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = mvdi.division_id','INNER');
-
+            $this->db->join($this->config->item('table_tm_market_visit_solution_di').' mvsdi','mvdi.id = mvsdi.visit_id','LEFT');
             $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvdi.customer_id','LEFT');
-
             $this->db->where('mvdi.id',$visit_id);
             $data['visit']=$this->db->get()->row_array();
             if(!$data['visit'])
@@ -388,8 +375,15 @@ class Tm_di_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']='Details of Visit';
-
+            $data['title']='DI Market Visit Solution Details';
+            $user_ids=array();
+            $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
+            $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_di'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
+            foreach($data['previous_solutions'] as $solution)
+            {
+                $user_ids[$solution['user_created']]=$solution['user_created'];
+            }
+            $data['users']=System_helper::get_users_info($user_ids);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_di_market_visit/details",$data,true));
             if($this->message)

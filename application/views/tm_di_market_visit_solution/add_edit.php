@@ -2,8 +2,13 @@
 $CI = & get_instance();
 $action_data=array();
 $action_data["action_back"]=base_url($CI->controller_url);
+$action_data["action_save"]='#save_form';
+
+$action_data["action_clear"]='#save_form';
 $CI->load->view("action_buttons",$action_data);
 ?>
+<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
+    <input type="hidden" name="visit_id" value="<?php echo $visit['id']; ?>">
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -138,17 +143,24 @@ $CI->load->view("action_buttons",$action_data);
                 <label class="control-label"><?php echo System_helper::display_date_time($visit['date_created']);?></label>
             </div>
         </div>
-        <div class="widget-header">
-            <div class="title">
-                Solutions
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Solutions</label>
             </div>
-            <div class="clearfix"></div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="solution" id="solution" class="form-control"></textarea>
+            </div>
         </div>
         <?php
         if(sizeof($previous_solutions)>0)
         {
             ?>
-
+            <div class="widget-header">
+                <div class="title">
+                    Other Solutions
+                </div>
+                <div class="clearfix"></div>
+            </div>
             <?php
             foreach($previous_solutions as $solution)
             {
@@ -162,27 +174,14 @@ $CI->load->view("action_buttons",$action_data);
                         <label class="control-label"><?php echo $solution['solution'];?></label>
                     </div>
                 </div>
-            <?php
+                <?php
             }
-        }
-        else
-        {
-            ?>
-            <div style="" class="row show-grid">
-                <div class="col-xs-4">
-                </div>
-                <div class="col-sm-4 col-xs-8">
-                    <label class="control-label">No Solution Given Yet</label>
-                </div>
-            </div>
-            <?php
-
         }
         ?>
     </div>
 
     <div class="clearfix"></div>
-
+</form>
 <script type="text/javascript">
 
     jQuery(document).ready(function()
