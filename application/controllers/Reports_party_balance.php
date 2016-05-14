@@ -123,7 +123,37 @@ class Reports_party_balance extends Root_Controller
 
             $ajax['status']=true;
             $data['title']="Party Balance Report";
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_party_balance/list",$data,true));
+            if($reports['customer_id']>0)
+            {
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_party_balance/customer_statement",$data,true));
+            }
+            else
+            {
+                if($reports['district_id']>0)
+                {
+                    $data['areas']='Customers';
+                }
+                elseif($reports['territory_id']>0)
+                {
+                    $data['areas']='Districts';
+                }
+                elseif($reports['zone_id']>0)
+                {
+                    $data['areas']='Territories';
+                }
+                elseif($reports['division_id']>0)
+                {
+                    $data['areas']='Zones';
+                }
+                else
+                {
+                    $data['areas']='Divisions';
+                }
+
+                $data['arm_banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_party_balance/list",$data,true));
+            }
+
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
