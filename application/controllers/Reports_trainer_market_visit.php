@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Reports_di_market_visit extends Root_Controller
+class Reports_trainer_market_visit extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Reports_di_market_visit extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Reports_di_market_visit');
+        $this->permissions=User_helper::get_permission('Reports_trainer_market_visit');
         $this->locations=User_helper::get_locations();
         if(!is_array($this->locations))
         {
@@ -28,7 +28,7 @@ class Reports_di_market_visit extends Root_Controller
             }
 
         }
-        $this->controller_url='reports_di_market_visit';
+        $this->controller_url='reports_trainer_market_visit';
     }
 
     public function index($action="search",$id=0)
@@ -50,10 +50,8 @@ class Reports_di_market_visit extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Search DI Visit";
+            $data['title']="Search Trainer Visit";
             $ajax['status']=true;
-            $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-
 
             $fiscal_years=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array());
             $data['fiscal_years']=array();
@@ -61,7 +59,7 @@ class Reports_di_market_visit extends Root_Controller
             {
                 $data['fiscal_years'][]=array('text'=>$year['name'],'value'=>System_helper::display_date($year['date_start']).'/'.System_helper::display_date($year['date_end']));
             }
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("reports_di_market_visit/search",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("reports_trainer_market_visit/search",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -103,8 +101,8 @@ class Reports_di_market_visit extends Root_Controller
 
 
             $ajax['status']=true;
-            $data['title']="DI Market Visit Report";
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_di_market_visit/list",$data,true));
+            $data['title']="Trainer Market Visit Report";
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_trainer_market_visit/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -120,18 +118,14 @@ class Reports_di_market_visit extends Root_Controller
         }
 
     }
-    private function get_visit_setup($date,$division_id,$setups)
+    private function get_visit_setup($date,$setups)
     {
         foreach($setups as $setup)
         {
-            if($division_id==$setup['division_id'])
+            if(($setup['date_start']<=$date) && ($setup['date_end']>=$date))
             {
-                if(($setup['date_start']<=$date) && ($setup['date_end']>=$date))
-                {
-                    return $setup;
-                }
+                return $setup;
             }
-
         }
         return null;
     }
@@ -139,19 +133,14 @@ class Reports_di_market_visit extends Root_Controller
     public function get_items()
     {
         $items=array();
-        $division_id=$this->input->post('division_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
-        $this->db->from($this->config->item('table_setup_tm_market_visit_di').' mvsdi');
-        if($division_id>0)
-        {
-            $this->db->where('division_id',$division_id);
-        }
+        $this->db->from($this->config->item('table_setup_tm_market_visit_trainer').' mvsdi');
+
         $this->db->order_by('mvsdi.date_start DESC');
         $visit_setups=$this->db->get()->result_array();
-
-        $this->db->from($this->config->item('table_tm_market_visit_di').' mvdi');
+        $this->db->from($this->config->item('table_tm_market_visit_trainer').' mvdi');
 
         $this->db->select('mvdi.*');
         $this->db->select('CONCAT(cus.customer_code," - ",cus.name) cus_name');
@@ -165,13 +154,10 @@ class Reports_di_market_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvdi.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = mvdi.division_id','INNER');
-        $this->db->join($this->config->item('table_tm_market_visit_solution_di').' mvsdi','mvdi.id = mvsdi.visit_id','LEFT');
+        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+        $this->db->join($this->config->item('table_tm_market_visit_solution_trainer').' mvsdi','mvdi.id = mvsdi.visit_id','LEFT');
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvdi.customer_id','LEFT');
-        if($division_id>0)
-        {
-            $this->db->where('division.id',$division_id);
-        }
+
         if($date_start>0)
         {
             $this->db->where('mvdi.date >=',$date_start);
@@ -189,7 +175,6 @@ class Reports_di_market_visit extends Root_Controller
         foreach($results as $result)
         {
             $user_ids[$result['user_created']]=$result['user_created'];
-            $visits[$result['id']]['division_id']=$result['division_id'];
             $visits[$result['id']]['date']=$result['date'];
             $visits[$result['id']]['date_visit']=System_helper::display_date($result['date']).'<br>'.date('l',$result['date']);
 
@@ -247,7 +232,7 @@ class Reports_di_market_visit extends Root_Controller
             $visit['solution']=$html_row;
             $html_tooltip='';
             $html_tooltip.='<div>';
-            $visit_setup_info=$this->get_visit_setup($visit['date'],$visit['division_id'],$visit_setups);
+            $visit_setup_info=$this->get_visit_setup($visit['date'],$visit_setups);
             if($visit_setup_info)
             {
                 $html_tooltip.='<div>'.$this->lang->line('LABEL_TITLE').': '.$visit_setup_info['title'].'</div>';
