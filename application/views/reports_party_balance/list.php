@@ -92,7 +92,14 @@
         var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
         {
             var element = $(defaultHtml);
-            element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','whiteSpace':'normal'});
+            if (record.areas=="Total")
+            {
+                element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','whiteSpace':'normal'});
+            }
             return element[0].outerHTML;
 
         };
@@ -113,7 +120,7 @@
                 rowsheight: 35,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', dataField: 'sl_no',pinned:true,width:'40',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: '<?php echo $areas; ?>',pinned:true ,dataField: 'date_visit',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $areas; ?>',pinned:true ,dataField: 'areas',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?>',dataField: 'opening_balance',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     { text: 'Sales',dataField: 'sales',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     <?php
