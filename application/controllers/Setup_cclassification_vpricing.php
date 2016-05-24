@@ -11,7 +11,6 @@ class Setup_cclassification_vpricing extends Root_Controller
         $this->message="";
         $this->permissions=User_helper::get_permission('Setup_cclassification_vpricing');
         $this->controller_url='setup_cclassification_vpricing';
-        //$this->load->model("sys_module_task_model");
     }
 
     public function index($action="list",$id=0)
@@ -70,7 +69,7 @@ class Setup_cclassification_vpricing extends Root_Controller
             $data["price"] = Array(
                 'id' => 0,
                 'pack_size_id'=>0,
-                'whose'=>'ARM',
+                'price_net'=>'',
                 'price'=>''
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -215,7 +214,8 @@ class Setup_cclassification_vpricing extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('price[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required');
-        $this->form_validation->set_rules('price[price]',$this->lang->line('LABEL_PRICE'),'required|numeric');
+        $this->form_validation->set_rules('price[price]',$this->lang->line('LABEL_PRICE_TRADE'),'required|numeric');
+        $this->form_validation->set_rules('price[price_net]',$this->lang->line('LABEL_PRICE_NET'),'required|numeric');
         $this->form_validation->set_rules('price[pack_size_id]',$this->lang->line('LABEL_PACK_NAME'),'required');
         if($this->form_validation->run() == FALSE)
         {
@@ -229,7 +229,7 @@ class Setup_cclassification_vpricing extends Root_Controller
         $user = User_helper::get_user();
 
         $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
-        $this->db->select('vp.id,vp.price');
+        $this->db->select('vp.id,vp.price,vp.price_net');
         $this->db->select('v.name variety_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
@@ -240,6 +240,7 @@ class Setup_cclassification_vpricing extends Root_Controller
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = vp.pack_size_id','INNER');
         $this->db->where('vp.revision',1);
+        //$this->db->order_by('vp.id DESC');
 
         $items=$this->db->get()->result_array();
         $this->jsonReturn($items);

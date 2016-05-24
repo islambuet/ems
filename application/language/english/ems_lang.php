@@ -103,6 +103,8 @@ $lang['LABEL_DATE_CREATED'] = 'Creation date';
 $lang['LABEL_PACK_NAME'] = 'Pack Size(gm)';
 $lang['LABEL_BONUS_PACK_NAME'] = 'Bonus Pack Size(gm)';
 $lang['LABEL_PRICE'] = 'Price';
+$lang['LABEL_PRICE_TRADE'] = 'Trade Price';
+$lang['LABEL_PRICE_NET'] = 'Net Price';
 //basic setup
 $lang['LABEL_CAPACITY_KG'] = 'Capacity (kg)';
 $lang['LABEL_WAREHOUSE_NAME'] = 'Warehouse';
