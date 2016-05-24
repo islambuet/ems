@@ -169,14 +169,6 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_OPENING_BALANCE');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="payment[amount]" id="amount" class="form-control" value="<?php echo $payment['amount'];?>"/>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_NAME_OWNER');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">

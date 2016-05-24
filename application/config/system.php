@@ -15,8 +15,8 @@ $config['system_view_not_exists']='View Not Exists';
 $config['system_view_others']='View Others';
 $config['system_save']='save';
 
-$config['system_payment_initial']='Initial';
-$config['system_payment_other']='Other';
+//$config['system_payment_initial']='Initial';
+//$config['system_payment_other']='Other';
 
 $config['system_payment_way_cash']='Cash';
 $config['system_payment_way_pay_order']='Pay Order';

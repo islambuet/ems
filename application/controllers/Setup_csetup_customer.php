@@ -99,10 +99,9 @@ class Setup_csetup_customer extends Root_Controller
                 'phone' => '',
                 'email' => '',
                 'status_agreement' => $this->config->item('system_status_not_done'),
-                'ordering' => 99,
+                'ordering' => 9999,
                 'status' => $this->config->item('system_status_active')
             );
-            $data['payment']['amount']=0;
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
             $data['territories']=array();
@@ -174,8 +173,6 @@ class Setup_csetup_customer extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['payment']=Query_helper::get_info($this->config->item('table_payment_payment'),array('amount'),array('payment_type ="'.$this->config->item('system_payment_initial').'"','customer_id ='.$customer_id),1);
-
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['customer']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['customer']['zone_id']));
@@ -243,24 +240,15 @@ class Setup_csetup_customer extends Root_Controller
 
                 Query_helper::update($this->config->item('table_csetup_customers'),$data,array("id = ".$id));
 
-                $payment['user_updated'] = $user->user_id;
-                $payment['date_updated'] = $time;
-                Query_helper::update($this->config->item('table_payment_payment'),$payment,array("customer_id = ".$id,'payment_type ="'.$this->config->item('system_payment_initial').'"'));
-
             }
             else
             {
 
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = $time;
-                $customer_id=Query_helper::add($this->config->item('table_csetup_customers'),$data);
+                Query_helper::add($this->config->item('table_csetup_customers'),$data);
 
-                $payment['customer_id'] = $customer_id;
-                $payment['user_created'] = $user->user_id;
-                $payment['date_created'] = $time;
-                $payment['date_payment'] = $time;
-                $payment['payment_type'] = $this->config->item('system_payment_initial');
-                Query_helper::add($this->config->item('table_payment_payment'),$payment);
+
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -310,7 +298,6 @@ class Setup_csetup_customer extends Root_Controller
         $this->form_validation->set_rules('customer[name]',$this->lang->line('LABEL_NAME'),'required');
         $this->form_validation->set_rules('customer[district_id]',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
         $this->form_validation->set_rules('customer[credit_limit]',$this->lang->line('LABEL_CUSTOMER_CREDIT_LIMIT'),'required|numeric');
-        $this->form_validation->set_rules('payment[amount]',$this->lang->line('LABEL_OPENING_BALANCE'),'required|numeric');
         if($this->form_validation->run() == FALSE)
         {
             $this->message=validation_errors();
