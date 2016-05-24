@@ -134,11 +134,25 @@ class Sales_model extends CI_Model
     public function get_customer_current_credit($customer_id)
     {
         //0-payment+purchase-sales return
+        //0-adjust-payment+purchase-sales return
 
         $CI = & get_instance();
-        $current_credit=0;
+        $current_credit=array('tp'=>0,'net'=>0);
+        //adjust
+        $this->db->from($CI->config->item('table_csetup_balance_adjust'));
+        $this->db->select('SUM(amount_tp) total_tp');
+        $this->db->select('SUM(amount_net) total_net');
+        $this->db->where('customer_id',$customer_id);
+        $this->db->where('status',$CI->config->item('system_status_active'));
+        $result=$this->db->get()->row_array();
+        if($result)
+        {
+            $current_credit['tp']-=$result['total_tp'];
+            $current_credit['net']-=$result['total_net'];
+        }
+
         //payment
-        $this->db->from($CI->config->item('table_payment_payment'));
+        /*$this->db->from($CI->config->item('table_payment_payment'));
         $this->db->select('SUM(amount) total_paid');
         $this->db->where('customer_id',$customer_id);
         $this->db->where('status',$CI->config->item('system_status_active'));
@@ -158,7 +172,7 @@ class Sales_model extends CI_Model
         if($result)
         {
             $current_credit+=$result['total_buy'];//plus for relative to arm
-        }
+        }*/
 
         return $current_credit;
 

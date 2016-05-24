@@ -280,15 +280,22 @@ class Common_controller extends Root_Controller
     }
     public function get_credit_by_customer_id()
     {
-        $html_container_id='#credit';
-        if($this->input->post('html_container_id'))
+        $html_container_id_tp='#credit_tp';
+        $html_container_id_net='#credit_net';
+        if($this->input->post('html_container_id_tp'))
         {
-            $html_container_id=$this->input->post('credit_container');
+            $html_container_id_tp=$this->input->post('html_container_id_tp');
+        }
+        if($this->input->post('html_container_id_net'))
+        {
+            $html_container_id_net=$this->input->post('html_container_id_net');
         }
         $customer_id = $this->input->post('customer_id');
         $this->load->model("sales_model");
+        $current_credit=$this->sales_model->get_customer_current_credit($customer_id);
         $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>number_format($this->sales_model->get_customer_current_credit($customer_id)),2);
+        $ajax['system_content'][]=array("id"=>$html_container_id_tp,"html"=>number_format($current_credit['tp'],2));
+        $ajax['system_content'][]=array("id"=>$html_container_id_net,"html"=>number_format($current_credit['net'],2));
         $this->jsonReturn($ajax);
     }
 

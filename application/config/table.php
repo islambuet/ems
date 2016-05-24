@@ -47,6 +47,7 @@ $config['table_basic_setup_vcolors'] = 'ems_basic_setup_vcolors';
 //customer setup
 $config['table_csetup_customers'] = 'ems_csetup_customers';
 $config['table_csetup_other_customers'] = 'ems_csetup_other_customers';
+$config['table_csetup_balance_adjust'] = 'ems_balance_adjust';
 //stock in
 $config['table_stockin_varieties'] = 'ems_stockin_varieties';
 $config['table_stockin_excess_inventory'] = 'ems_stockin_excess_inventory';
