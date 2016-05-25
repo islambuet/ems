@@ -132,6 +132,7 @@ $lang['LABEL_CUSTOMER_CREDIT_LIMIT'] = 'Credit Limit';
 //payment
 $lang['LABEL_AMOUNT'] = 'Amount';
 $lang['LABEL_DATE_PAYMENT'] = 'Payment Date';
+$lang['LABEL_DATE_RECEIVE'] = 'Received Date';
 $lang['LABEL_DATE_ADJUSTMENT'] = 'Adjustment Date';
 $lang['LABEL_PAYMENT_WAY'] = 'Payment Type';
 $lang['LABEL_CUSTOMER_NAME'] = 'Customer';

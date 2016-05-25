@@ -150,19 +150,19 @@ class Sales_model extends CI_Model
             $current_credit['tp']-=$result['total_tp'];
             $current_credit['net']-=$result['total_net'];
         }
-
         //payment
-        /*$this->db->from($CI->config->item('table_payment_payment'));
+        $this->db->from($CI->config->item('table_payment_payment'));
         $this->db->select('SUM(amount) total_paid');
         $this->db->where('customer_id',$customer_id);
         $this->db->where('status',$CI->config->item('system_status_active'));
         $result=$this->db->get()->row_array();
         if($result)
         {
-            $current_credit-=$result['total_paid'];//minus for relative to arm
+            $current_credit['tp']-=$result['total_paid'];
+            $current_credit['net']-=$result['total_paid'];
         }
         //purchase
-        $this->db->from($CI->config->item('table_sales_po_details').' spd');
+        /*$this->db->from($CI->config->item('table_sales_po_details').' spd');
         $this->db->select('SUM(spd.variety_price*(spd.quantity-spd.quantity_return)) total_buy');
         $this->db->join($CI->config->item('table_sales_po').' sp','sp.id = spd.sales_po_id','INNER');
         $this->db->where('sp.customer_id',$customer_id);
