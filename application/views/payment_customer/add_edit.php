@@ -23,7 +23,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PAYMENT');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="payment[date_payment]" id="date_payment" class="form-control datepicker" value="<?php echo System_helper::display_date($payment['date_payment']);?>"/>
+                <input type="text" name="payment[date_payment_customer]" id="date_payment_customer" class="form-control datepicker" value="<?php echo System_helper::display_date($payment['date_payment_customer']);?>"/>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -167,12 +167,12 @@
 
             </div>
         </div>
-        <div style="<?php if(!($payment['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="credit_container">
+        <div style="<?php if(!($payment['id']>0)){echo 'display:none';} ?>" class="row show-grid" id="credit_tp_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_CREDIT');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label" id="credit"><?php echo number_format($payment['credit'],2);?></label>
+                <label class="control-label" id="credit_tp"><?php echo number_format($payment['credit'],2);?></label>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -234,7 +234,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT');?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <input type="text" name="payment[amount]" id="amount" class="form-control float_type_positive" value="<?php echo $payment['amount'];?>"/>
+                <input type="text" name="payment[amount_customer]" id="amount_customer" class="form-control float_type_positive" value="<?php echo $payment['amount_customer'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
@@ -270,40 +270,6 @@
                 <input type="text" name="payment[bank_branch]" id="bank_branch" class="form-control" value="<?php echo $payment['bank_branch'];?>"/>
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ARM_BANK_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="arm_bank_id" name="payment[arm_bank_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($arm_banks as $arm_bank)
-                    {?>
-                        <option value="<?php echo $arm_bank['value']?>" <?php if($arm_bank['value']==$payment['arm_bank_id']){ echo "selected";}?>><?php echo $arm_bank['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
-        <div style="<?php if(!(sizeof($arm_bank_accounts)>0)){echo 'display:none';} ?>" class="row show-grid" id="arm_bank_account_id_container">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_ACCOUNT_NO');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="arm_bank_account_id" name="payment[arm_bank_account_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($arm_bank_accounts as $arm_bank_account)
-                    {?>
-                        <option value="<?php echo $arm_bank_account['value']?>" <?php if($arm_bank_account['value']==$payment['arm_bank_account_id']){ echo "selected";}?>><?php echo $arm_bank_account['text'];?></option>
-                    <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
     </div>
 
     <div class="clearfix"></div>
@@ -320,7 +286,7 @@
             $("#territory_id").val("");
             $("#district_id").val("");
             $("#customer_id").val("");
-            $('#credit_container').hide();
+            $('#credit_tp_container').hide();
             var division_id=$('#division_id').val();
             if(division_id>0)
             {
@@ -358,7 +324,7 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var zone_id=$('#zone_id').val();
-            $('#credit_container').hide();
+            $('#credit_tp_container').hide();
             if(zone_id>0)
             {
                 $('#territory_id_container').show();
@@ -392,7 +358,7 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var territory_id=$('#territory_id').val();
-            $('#credit_container').hide();
+            $('#credit_tp_container').hide();
             if(territory_id>0)
             {
                 $('#district_id_container').show();
@@ -423,7 +389,7 @@
         {
             $("#customer_id").val("");
             var district_id=$('#district_id').val();
-            $('#credit_container').hide();
+            $('#credit_tp_container').hide();
             if(district_id>0)
             {
                 $('#customer_id_container').show();
@@ -455,7 +421,7 @@
 
             if(customer_id>0)
             {
-                $('#credit_container').show();
+                $('#credit_tp_container').show();
                 $.ajax({
                     url: base_url+"common_controller/get_credit_by_customer_id/",
                     type: 'POST',
@@ -474,10 +440,10 @@
             }
             else
             {
-                $('#credit_container').hide();
+                $('#credit_tp_container').hide();
             }
         });
-        $(document).on("change","#arm_bank_id",function()
+        /*$(document).on("change","#arm_bank_id",function()
         {
             $("#arm_bank_account_id").val("");
             var arm_bank_id=$('#arm_bank_id').val();
@@ -504,7 +470,7 @@
             {
                 $('#arm_bank_account_id_container').hide();
             }
-        });
+        });*/
 
     });
 </script>

@@ -17,7 +17,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_PAYMENT');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo System_helper::display_date($payment['date_payment']);?></label>
+                <label class="control-label"><?php echo System_helper::display_date($payment['date_payment_customer']);?></label>
             </div>
         </div>
         <div style="" class="row show-grid">
@@ -38,7 +38,28 @@
                 <label class="control-label"><?php echo $text;?></label>
             </div>
         </div>
+        <div class="row show-grid" id="zone_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Receive Status</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($payment['date_payment_receive']>0)
+                {
+                    ?>
+                    <label class="control-label">Received</label>
+                    <?php
+                }
+                else
+                {
+                    ?>
+                    <label class="control-label">Pending</label>
+                    <?php
 
+                }
+                ?>
+            </div>
+        </div>
         <div class="row show-grid" id="zone_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
@@ -126,7 +147,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_AMOUNT');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo number_format($payment['amount'],2);?></label>
+                <label class="control-label"><?php echo number_format($payment['amount_customer'],2);?></label>
             </div>
         </div>
         <div class="row show-grid">

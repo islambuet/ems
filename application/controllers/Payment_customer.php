@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Payment_payment extends Root_Controller
+class Payment_customer extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Payment_payment extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Payment_payment');
+        $this->permissions=User_helper::get_permission('Payment_customer');
         $this->locations=User_helper::get_locations();
         if(!is_array($this->locations))
         {
@@ -28,7 +28,7 @@ class Payment_payment extends Root_Controller
             }
 
         }
-        $this->controller_url='payment_payment';
+        $this->controller_url='payment_customer';
         //$this->load->model("sys_module_task_model");
     }
 
@@ -70,7 +70,7 @@ class Payment_payment extends Root_Controller
         {
             $data['title']="Payment List";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_payment/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_customer/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -100,13 +100,11 @@ class Payment_payment extends Root_Controller
                 'district_id'=>$this->locations['district_id'],
                 'customer_id'=>'',
                 'payment_way' => '',
-                'amount' => '0',
+                'amount_customer' => '0',
                 'cheque_no' => '',
                 'bank_id' => '',
                 'bank_branch' => '',
-                'arm_bank_id' => '',
-                'arm_bank_account_id' => '',
-                'date_payment' => time(),
+                'date_payment_customer' => time(),
                 'credit'=>0
             );
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
@@ -125,19 +123,17 @@ class Payment_payment extends Root_Controller
                         $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$this->locations['territory_id']));
                         if($this->locations['district_id']>0)
                         {
-                            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$this->locations['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
+                            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$data['adjust']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
                         }
                     }
                 }
             }
             $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['arm_banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['arm_bank_accounts']=array();
 
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_payment/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_customer/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -166,7 +162,8 @@ class Payment_payment extends Root_Controller
 
             $this->db->from($this->config->item('table_payment_payment').' payment');
             $this->db->select('payment.*');
-            $this->db->select('cus.name,cus.id customer_id');
+            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+            $this->db->select('cus.id customer_id');
             $this->db->select('d.name district_name,d.id district_id');
             $this->db->select('t.name territory_name,t.id territory_id');
             $this->db->select('zone.name zone_name,zone.id zone_id');
@@ -177,7 +174,6 @@ class Payment_payment extends Root_Controller
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->where('payment.id',$payment_id);
-            $this->db->where('payment.payment_type',$this->config->item('system_payment_other'));
             $data['payment']=$this->db->get()->row_array();
             if(!$data['payment'])
             {
@@ -199,23 +195,17 @@ class Payment_payment extends Root_Controller
             $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['payment']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['payment']['zone_id']));
             $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['payment']['territory_id']));
-            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$data['payment']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$data['payment']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
 
             $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['arm_banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['arm_bank_accounts']=array();
-            if($data['payment']['arm_bank_id']>0)
-            {
-                $data['arm_bank_accounts']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('bank_id'=>$data['payment']['arm_bank_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            }
             $this->load->model("sales_model");
             $balance=$this->sales_model->get_customer_current_credit($data['payment']['customer_id']);
-            $data['payment']['credit']=$balance-$data['payment']['amount'];
+            $data['payment']['credit']=$balance['tp'];
 
 
             $data['title']="Edit Payment";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_payment/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_customer/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -245,7 +235,7 @@ class Payment_payment extends Root_Controller
 
             $this->db->from($this->config->item('table_payment_payment').' payment');
             $this->db->select('payment.*');
-            $this->db->select('cus.name');
+            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
             $this->db->select('d.name district_name,d.id district_id');
             $this->db->select('t.name territory_name,t.id territory_id');
             $this->db->select('zone.name zone_name,zone.id zone_id');
@@ -256,7 +246,6 @@ class Payment_payment extends Root_Controller
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->where('payment.id',$payment_id);
-            $this->db->where('payment.payment_type',$this->config->item('system_payment_other'));
             $data['payment']=$this->db->get()->row_array();
             if(!$data['payment'])
             {
@@ -291,7 +280,7 @@ class Payment_payment extends Root_Controller
 
             $data['title']="Details of Payment";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_payment/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("payment_customer/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -376,8 +365,7 @@ class Payment_payment extends Root_Controller
         else
         {
             $data=$this->input->post('payment');
-            $data['date_payment']=System_helper::get_time($data['date_payment']);
-            $data['payment_type']=$this->config->item('system_payment_other');
+            $data['date_payment_customer']=System_helper::get_time($data['date_payment_customer']);
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -440,8 +428,8 @@ class Payment_payment extends Root_Controller
     {
         $this->load->library('form_validation');
         $this->form_validation->set_rules('payment[customer_id]',$this->lang->line('LABEL_CUSTOMER_NAME'),'required');
-        $this->form_validation->set_rules('payment[amount]',$this->lang->line('LABEL_AMOUNT'),'required|numeric');
-        $this->form_validation->set_rules('payment[date_payment]',$this->lang->line('LABEL_DATE_PAYMENT'),'required');
+        $this->form_validation->set_rules('payment[amount_customer]',$this->lang->line('LABEL_AMOUNT'),'required|numeric');
+        $this->form_validation->set_rules('payment[date_payment_customer]',$this->lang->line('LABEL_DATE_PAYMENT'),'required');
         $this->form_validation->set_rules('payment[payment_way]',$this->lang->line('LABEL_PAYMENT_WAY'),'required');
         if($this->form_validation->run() == FALSE)
         {
@@ -464,7 +452,7 @@ class Payment_payment extends Root_Controller
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
             $this->db->where('payment.id',$id);
-            $this->db->where('payment.payment_type',$this->config->item('system_payment_other'));
+
             $payment=$this->db->get()->row_array();
 
 
@@ -505,10 +493,9 @@ class Payment_payment extends Root_Controller
     }
     public function get_items()
     {
-        //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
         $this->db->from($this->config->item('table_payment_payment').' payment');
-        $this->db->select('payment.id,payment.amount,payment.payment_way,payment.date_payment,payment.cheque_no');
-        $this->db->select('cus.name,cus.customer_code,cus.phone,cus.status,cus.ordering');
+        $this->db->select('payment.id,payment.amount,payment.amount_customer,payment.payment_way,payment.date_payment_customer,payment.date_payment_receive,payment.cheque_no');
+        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
@@ -535,13 +522,26 @@ class Payment_payment extends Root_Controller
             }
         }
         $this->db->where('payment.status !=',$this->config->item('system_status_delete'));
-        $this->db->where('payment.payment_type',$this->config->item('system_payment_other'));
         $this->db->order_by('payment.id','DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
-            $item['date_payment']=System_helper::display_date($item['date_payment']);
-            $item['amount']=number_format($item['amount'],2);
+            $item['date_payment_customer']=System_helper::display_date($item['date_payment_customer']);
+            if($item['date_payment_receive']>0)
+            {
+                $item['date_payment_receive']=System_helper::display_date($item['date_payment_receive']);
+                $item['status_receive']='Received';
+            }
+            else
+            {
+                $item['date_payment_receive']='';
+                $item['status_receive']='Pending';
+            }
+            $item['amount_customer']=number_format($item['amount_customer'],2);
+            if($item['amount']>0)
+            {
+                $item['amount']=number_format($item['amount'],2);
+            }
             $item['payment_id']=str_pad($item['id'],6,'0',STR_PAD_LEFT);
         }
         $this->jsonReturn($items);

@@ -35,14 +35,19 @@
         ?>
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_string_adjust"><?php echo $CI->lang->line('LABEL_DATE_ADJUSTMENT'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_id"><?php echo $CI->lang->line('LABEL_PAYMENT_ID'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_payment_customer"><?php echo $CI->lang->line('LABEL_DATE_PAYMENT'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_payment_receive">Received Date</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_receive">Received Status</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="amount_net">NET Amount</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="amount_tp">TP Amount</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="amount_customer">Payment Amount</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="amount">Received Amount</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_way"><?php echo $CI->lang->line('LABEL_PAYMENT_WAY'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="cheque_no"><?php echo $CI->lang->line('LABEL_CHEQUE_NO'); ?></label>
 
             </div>
         </div>
@@ -66,15 +71,20 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'date_string_adjust', type: 'string' },
+                { name: 'payment_id', type: 'string' },
+                { name: 'date_payment_customer', type: 'string' },
+                { name: 'date_payment_receive', type: 'string' },
+                { name: 'status_receive', type: 'string' },
                 { name: 'customer_name', type: 'string' },
                 { name: 'division_name', type: 'string' },
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
-                { name: 'amount_net', type: 'string' },
-                { name: 'amount_tp', type: 'string' }
-
+                { name: 'customer_code', type: 'string' },
+                { name: 'amount_customer', type: 'string' },
+                { name: 'amount', type: 'string' },
+                { name: 'payment_way', type: 'string' },
+                { name: 'cheque_no', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -98,7 +108,7 @@
                 autoheight: true,
                 columns: [
                     {
-                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: '',pinned:true,width:'40', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,
+                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: '',pinned:true,width:'80', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,
                         cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
                         {
                             var element = $(defaultHtml);
@@ -106,14 +116,19 @@
                             return element[0].outerHTML;
                         }
                     },
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_ADJUSTMENT'); ?>', dataField: 'date_string_adjust',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_PAYMENT_ID'); ?>',pinned:true, dataField: 'payment_id',width:'90'},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_PAYMENT'); ?>', dataField: 'date_payment_customer',width:'100'},
+                    { text: 'Received Date', dataField: 'date_payment_receive',width:'100'},
+                    { text: 'Received status', dataField: 'status_receive',width:'100',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>', dataField: 'customer_name',width:'200'},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name'},
-                    { text: 'NET Amount', dataField: 'amount_net',cellsalign: 'right',width:'100'},
-                    { text: 'TP Amount', dataField: 'amount_tp',cellsalign: 'right',width:'100'}
+                    { text: 'Payment Amount', dataField: 'amount_customer',cellsalign: 'right',width:'100'},
+                    { text: 'Received Amount', dataField: 'amount',cellsalign: 'right',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_PAYMENT_WAY'); ?>', dataField: 'payment_way',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_CHEQUE_NO'); ?>', dataField: 'cheque_no'}
                 ]
             });
     });
