@@ -177,21 +177,21 @@
                 </tr>
                 <tr>
                     <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_CREDIT'); ?></label></td>
-                    <td class="text-right"><label><?php echo number_format($customer_current_credit,2); ?></label></td>
+                    <td class="text-right"><label><?php echo number_format($customer_current_credit['tp'],2); ?></label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                 </tr>
                 <?php
                 $back_color='lightgreen';
-                if($po['credit_limit']<($customer_current_credit+$total_total_price))
+                if($po['credit_limit']<($customer_current_credit['tp']+$total_total_price))
                 {
                     $back_color='red';
                 }
                 ?>
                 <tr>
                     <td class="text-right" colspan="7"><label><?php echo $CI->lang->line('LABEL_CUSTOMER_NEW_CREDIT'); ?></label></td>
-                    <td class="text-right" style="background-color: <?php echo $back_color;?>"><label><?php echo number_format($customer_current_credit+$total_total_price,2); ?></label></td>
+                    <td class="text-right" style="background-color: <?php echo $back_color;?>"><label><?php echo number_format($customer_current_credit['tp']+$total_total_price,2); ?></label></td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>
                     <td>&nbsp;</td>

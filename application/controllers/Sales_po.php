@@ -104,7 +104,8 @@ class Sales_po extends Root_Controller
                 'territory_id'=>$this->locations['territory_id'],
                 'district_id'=>$this->locations['district_id'],
                 'customer_id'=>'',
-                'warehouse_id' => '',
+                //'warehouse_id' => '',
+                'warehouse_id' => 1,//head office
                 'date_po' => time()
             );
             $data['remarks']='';
@@ -130,8 +131,14 @@ class Sales_po extends Root_Controller
                 }
             }
             $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
+            $this->db->select('wc.crop_id value,c.name text');
+            $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
+            $this->db->where('wc.warehouse_id',1);//head office
+            $this->db->where('wc.revision',1);
+            $data['crops']=$this->db->get()->result_array();
+
             $data['po_varieties']=array();
-            $data['crops']=array();
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
@@ -593,7 +600,7 @@ class Sales_po extends Root_Controller
         $quantity=$this->input->post('quantity');
         $active_id=$this->input->post('active_id');
         $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
-        $this->db->select('vp.price variety_price,vp.id variety_price_id');
+        $this->db->select('vp.price variety_price,vp.price_net variety_price_net,vp.id variety_price_id');
         $this->db->select('vp_size.name pack_size');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' vp_size','vp_size.id = vp.pack_size_id','INNER');
         $this->db->where('vp.variety_id',$variety_id);
@@ -603,7 +610,14 @@ class Sales_po extends Root_Controller
         if(!$price_info)
         {
             $ajax['status']=false;
-            $ajax['system_message']="Invalid Try";
+            $ajax['system_message']=$this->lang->line('MSG_PRICE_NOT_SET');
+            $this->jsonReturn($ajax);
+            die();
+        }
+        elseif((is_null($price_info['variety_price'])||is_null($price_info['variety_price_net'])))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Full '.$this->lang->line('MSG_PRICE_NOT_SET');;
             $this->jsonReturn($ajax);
             die();
         }
@@ -614,6 +628,7 @@ class Sales_po extends Root_Controller
 
         $price_html='<span>'.number_format($quantity*$price_info['variety_price'],2).'</span>';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price]" value="'.$price_info['variety_price'].'" />';
+        $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_net]" value="'.$price_info['variety_price_net'].'" />';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_id]" value="'.$price_info['variety_price_id'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>$price_html);
 

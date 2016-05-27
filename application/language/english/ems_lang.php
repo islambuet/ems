@@ -8,6 +8,7 @@ $lang['MSG_NOT_ASSIGNED_GROUP'] = 'Please Contact with Admin(01777709208) to ass
 $lang['MSG_LOCATION_INVALID'] = 'Your assigned Location is invalid.Please contact with admin(01777709208).';
 $lang['MSG_LOCATION_NOT_ASSIGNED'] = 'No Location assigned for you.Please contact with admin(01777709208).';
 $lang['MSG_SITE_OFFLINE'] = 'Site is Currently Offline.Please contact with admin(01777709208).';
+$lang['MSG_PRICE_NOT_SET'] = 'Variety Price Not set.Please contact with admin(01777709208).';
 
 //Action buttons
 $lang['ACTION_DASHBOARD'] = 'Dashboard';

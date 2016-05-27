@@ -353,13 +353,6 @@ class Sales_po_approve extends Root_Controller
                 $ajax['system_message']=$this->lang->line("MSG_PO_APPROVAL_EDIT_UNABLE_REJECTED");
                 $this->jsonReturn($ajax);
             }
-            /*$this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
-            $this->db->select('wc.crop_id value,c.name text');
-            $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
-            $this->db->where('wc.warehouse_id',$data['po']['warehouse_id']);
-            $this->db->where('wc.revision',1);
-            $data['crops']=$this->db->get()->result_array();*/
-
             $this->db->from($this->config->item('table_sales_po_details').' spd');
             $this->db->select('spd.*');
             $this->db->select('v.name variety_name');
@@ -770,7 +763,7 @@ class Sales_po_approve extends Root_Controller
         $quantity=$this->input->post('quantity');
         $active_id=$this->input->post('active_id');
         $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
-        $this->db->select('vp.price variety_price,vp.id variety_price_id');
+        $this->db->select('vp.price variety_price,vp.price_net variety_price_net,vp.id variety_price_id');
         $this->db->select('vp_size.name pack_size');
         $this->db->join($this->config->item('table_setup_classification_vpack_size').' vp_size','vp_size.id = vp.pack_size_id','INNER');
         $this->db->where('vp.variety_id',$variety_id);
@@ -791,6 +784,7 @@ class Sales_po_approve extends Root_Controller
 
         $price_html='<span>'.number_format($quantity*$price_info['variety_price'],2).'</span>';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price]" value="'.$price_info['variety_price'].'" />';
+        $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_net]" value="'.$price_info['variety_price_net'].'" />';
         $price_html.='<input type="hidden" name="po_varieties['.$active_id.'][variety_price_id]" value="'.$price_info['variety_price_id'].'" />';
         $ajax['system_content'][]=array("id"=>"#total_price_".$active_id,"html"=>$price_html);
 

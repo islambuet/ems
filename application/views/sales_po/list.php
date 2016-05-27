@@ -120,6 +120,15 @@
                 autorowheight: true,
                 columnsreorder: true,
                 columns: [
+                    {
+                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: '',pinned:true,width:'50', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,
+                        cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
+                        {
+                            var element = $(defaultHtml);
+                            element.html(value+1);
+                            return element[0].outerHTML;
+                        }
+                    },
                     { text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>', dataField: 'po_no',width:'60',cellsalign: 'right',pinned:true},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:'150',pinned:true},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_PO'); ?>', dataField: 'date_po',width:'150'},

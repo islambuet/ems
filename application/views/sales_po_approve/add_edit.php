@@ -170,6 +170,7 @@
                             <label class="total_price" id="total_price_<?php echo $index+1;?>" data-current-id="<?php echo $index+1;?>">
                                 <span><?php echo number_format($po_variety['variety_price']*$po_variety['quantity'],2); ?></span>
                                 <input type="hidden" value="<?php echo $po_variety['variety_price']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price]">
+                                <input type="hidden" value="<?php echo $po_variety['variety_price_net']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price_net]">
                                 <input type="hidden" value="<?php echo $po_variety['variety_price_id']; ?>" name="po_varieties[<?php echo $index+1;?>][variety_price_id]">
                             </label>
                         </td>
