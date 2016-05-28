@@ -32,8 +32,11 @@
             <div class="col-xs-12" style="margin-bottom: 20px;">
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sl_no"><?php echo $CI->lang->line('LABEL_SL_NO'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="areas"><?php echo $areas; ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales">Sales</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_tp"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_net"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> NET</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_tp">Sales TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_net">Sales NET</label>
+
 
                 <?php
                 foreach($arm_banks as $arm_bank)
@@ -43,8 +46,12 @@
                 }
                 ?>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_payment">Total Payment</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance">Balance</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="percentage">Payment Percentage</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_tp">Adjust TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_net">Adjust NET</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_tp">Balance TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_net">Balance Net</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_tp">Payment % Tp</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_net">Payment % Net</label>
             </div>
         </div>
     <?php
@@ -69,10 +76,11 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'sl_no', type: 'int' },
                 { name: 'areas', type: 'string' },
-                { name: 'opening_balance', type: 'string' },
-                { name: 'sales', type: 'string' },
+                { name: 'opening_balance_tp', type: 'string' },
+                { name: 'opening_balance_net', type: 'string' },
+                { name: 'sales_tp', type: 'string' },
+                { name: 'sales_net', type: 'string' },
                 <?php
                     foreach($arm_banks as $arm_bank)
                     {?>{ name: '<?php echo 'payment_'.$arm_bank['value'];?>', type: 'string' },
@@ -80,8 +88,12 @@
                     }
                 ?>
                 { name: 'total_payment', type: 'string' },
-                { name: 'balance', type: 'string' },
-                { name: 'percentage', type: 'string' }
+                { name: 'adjust_tp', type: 'string' },
+                { name: 'adjust_net', type: 'string' },
+                { name: 'balance_tp', type: 'string' },
+                { name: 'balance_net', type: 'string' },
+                { name: 'payment_percentage_tp', type: 'string' },
+                { name: 'payment_percentage_net', type: 'string' }
 
             ],
             id: 'id',
@@ -99,6 +111,14 @@
             else
             {
                 element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','whiteSpace':'normal'});
+            }
+            if(column=='sl')
+            {
+                if (record.areas!="Total")
+                {
+                    element.html(value+1);
+                }
+
             }
             return element[0].outerHTML;
 
@@ -119,10 +139,12 @@
                 enabletooltips: true,
                 rowsheight: 35,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', dataField: 'sl_no',pinned:true,width:'40',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl',pinned:true,width:'80', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,cellsrenderer: cellsrenderer},
                     { text: '<?php echo $areas; ?>',pinned:true ,dataField: 'areas',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?>',dataField: 'opening_balance',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
-                    { text: 'Sales',dataField: 'sales',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'opening_balance',text: 'TP',dataField: 'opening_balance_tp',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'opening_balance',text: 'NET',dataField: 'opening_balance_net',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'sales',text: 'TP',dataField: 'sales_tp',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'sales',text: 'NET',dataField: 'sales_net',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     <?php
                         foreach($arm_banks as $arm_bank)
                         {?>{ columngroup: 'arm_bank_account',text: '<?php echo $arm_bank['text'];?>', dataField: '<?php echo 'payment_'.$arm_bank['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
@@ -130,12 +152,22 @@
                         }
                     ?>
                     { text: 'Total Payment', dataField: 'total_payment',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
-                    { text: 'Balance', dataField: 'balance',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
-                    { text: 'Payment Percentage', dataField: 'percentage',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'}
+                    { columngroup: 'adjustment',text: 'TP', dataField: 'adjust_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                    { columngroup: 'adjustment',text: 'NET', dataField: 'adjust_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                    { columngroup: 'balance',text: 'TP', dataField: 'balance_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                    { columngroup: 'balance',text: 'NET', dataField: 'balance_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                    { columngroup: 'payment_percentage',text: 'TP', dataField: 'payment_percentage_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'50'},
+                    { columngroup: 'payment_percentage',text: 'NET', dataField: 'payment_percentage_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'50'}
+
                 ],
                 columngroups:
                 [
-                    { text: 'ARM Bank Account', align: 'center', name: 'arm_bank_account' }
+                    { text: 'Opening Balance', align: 'center', name: 'opening_balance' },
+                    { text: 'Sales', align: 'center', name: 'sales' },
+                    { text: 'Adjustment', align: 'center', name: 'adjustment' },
+                    { text: 'Current Balance', align: 'center', name: 'balance' },
+                    { text: 'ARM Bank Account', align: 'center', name: 'arm_bank_account' },
+                    { text: 'Payment %', align: 'center', name: 'payment_percentage' }
                 ]
 
             });

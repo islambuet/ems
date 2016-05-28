@@ -110,6 +110,16 @@ class Reports_party_balance extends Root_Controller
             {
                 $reports['date_end']=$reports['date_end']+3600*24-1;
             }
+            else
+            {
+                $reports['date_end']=time();
+            }
+            if($reports['date_start']>$reports['date_end'])
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Start Date Must be less than End Date';
+                $this->jsonReturn($ajax);
+            }
 
             $keys=',';
 
@@ -169,22 +179,6 @@ class Reports_party_balance extends Root_Controller
         }
 
     }
-    /*private function get_visit_setup($date,$division_id,$setups)
-    {
-        foreach($setups as $setup)
-        {
-            if($division_id==$setup['division_id'])
-            {
-                if(($setup['date_start']<=$date) && ($setup['date_end']>=$date))
-                {
-                    return $setup;
-                }
-            }
-
-        }
-        return null;
-    }*/
-
     public function get_items()
     {
         $items=array();
@@ -220,44 +214,85 @@ class Reports_party_balance extends Root_Controller
             $location_type='division_id';
         }
         $arm_banks=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+        //0-adjust-payment+purchase-sales return
         $area_initial=array();
-
-        $sl=0;
+        //setting 0
         foreach($areas as $area)
         {
-            $sl++;
-            $area_initial[$area['value']]['sl_no']=$sl;
             $area_initial[$area['value']]['areas']=$area['text'];
-            $area_initial[$area['value']]['opening_balance']=0;
-            $area_initial[$area['value']]['sales']=0;
+            $area_initial[$area['value']]['opening_balance_tp']=0;
+            $area_initial[$area['value']]['opening_balance_net']=0;
+            $area_initial[$area['value']]['sales_tp']=0;
+            $area_initial[$area['value']]['sales_net']=0;
             foreach($arm_banks as $arm_bank)
             {
                 $area_initial[$area['value']]['payment_'.$arm_bank['value']]=0;
             }
             $area_initial[$area['value']]['total_payment']=0;
+            $area_initial[$area['value']]['adjust_tp']=0;
+            $area_initial[$area['value']]['adjust_net']=0;
         }
-        $total_row=array();
-        $total_row['sl_no']='';
-        $total_row['areas']='Total';
-        $total_row['opening_balance']=0;
-        $total_row['sales']=0;
-        foreach($arm_banks as $arm_bank)
-        {
-            $total_row['payment_'.$arm_bank['value']]=0;
-        }
-        $total_row['total_payment']=0;
 
-        //initial payment
-        $this->db->from($this->config->item('table_payment_payment').' p');
-        $this->db->select('SUM(p.amount) total_initial');
-        $this->db->select('p.customer_id customer_id');
+        //find adjustment
+        //opening balance
+        if($date_start>0)
+        {
+            $this->db->from($this->config->item('table_csetup_balance_adjust').' ba');
+            $this->db->select('SUM(ba.amount_tp) amount_tp');
+            $this->db->select('SUM(ba.amount_net) amount_net');
+            $this->db->select('ba.customer_id customer_id');
+            $this->db->select('ba.date_adjust date_adjust');
+            $this->db->select('d.id district_id');
+            $this->db->select('t.id territory_id');
+            $this->db->select('zone.id zone_id');
+            $this->db->select('zone.division_id division_id');
+            $this->db->where('ba.status',$this->config->item('system_status_active'));
+            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = ba.customer_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+            if($division_id>0)
+            {
+                $this->db->where('zone.division_id',$division_id);
+                if($zone_id>0)
+                {
+                    $this->db->where('zone.id',$zone_id);
+                    if($territory_id>0)
+                    {
+                        $this->db->where('t.id',$territory_id);
+                        if($district_id>0)
+                        {
+                            $this->db->where('d.id',$district_id);
+                        }
+                    }
+                }
+            }
+            $this->db->where('ba.date_adjust <=',$date_start);
+            $group_array[]=$location_type;
+            $this->db->group_by($group_array);
+            $results=$this->db->get()->result_array();
+            if($results)
+            {
+                foreach($results as $result)
+                {
+
+                    $area_initial[$result[$location_type]]['opening_balance_tp']-=$result['amount_tp'];
+                    $area_initial[$result[$location_type]]['opening_balance_net']-=$result['amount_net'];
+                }
+            }
+        }
+        //other adjustment
+        $this->db->from($this->config->item('table_csetup_balance_adjust').' ba');
+        $this->db->select('SUM(ba.amount_tp) amount_tp');
+        $this->db->select('SUM(ba.amount_net) amount_net');
+        $this->db->select('ba.customer_id customer_id');
+        $this->db->select('ba.date_adjust date_adjust');
         $this->db->select('d.id district_id');
         $this->db->select('t.id territory_id');
         $this->db->select('zone.id zone_id');
         $this->db->select('zone.division_id division_id');
-        $this->db->where('p.status',$this->config->item('system_status_active'));
-        $this->db->where('p.payment_type',$this->config->item('system_payment_initial'));
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = p.customer_id','INNER');
+        $this->db->where('ba.status',$this->config->item('system_status_active'));
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = ba.customer_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
@@ -277,6 +312,8 @@ class Reports_party_balance extends Root_Controller
                 }
             }
         }
+        $this->db->where('ba.date_adjust >',$date_start);
+        $this->db->where('ba.date_adjust <=',$date_end);
         $group_array[]=$location_type;
         $this->db->group_by($group_array);
         $results=$this->db->get()->result_array();
@@ -284,116 +321,17 @@ class Reports_party_balance extends Root_Controller
         {
             foreach($results as $result)
             {
-                $area_initial[$result[$location_type]]['opening_balance']-=$result['total_initial'];
+
+                $area_initial[$result[$location_type]]['adjust_tp']+=$result['amount_tp'];
+                $area_initial[$result[$location_type]]['adjust_net']+=$result['amount_net'];
             }
         }
-        //payment
-        $this->db->from($this->config->item('table_payment_payment').' p');
-        $this->db->select('p.amount,p.date_payment,p.arm_bank_id,p.customer_id');
-        $this->db->select('d.id district_id');
-        $this->db->select('t.id territory_id');
-        $this->db->select('zone.id zone_id');
-        $this->db->select('zone.division_id division_id');
-        $this->db->where('p.status',$this->config->item('system_status_active'));
-        $this->db->where('p.payment_type',$this->config->item('system_payment_other'));
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = p.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        if($division_id>0)
-        {
-            $this->db->where('zone.division_id',$division_id);
-            if($zone_id>0)
-            {
-                $this->db->where('zone.id',$zone_id);
-                if($territory_id>0)
-                {
-                    $this->db->where('t.id',$territory_id);
-                    if($district_id>0)
-                    {
-                        $this->db->where('d.id',$district_id);
-                    }
-                }
-            }
-        }
-        if($date_end>0)
-        {
-            $this->db->where('p.date_payment <=',$date_end);
-        }
-        $results=$this->db->get()->result_array();
-        if($results)
-        {
-            foreach($results as $result)
-            {
-                if($date_start>0 && $date_start>=$result['date_payment'])
-                {
-                    $area_initial[$result[$location_type]]['opening_balance']-=$result['amount'];
-                }
-                else
-                {
-                    if(isset($area_initial[$result[$location_type]]['payment_'.$result['arm_bank_id']]))
-                    {
-                        $area_initial[$result[$location_type]]['payment_'.$result['arm_bank_id']]+=$result['amount'];
-                    }
-
-                    $area_initial[$result[$location_type]]['total_payment']+=$result['amount'];
-                }
-
-            }
-        }
-        //sales
-
-        //sales upto end date
-        $this->db->from($this->config->item('table_sales_po_details').' pod');
-        $this->db->select('SUM(quantity*variety_price) total_sales');
-
-        $this->db->select('cus.id customer_id,cus.name customer_name');
-        $this->db->select('d.id district_id');
-        $this->db->select('t.id territory_id');
-        $this->db->select('zone.id zone_id');
-        $this->db->select('zone.division_id division_id');
-
-        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->where('pod.revision',1);
-        $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
-        if($division_id>0)
-        {
-            $this->db->where('zone.division_id',$division_id);
-            if($zone_id>0)
-            {
-                $this->db->where('zone.id',$zone_id);
-                if($territory_id>0)
-                {
-                    $this->db->where('t.id',$territory_id);
-                    if($district_id>0)
-                    {
-                        $this->db->where('d.id',$district_id);
-                    }
-                }
-            }
-        }
-        if($date_end>0)
-        {
-            $this->db->where('po.date_approved <=',$date_end);
-        }
-        $group_array[]=$location_type;
-        $this->db->group_by($group_array);
-        $results=$this->db->get()->result_array();
-        foreach($results as $result)
-        {
-            $area_initial[$result[$location_type]]['sales']+=$result['total_sales'];
-
-        }
-
-        //sales upto start date
+        //sales in opening balance
         if($date_start>0)
         {
             $this->db->from($this->config->item('table_sales_po_details').' pod');
-            $this->db->select('SUM(quantity*variety_price) total_sales');
+            $this->db->select('SUM(quantity*variety_price) total_sales_tp');
+            $this->db->select('SUM(quantity*variety_price_net) total_sales_net');
 
             $this->db->select('cus.id customer_id,cus.name customer_name');
             $this->db->select('d.id district_id');
@@ -432,14 +370,14 @@ class Reports_party_balance extends Root_Controller
             $results=$this->db->get()->result_array();
             foreach($results as $result)
             {
-                $area_initial[$result[$location_type]]['sales']-=$result['total_sales'];
-                $area_initial[$result[$location_type]]['opening_balance']+=$result['total_sales'];
-
+                $area_initial[$result[$location_type]]['opening_balance_tp']+=$result['total_sales_tp'];
+                $area_initial[$result[$location_type]]['opening_balance_net']+=$result['total_sales_net'];
             }
         }
-        //sales return upto end date
+        //sales in sales
         $this->db->from($this->config->item('table_sales_po_details').' pod');
-        $this->db->select('SUM(quantity_return*variety_price) total_sales');
+        $this->db->select('SUM(quantity*variety_price) total_sales_tp');
+        $this->db->select('SUM(quantity*variety_price_net) total_sales_net');
 
         $this->db->select('cus.id customer_id,cus.name customer_name');
         $this->db->select('d.id district_id');
@@ -470,25 +408,109 @@ class Reports_party_balance extends Root_Controller
                 }
             }
         }
-        $this->db->where('pod.date_return >',0);
-        if($date_end>0)
-        {
-            $this->db->where('pod.date_return <=',$date_end);
-        }
+
+        $this->db->where('po.date_approved >',$date_start);
+        $this->db->where('po.date_approved <=',$date_end);
+
         $group_array[]=$location_type;
         $this->db->group_by($group_array);
         $results=$this->db->get()->result_array();
         foreach($results as $result)
         {
-            $area_initial[$result[$location_type]]['sales']-=$result['total_sales'];
-
+            $area_initial[$result[$location_type]]['sales_tp']+=$result['total_sales_tp'];
+            $area_initial[$result[$location_type]]['sales_net']+=$result['total_sales_net'];
         }
-
-        //sales return upto start date
+        //payment opening balance
         if($date_start>0)
         {
+            $this->db->from($this->config->item('table_payment_payment').' p');
+            $this->db->select('p.amount,p.date_payment_receive,p.customer_id');
+            $this->db->select('d.id district_id');
+            $this->db->select('t.id territory_id');
+            $this->db->select('zone.id zone_id');
+            $this->db->select('zone.division_id division_id');
+            $this->db->where('p.status',$this->config->item('system_status_active'));
+            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = p.customer_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+            if($division_id>0)
+            {
+                $this->db->where('zone.division_id',$division_id);
+                if($zone_id>0)
+                {
+                    $this->db->where('zone.id',$zone_id);
+                    if($territory_id>0)
+                    {
+                        $this->db->where('t.id',$territory_id);
+                        if($district_id>0)
+                        {
+                            $this->db->where('d.id',$district_id);
+                        }
+                    }
+                }
+            }
+            $this->db->where('p.date_payment_receive <=',$date_start);
+            $group_array[]=$location_type;
+            $this->db->group_by($group_array);
+            $results=$this->db->get()->result_array();
+            if($results)
+            {
+                foreach($results as $result)
+                {
+                    $area_initial[$result[$location_type]]['opening_balance_tp']-=$result['amount'];
+                    $area_initial[$result[$location_type]]['opening_balance_net']-=$result['amount'];
+                }
+            }
+
+        }
+        //payment
+        $this->db->from($this->config->item('table_payment_payment').' p');
+        $this->db->select('p.amount,p.date_payment_receive,p.arm_bank_id,p.customer_id');
+        $this->db->select('d.id district_id');
+        $this->db->select('t.id territory_id');
+        $this->db->select('zone.id zone_id');
+        $this->db->select('zone.division_id division_id');
+        $this->db->where('p.status',$this->config->item('system_status_active'));
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = p.customer_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        if($division_id>0)
+        {
+            $this->db->where('zone.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('d.id',$district_id);
+                    }
+                }
+            }
+        }
+
+        $this->db->where('p.date_payment_receive >',$date_start);
+        $this->db->where('p.date_payment_receive <=',$date_end);
+
+        $results=$this->db->get()->result_array();
+        if($results)
+        {
+            foreach($results as $result)
+            {
+                $area_initial[$result[$location_type]]['payment_'.$result['arm_bank_id']]+=$result['amount'];
+            }
+        }
+        //sales return in opening balance
+        if($date_start>0)
+        {
+
             $this->db->from($this->config->item('table_sales_po_details').' pod');
-            $this->db->select('SUM(quantity_return*variety_price) total_sales');
+            $this->db->select('SUM(quantity_return*variety_price) total_sales_tp');
+            $this->db->select('SUM(quantity_return*variety_price_net) total_sales_net');
 
             $this->db->select('cus.id customer_id,cus.name customer_name');
             $this->db->select('d.id district_id');
@@ -521,61 +543,201 @@ class Reports_party_balance extends Root_Controller
             }
             $this->db->where('pod.date_return >',0);
             $this->db->where('pod.date_return <=',$date_start);
-
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
             $results=$this->db->get()->result_array();
             foreach($results as $result)
             {
-                $area_initial[$result[$location_type]]['opening_balance']-=$result['total_sales'];
+                $area_initial[$result[$location_type]]['opening_balance_tp']-=$result['total_sales_tp'];
+                $area_initial[$result[$location_type]]['opening_balance_net']-=$result['total_sales_net'];
 
             }
         }
-        //final row
+        //sales return in sales
+        $this->db->from($this->config->item('table_sales_po_details').' pod');
+        $this->db->select('SUM(quantity_return*variety_price) total_sales_tp');
+        $this->db->select('SUM(quantity_return*variety_price_net) total_sales_net');
+
+        $this->db->select('cus.id customer_id,cus.name customer_name');
+        $this->db->select('d.id district_id');
+        $this->db->select('t.id territory_id');
+        $this->db->select('zone.id zone_id');
+        $this->db->select('zone.division_id division_id');
+
+        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->where('pod.revision',1);
+        $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+        if($division_id>0)
+        {
+            $this->db->where('zone.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('d.id',$district_id);
+                    }
+                }
+            }
+        }
+        $this->db->where('pod.date_return >',0);
+        $this->db->where('pod.date_return >',$date_start);
+        $this->db->where('pod.date_return <=',$date_end);
+        $group_array[]=$location_type;
+        $this->db->group_by($group_array);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $area_initial[$result[$location_type]]['sales_tp']-=$result['total_sales_tp'];
+            $area_initial[$result[$location_type]]['sales_net']-=$result['total_sales_net'];
+
+        }
+
+        $total_row=array();
+        $total_row['areas']='Total';
+        $total_row['opening_balance_tp']=0;
+        $total_row['opening_balance_net']=0;
+        $total_row['sales_tp']=0;
+        $total_row['sales_net']=0;
+        foreach($arm_banks as $arm_bank)
+        {
+            $total_row['payment_'.$arm_bank['value']]=0;
+        }
+        $total_row['total_payment']=0;
+        $total_row['adjust_tp']=0;
+        $total_row['adjust_net']=0;
+        $total_row['balance_tp']=0;
+        $total_row['balance_net']=0;
         foreach($area_initial as $area)
         {
-            $total_row['opening_balance']+=$area['opening_balance'];
-            $total_row['sales']+=$area['sales'];
-            $area['balance']=number_format($area['opening_balance']+$area['sales']-$area['total_payment'],2);
-            if(($area['opening_balance']+$area['sales'])>0)
-            {
-                $area['percentage']=number_format($area['total_payment']*100/($area['opening_balance']+$area['sales']),2);
-            }
-            else
-            {
-                $area['percentage']='N/A';
-            }
-            $area['opening_balance']=number_format($area['opening_balance'],2);
-            $area['sales']=number_format($area['sales'],2);
+            //opening balance sum
+            $total_row['opening_balance_tp']+=$area['opening_balance_tp'];
+            $total_row['opening_balance_net']+=$area['opening_balance_net'];
+            //sales sum
+            $total_row['sales_tp']+=$area['sales_tp'];
+            $total_row['sales_net']+=$area['sales_net'];
 
+            //bank sum
             foreach($arm_banks as $arm_bank)
             {
                 $total_row['payment_'.$arm_bank['value']]+=($area['payment_'.$arm_bank['value']]);
-                $area['payment_'.$arm_bank['value']]=number_format($area['payment_'.$arm_bank['value']],2);
+                $area['total_payment']+=($area['payment_'.$arm_bank['value']]);
+
             }
+            //total payment sum
             $total_row['total_payment']+=$area['total_payment'];
-            $area['total_payment']=number_format($area['total_payment'],2);
-            $items[]=$area;
+            //other adjustment sum
+            $total_row['adjust_tp']+=$area['adjust_tp'];
+            $total_row['adjust_net']+=$area['adjust_net'];
+
+            //opening balance+sales-total_payment-adjustment
+            $area['balance_tp']=$area['opening_balance_tp']+$area['sales_tp']-$area['total_payment']-$area['adjust_tp'];
+            $area['balance_net']=$area['opening_balance_net']+$area['sales_net']-$area['total_payment']-$area['adjust_net'];
+            $total_row['balance_tp']+=$area['balance_tp'];
+            $total_row['balance_net']+=$area['balance_net'];
+            //for printing purpose
+            $items[]=$this->get_items_printing_row($area,$arm_banks);
 
         }
-        $total_row['balance']=number_format($total_row['opening_balance']+$total_row['sales']-$total_row['total_payment'],2);
-        if(($total_row['opening_balance']+$total_row['sales'])>0)
+        $items[]=$this->get_items_printing_row($total_row,$arm_banks);
+        $this->jsonReturn($items);
+    }
+    private function get_items_printing_row($row,$arm_banks)
+    {
+        $info=array();
+        $info['areas']=$row['areas'];
+        if(($row['opening_balance_tp']+$row['sales_tp'])!=0)
         {
-            $total_row['percentage']=number_format($total_row['total_payment']*100/($total_row['opening_balance']+$total_row['sales']),2);
+            $info['payment_percentage_tp']=number_format($row['total_payment']*100/($row['opening_balance_tp']+$row['sales_tp']),2);
         }
         else
         {
-            $total_row['percentage']='N/A';
+            $info['payment_percentage_tp']='-';
+        }
+        if(($row['opening_balance_net']+$row['sales_net'])!=0)
+        {
+            $info['payment_percentage_net']=number_format($row['total_payment']*100/($row['opening_balance_net']+$row['sales_net']),2);
+        }
+        else
+        {
+            $info['payment_percentage_tp']='-';
+        }
+        if($row['opening_balance_tp']!=0)
+        {
+            $info['opening_balance_tp']=number_format($row['opening_balance_tp'],2);
+        }
+        else
+        {
+            $info['opening_balance_tp']='';
+        }
+        if($row['opening_balance_net']!=0)
+        {
+            $info['opening_balance_net']=number_format($row['opening_balance_net'],2);
+        }
+        else
+        {
+            $info['opening_balance_net']='';
+        }
+        if($row['sales_tp']!=0)
+        {
+            $info['sales_tp']=number_format($row['sales_tp'],2);
+        }
+        else
+        {
+            $info['sales_tp']='';
+        }
+        if($row['sales_net']!=0)
+        {
+            $info['sales_net']=number_format($row['sales_net'],2);
+        }
+        else
+        {
+            $info['sales_net']='';
         }
         foreach($arm_banks as $arm_bank)
         {
-            $total_row['payment_'.$arm_bank['value']]=number_format($total_row['payment_'.$arm_bank['value']],2);
-        }
-        $total_row['opening_balance']=number_format($total_row['opening_balance'],2);
-        $total_row['sales']=number_format($total_row['sales'],2);
+            if($row['payment_'.$arm_bank['value']]!=0)
+            {
+                $info['payment_'.$arm_bank['value']]=number_format($row['payment_'.$arm_bank['value']],2);
+            }
+            else
+            {
+                $info['payment_'.$arm_bank['value']]='';
+            }
 
-        $total_row['total_payment']=number_format($total_row['total_payment'],2);
-        $items[]=$total_row;
-        $this->jsonReturn($items);
+        }
+        if($row['total_payment']!=0)
+        {
+            $info['total_payment']=number_format($row['total_payment'],2);
+        }
+        else
+        {
+            $info['total_payment']='';
+        }
+        if($row['balance_tp']!=0)
+        {
+            $info['balance_tp']=number_format($row['balance_tp'],2);
+        }
+        else
+        {
+            $info['balance_tp']='';
+        }
+        if($row['balance_net']!=0)
+        {
+            $info['balance_net']=number_format($row['balance_net'],2);
+        }
+        else
+        {
+            $info['balance_net']='';
+        }
+
+        return $info;
     }
 }
