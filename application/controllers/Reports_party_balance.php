@@ -721,6 +721,22 @@ class Reports_party_balance extends Root_Controller
         {
             $info['total_payment']='';
         }
+        if($row['adjust_tp']!=0)
+        {
+            $info['adjust_tp']=number_format($row['adjust_tp'],2);
+        }
+        else
+        {
+            $info['adjust_tp']='';
+        }
+        if($row['adjust_net']!=0)
+        {
+            $info['adjust_net']=number_format($row['adjust_net'],2);
+        }
+        else
+        {
+            $info['adjust_net']='';
+        }
         if($row['balance_tp']!=0)
         {
             $info['balance_tp']=number_format($row['balance_tp'],2);
@@ -740,4 +756,407 @@ class Reports_party_balance extends Root_Controller
 
         return $info;
     }
+    //private function get_customer_statement_printing_row($opening_balance_tp,$row,$arm_banks)
+
+    public function get_customer_statement()
+    {
+
+        $items=array();
+
+        $customer_id=$this->input->post('customer_id');
+
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        $results=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array());
+        $banks=array();
+        foreach($results as $result)
+        {
+            $banks[$result['value']]=$result['text'];
+        }
+        $results=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array());
+        $arm_banks=array();
+        foreach($results as $result)
+        {
+            $arm_banks[$result['value']]=$result['text'];
+        }
+        $opening_balance_tp=0;
+        $opening_balance_net=0;
+
+        //opening balance calculation
+        if($date_start>0)
+        {
+            //adjustment calculation
+            $this->db->from($this->config->item('table_csetup_balance_adjust').' ba');
+            $this->db->select('SUM(ba.amount_tp) amount_tp');
+            $this->db->select('SUM(ba.amount_net) amount_net');
+            $this->db->select('ba.customer_id customer_id');
+            $this->db->select('ba.date_adjust date_adjust');
+
+            $this->db->where('ba.status',$this->config->item('system_status_active'));
+            $this->db->where('ba.customer_id',$customer_id);
+            $this->db->where('ba.date_adjust <=',$date_start);
+            $this->db->group_by('ba.customer_id');
+            $result=$this->db->get()->row_array();
+            if($result)
+            {
+                $opening_balance_tp-=$result['amount_tp'];
+                $opening_balance_net-=$result['amount_net'];
+            }
+            //total sales in opening balance
+            $this->db->from($this->config->item('table_sales_po_details').' pod');
+            $this->db->select('SUM(quantity*variety_price) total_sales_tp');
+            $this->db->select('SUM(quantity*variety_price_net) total_sales_net');
+            $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+            $this->db->where('pod.revision',1);
+            $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+            $this->db->where(' po.customer_id',$customer_id);
+            $this->db->where('po.date_approved <=',$date_start);
+            $this->db->group_by('po.customer_id');
+            $result=$this->db->get()->row_array();
+            if($result)
+            {
+                $opening_balance_tp+=$result['total_sales_tp'];
+                $opening_balance_net+=$result['total_sales_net'];
+            }
+            //payment in opening balance
+            $this->db->from($this->config->item('table_payment_payment').' p');
+            $this->db->select('SUM(p.amount) amount');
+            $this->db->where('p.status',$this->config->item('system_status_active'));
+            $this->db->where(' p.customer_id',$customer_id);
+            $this->db->where('p.date_payment_receive <=',$date_start);
+            $this->db->group_by('p.customer_id');
+            $result=$this->db->get()->row_array();
+            if($result)
+            {
+                $opening_balance_tp-=$result['amount'];
+                $opening_balance_net-=$result['amount'];
+            }
+            //sales return in opening balance
+            $this->db->from($this->config->item('table_sales_po_details').' pod');
+            $this->db->select('SUM(quantity_return*variety_price) total_sales_tp');
+            $this->db->select('SUM(quantity_return*variety_price_net) total_sales_net');
+
+
+            $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+
+            $this->db->where('pod.revision',1);
+            $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+
+            $this->db->where('pod.date_return >',0);
+            $this->db->where('pod.date_return <=',$date_start);
+            $this->db->where(' po.customer_id',$customer_id);
+            $this->db->group_by('po.customer_id');
+            $result=$this->db->get()->row_array();
+            if($result)
+            {
+                $opening_balance_tp-=$result['total_sales_tp'];
+                $opening_balance_net-=$result['total_sales_net'];
+            }
+        }
+        $items[]=$this->get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,NULL,NULL,NULL,$banks,$arm_banks);
+        //sales in sales
+        $this->db->from($this->config->item('table_sales_po_details').' pod');
+        $this->db->select('po.id,po.date_po,po.date_approved');
+        $this->db->select('SUM(quantity*variety_price) total_sales_tp');
+        $this->db->select('SUM(quantity*variety_price_net) total_sales_net');
+        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+        $this->db->where('pod.revision',1);
+        $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+        $this->db->where(' po.customer_id',$customer_id);
+        $this->db->where('po.date_approved >',$date_start);
+        $this->db->where('po.date_approved <=',$date_end);
+        $this->db->group_by('po.id');
+        $this->db->order_by('po.id DESC');
+        $sales=$this->db->get()->result_array();
+        //payment
+        $this->db->from($this->config->item('table_payment_payment').' p');
+        $this->db->select('p.id,p.amount_customer,p.date_payment_customer,p.customer_id,p.bank_id,p.arm_bank_id');
+        $this->db->select('p.amount,p.date_payment_receive,p.customer_id');
+        $this->db->where('p.status',$this->config->item('system_status_active'));
+        $this->db->where(' p.customer_id',$customer_id);
+        $this->db->where('p.date_payment_receive >',$date_start);
+        $this->db->where('p.date_payment_receive <=',$date_end);
+        $this->db->order_by('p.id DESC');
+
+        $payments=$this->db->get()->result_array();
+        //adjustment calculation
+        $this->db->from($this->config->item('table_csetup_balance_adjust').' ba');
+        $this->db->select('(ba.amount_tp) amount_tp');
+        $this->db->select('(ba.amount_net) amount_net');
+        $this->db->select('ba.customer_id customer_id');
+        $this->db->select('ba.date_adjust date_adjust');
+
+        $this->db->where('ba.status',$this->config->item('system_status_active'));
+        $this->db->where('ba.customer_id',$customer_id);
+        $this->db->where('ba.date_adjust >',$date_start);
+        $this->db->where('ba.date_adjust <=',$date_end);
+        $adjustments=$this->db->get()->result_array();
+
+        //sales return remaining
+        $sales_tp_total=0;
+        $sales_net_total=0;
+        $payment_total=0;
+        $payment_receive_total=0;
+        $adjust_tp_total=0;
+        $adjust_net_total=0;
+
+        for($i=0;$i<max(sizeof($sales),sizeof($payments),sizeof($adjustments));$i++)
+        {
+            $sale=null;
+            if(sizeof($sales)>$i)
+            {
+                $sale=$sales[$i];
+                $sales_tp_total+=$sale['total_sales_tp'];
+                $sales_net_total+=$sale['total_sales_net'];
+                if($i==0)
+                {
+                    $items[0]['date_po']=System_helper::display_date($sale['date_po']);
+                    $items[0]['po_no']=str_pad($sale['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+                    $items[0]['sales_tp']=number_format($sale['total_sales_tp'],2);
+                    $items[0]['sales_net']=number_format($sale['total_sales_net'],2);
+
+                }
+            }
+            $payment=null;
+            if(sizeof($payments)>$i)
+            {
+                $payment=$payments[$i];
+                $payment_total+=$payment['amount'];
+                $payment_receive_total+=$payment['amount'];
+                if($i==0)
+                {
+                    $items[0]['payment_no']=str_pad($payment['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+                    $items[0]['payment_date']=System_helper::display_date($payment['date_payment_customer']);
+                    $items[0]['payment_amount']=number_format($payment['amount_customer'],2);
+                    if($payment['bank_id']>0)
+                    {
+                        $items[0]['payment_bank']=$banks[$payment['bank_id']];
+                    }
+                    else
+                    {
+                        $items[0]['payment_bank']='';
+                    }
+                    $items[0]['receive_date']=System_helper::display_date($payment['date_payment_receive']);
+                    $items[0]['receive_amount']=number_format($payment['amount'],2);
+                    if($payment['arm_bank_id']>0)
+                    {
+                        $items[0]['receive_bank']=$banks[$payment['arm_bank_id']];
+                    }
+                    else
+                    {
+                        $items[0]['receive_bank']='';
+                    }
+                }
+            }
+            $adjustment=null;
+            if(sizeof($adjustments)>$i)
+            {
+                $adjustment=$adjustments[$i];
+                $adjust_tp_total+=$adjustment['amount_tp'];
+                $adjust_net_total+=$adjustment['amount_net'];
+                if($i==0)
+                {
+                    $items[0]['adjust_date']=System_helper::display_date($adjustment['date_adjust']);
+                    $items[0]['adjust_tp']=number_format($adjustment['amount_tp'],2);
+                    $items[0]['adjust_net']=number_format($adjustment['amount_net'],2);
+                }
+            }
+            if($i>0)
+            {
+                $items[]=$this->get_customer_statement_printing_row('','',$sale,$payment,$adjustment,$banks,$arm_banks);
+            }
+        }
+        $total_row=array();
+        $total_row['opening_balance_tp']='Total';
+        $total_row['opening_balance_net']='';
+        $total_row['date_sales']='';
+        $total_row['po_no']='';
+        if($sales_tp_total!=0)
+        {
+            $total_row['sales_tp']=number_format($sales_tp_total,2);
+        }
+        else
+        {
+            $total_row['sales_tp']='';
+        }
+        if($sales_net_total!=0)
+        {
+            $total_row['sales_net']=number_format($sales_net_total,2);
+        }
+        else
+        {
+            $total_row['sales_net']='';
+        }
+        $total_row['payment_no']='';
+        $total_row['payment_date']='';
+        if($payment_total!=0)
+        {
+            $total_row['payment_amount']=number_format($payment_total,2);
+        }
+        else
+        {
+            $total_row['payment_amount']='';
+        }
+        $total_row['payment_bank']='';
+        $total_row['receive_date']='';
+        if($payment_receive_total!=0)
+        {
+            $total_row['receive_amount']=number_format($payment_receive_total,2);
+        }
+        else
+        {
+            $total_row['receive_amount']='';
+        }
+
+        $total_row['receive_bank']='';
+
+        $total_row['adjust_date']='';
+        if($adjust_tp_total!=0)
+        {
+            $total_row['adjust_tp']=number_format($adjust_tp_total,2);
+        }
+        else
+        {
+            $total_row['adjust_tp']='';
+        }
+        if($adjust_net_total!=0)
+        {
+            $total_row['adjust_net']=number_format($adjust_net_total,2);
+        }
+        else
+        {
+            $total_row['adjust_net']='';
+        }
+
+        $total_row['balance_tp']='';
+        $total_row['balance_net']='';
+        $total_row['payment_percentage_tp']='';
+        $total_row['payment_percentage_net']='';
+        $items[]=$total_row;
+
+        $current_balance_tp=$opening_balance_tp+$sales_tp_total-$payment_receive_total-$adjust_tp_total;//adjustment need to calculate
+        if($current_balance_tp!=0)
+        {
+            $items[0]['balance_tp']=number_format($current_balance_tp,2);
+        }
+        else
+        {
+            $items[0]['balance_tp']='';
+        }
+        $current_balance_net=$opening_balance_net+$sales_net_total-$payment_receive_total-$adjust_net_total;//adjustment need to calculate
+        if($current_balance_net!=0)
+        {
+            $items[0]['balance_net']=number_format($current_balance_net,2);
+        }
+        else
+        {
+            $items[0]['balance_net']='';
+        }
+        if(($opening_balance_tp+$sales_tp_total)!=0)
+        {
+            $items[0]['payment_percentage_tp']=number_format($payment_receive_total*100/($opening_balance_tp+$sales_tp_total),2);
+        }
+        else
+        {
+            $items[0]['payment_percentage_tp']='-';
+        }
+        if(($opening_balance_net+$sales_net_total)!=0)
+        {
+            $items[0]['payment_percentage_net']=number_format($payment_receive_total*100/($opening_balance_net+$sales_net_total),2);
+        }
+        else
+        {
+            $items[0]['payment_percentage_net']='';
+        }
+
+        $this->jsonReturn($items);
+
+    }
+    private function get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,$sale,$payment,$adjustment,$banks,$arm_banks)
+    {
+        $info=array();
+        if($opening_balance_tp>0)
+        {
+            $info['opening_balance_tp']=number_format($opening_balance_tp,2);
+        }
+        else
+        {
+            $info['opening_balance_tp']='';
+        }
+        if($opening_balance_net>0)
+        {
+            $info['opening_balance_net']=number_format($opening_balance_net,2);
+        }
+        else
+        {
+            $info['opening_balance_net']='';
+        }
+        if($sale)
+        {
+            $info['date_po']=System_helper::display_date($sale['date_po']);
+            $info['po_no']=str_pad($sale['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+            $info['sales_tp']=number_format($sale['total_sales_tp'],2);
+            $info['sales_net']=number_format($sale['total_sales_net'],2);
+        }
+        else
+        {
+            $info['date_po']='';
+            $info['po_no']='';
+            $info['sales_tp']='';
+            $info['sales_net']='';
+        }
+        if($payment)
+        {
+            $info['payment_no']=str_pad($payment['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+            $info['payment_date']=System_helper::display_date($payment['date_payment_customer']);
+            $info['payment_amount']=number_format($payment['amount_customer'],2);
+            if($payment['bank_id']>0)
+            {
+                $info['payment_bank']=$banks[$payment['bank_id']];
+            }
+            else
+            {
+                $info['payment_bank']='';
+            }
+            $info['receive_date']=System_helper::display_date($payment['date_payment_receive']);
+            $info['receive_amount']=number_format($payment['amount'],2);
+            if($payment['arm_bank_id']>0)
+            {
+                $info['receive_bank']=$banks[$payment['arm_bank_id']];
+            }
+            else
+            {
+                $info['receive_bank']='';
+            }
+        }
+        else
+        {
+            $info['payment_no']='';
+            $info['payment_date']='';
+            $info['payment_amount']='';
+            $info['payment_bank']='';
+            $info['receive_date']='';
+            $info['receive_amount']='';
+            $info['receive_bank']='';
+        }
+        if($adjustment)
+        {
+            $info['adjust_date']=System_helper::display_date($adjustment['date_adjust']);
+            $info['adjust_tp']=number_format($adjustment['amount_tp'],2);
+            $info['adjust_net']=number_format($adjustment['amount_net'],2);
+        }
+        else
+        {
+            $info['adjust_date']='';
+            $info['adjust_tp']='';
+            $info['adjust_net']='';
+        }
+        $info['balance_tp']='';
+        $info['balance_net']='';
+        $info['payment_percentage_tp']='';
+        $info['payment_percentage_net']='';
+        return $info;
+    }
+
 }

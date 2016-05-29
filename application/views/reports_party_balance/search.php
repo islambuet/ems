@@ -36,7 +36,7 @@
                         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="01-Jun-2016">
                     </div>
                 </div>
                 <div class="row show-grid">
