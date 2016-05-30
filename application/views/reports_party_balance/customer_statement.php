@@ -47,6 +47,9 @@
 
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_date">Adjust Date</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_tp">Adjust TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_return">Sale Return Date</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_po_no">Return Po NO</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_tp">Sales Return</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_tp">Balance TP</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_tp">Payment % Tp</label>
                 <?php
@@ -57,6 +60,7 @@
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_net"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> NET</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_net">Sales NET</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_net">Adjust NET</label>
+                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_net">Sales Return Net</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_net">Balance Net</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_net">Payment % Net</label>
                 <?php
@@ -103,6 +107,10 @@
                 { name: 'adjust_date', type: 'string' },
                 { name: 'adjust_tp', type: 'string' },
                 { name: 'adjust_net', type: 'string' },
+                { name: 'date_return', type: 'string' },
+                { name: 'return_po_no', type: 'string' },
+                { name: 'return_tp', type: 'string' },
+                { name: 'return_net', type: 'string' },
                 { name: 'balance_tp', type: 'string' },
                 { name: 'balance_net', type: 'string' },
                 { name: 'payment_percentage_tp', type: 'string' },
@@ -207,6 +215,17 @@
                             <?php
                         }
                     ?>
+                    { columngroup: 'sales_return',text: 'Return Date',dataField: 'date_return',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'sales_return',text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>',dataField: 'return_po_no',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
+                    { columngroup: 'sales_return',text: 'Amount',dataField: 'return_tp',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    <?php
+                        if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
+                        {
+                            ?>
+                            { columngroup: 'sales_return',text: 'NET Amount',dataField: 'return_net',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            <?php
+                        }
+                    ?>
                     { columngroup: 'balance',text: 'Amount', dataField: 'balance_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'100'},
                     <?php
                         if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
@@ -232,6 +251,7 @@
                     { text: 'Sales', align: 'center', name: 'sales' },
                     { text: 'Payment', align: 'center', name: 'payment' },
                     { text: 'Adjustment', align: 'center', name: 'adjustment' },
+                    { text: 'Sales Return', align: 'center', name: 'sales_return' },
                     { text: 'Current Balance', align: 'center', name: 'balance' },
                     { text: 'Payment %', align: 'center', name: 'payment_percentage' }
                 ]

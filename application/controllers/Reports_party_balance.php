@@ -854,7 +854,7 @@ class Reports_party_balance extends Root_Controller
                 $opening_balance_net-=$result['total_sales_net'];
             }
         }
-        $items[]=$this->get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,NULL,NULL,NULL,$banks,$arm_banks);
+        $items[]=$this->get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,NULL,NULL,NULL,NULL,$banks,$arm_banks);
         //sales in sales
         $this->db->from($this->config->item('table_sales_po_details').' pod');
         $this->db->select('po.id,po.date_po,po.date_approved');
@@ -893,15 +893,35 @@ class Reports_party_balance extends Root_Controller
         $this->db->where('ba.date_adjust <=',$date_end);
         $adjustments=$this->db->get()->result_array();
 
-        //sales return remaining
+        //sales return
+        $this->db->from($this->config->item('table_sales_po_details').' pod');
+        $this->db->select('(quantity_return*variety_price) total_sales_tp');
+        $this->db->select('(quantity_return*variety_price_net) total_sales_net');
+        $this->db->select('po.id,po.date_po,pod.date_return');
+
+
+        $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
+
+        $this->db->where('pod.revision',1);
+        $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
+
+        $this->db->where('pod.date_return >',0);
+        $this->db->where('pod.date_return >',$date_start);
+        $this->db->where('pod.date_return <=',$date_end);
+        $this->db->where(' po.customer_id',$customer_id);
+        $this->db->group_by('po.id');
+        $sales_returns=$this->db->get()->result_array();
+
         $sales_tp_total=0;
         $sales_net_total=0;
         $payment_total=0;
         $payment_receive_total=0;
         $adjust_tp_total=0;
         $adjust_net_total=0;
+        $sales_return_tp_total=0;
+        $sales_return_net_total=0;
 
-        for($i=0;$i<max(sizeof($sales),sizeof($payments),sizeof($adjustments));$i++)
+        for($i=0;$i<max(sizeof($sales),sizeof($payments),sizeof($adjustments),sizeof($sales_returns));$i++)
         {
             $sale=null;
             if(sizeof($sales)>$i)
@@ -962,9 +982,24 @@ class Reports_party_balance extends Root_Controller
                     $items[0]['adjust_net']=number_format($adjustment['amount_net'],2);
                 }
             }
+            $sale_return=null;
+            if(sizeof($sales_returns)>$i)
+            {
+                $sale_return=$sales_returns[$i];
+                $sales_return_tp_total+=$sale_return['total_sales_tp'];
+                $sales_return_net_total+=$sale_return['total_sales_net'];
+                if($i==0)
+                {
+                    $items[0]['date_return']=System_helper::display_date($sale_return['date_return']);
+                    $items[0]['return_po_no']=str_pad($sale_return['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+                    $items[0]['return_tp']=number_format($sale_return['total_sales_tp'],2);
+                    $items[0]['return_net']=number_format($sale_return['total_sales_net'],2);
+
+                }
+            }
             if($i>0)
             {
-                $items[]=$this->get_customer_statement_printing_row('','',$sale,$payment,$adjustment,$banks,$arm_banks);
+                $items[]=$this->get_customer_statement_printing_row('','',$sale,$payment,$adjustment,$sale_return,$banks,$arm_banks);
             }
         }
         $total_row=array();
@@ -1028,14 +1063,31 @@ class Reports_party_balance extends Root_Controller
         {
             $total_row['adjust_net']='';
         }
-
+        $total_row['date_return']='';
+        $total_row['return_po_no']='';
+        if($sales_return_tp_total!=0)
+        {
+            $total_row['return_tp']=number_format($sales_return_tp_total,2);
+        }
+        else
+        {
+            $total_row['return_tp']='';
+        }
+        if($sales_return_net_total!=0)
+        {
+            $total_row['return_net']=number_format($sales_return_net_total,2);
+        }
+        else
+        {
+            $total_row['return_net']='';
+        }
         $total_row['balance_tp']='';
         $total_row['balance_net']='';
         $total_row['payment_percentage_tp']='';
         $total_row['payment_percentage_net']='';
         $items[]=$total_row;
 
-        $current_balance_tp=$opening_balance_tp+$sales_tp_total-$payment_receive_total-$adjust_tp_total;//adjustment need to calculate
+        $current_balance_tp=$opening_balance_tp+$sales_tp_total-$payment_receive_total-$adjust_tp_total-$sales_return_tp_total;
         if($current_balance_tp!=0)
         {
             $items[0]['balance_tp']=number_format($current_balance_tp,2);
@@ -1044,7 +1096,7 @@ class Reports_party_balance extends Root_Controller
         {
             $items[0]['balance_tp']='';
         }
-        $current_balance_net=$opening_balance_net+$sales_net_total-$payment_receive_total-$adjust_net_total;//adjustment need to calculate
+        $current_balance_net=$opening_balance_net+$sales_net_total-$payment_receive_total-$adjust_net_total-$sales_return_tp_total;
         if($current_balance_net!=0)
         {
             $items[0]['balance_net']=number_format($current_balance_net,2);
@@ -1073,7 +1125,7 @@ class Reports_party_balance extends Root_Controller
         $this->jsonReturn($items);
 
     }
-    private function get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,$sale,$payment,$adjustment,$banks,$arm_banks)
+    private function get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,$sale,$payment,$adjustment,$sale_return,$banks,$arm_banks)
     {
         $info=array();
         if($opening_balance_tp>0)
@@ -1123,7 +1175,7 @@ class Reports_party_balance extends Root_Controller
             $info['receive_amount']=number_format($payment['amount'],2);
             if($payment['arm_bank_id']>0)
             {
-                $info['receive_bank']=$banks[$payment['arm_bank_id']];
+                $info['receive_bank']=$arm_banks[$payment['arm_bank_id']];
             }
             else
             {
@@ -1151,6 +1203,21 @@ class Reports_party_balance extends Root_Controller
             $info['adjust_date']='';
             $info['adjust_tp']='';
             $info['adjust_net']='';
+        }
+        if($sale_return)
+        {
+
+            $info['date_return']=System_helper::display_date($sale_return['date_return']);
+            $info['return_po_no']=str_pad($sale_return['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+            $info['return_tp']=number_format($sale_return['total_sales_tp'],2);
+            $info['return_net']=number_format($sale_return['total_sales_net'],2);
+        }
+        else
+        {
+            $info['date_return']='';
+            $info['return_po_no']='';
+            $info['return_tp']='';
+            $info['return_net']='';
         }
         $info['balance_tp']='';
         $info['balance_net']='';
