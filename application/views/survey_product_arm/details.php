@@ -46,7 +46,7 @@ $CI->load->view("action_buttons",$action_data);
                 <label class="control-label pull-right">Characteristics</label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $survey['characteristics'];?></label>
+                <label class="control-label"><?php echo nl2br($survey['characteristics']);?></label>
             </div>
         </div>
         <div class="row show-grid">
@@ -81,7 +81,7 @@ $CI->load->view("action_buttons",$action_data);
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $survey['remarks'];?></label>
+                <label class="control-label"><?php echo nl2br($survey['remarks']);?></label>
             </div>
         </div>
     </div>
