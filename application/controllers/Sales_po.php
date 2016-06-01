@@ -574,13 +574,17 @@ class Sales_po extends Root_Controller
         {
             foreach($po_varieties as $po)
             {
-                if(!(($po['variety_id']>0)&&($po['pack_size_id']>0)&&($po['quantity']>0)))
+                if(!(($po['variety_id']>0)&&($po['pack_size_id']>0)&&($po['quantity']>0)&& isset($po['variety_price'])&& isset($po['variety_price_net'])))
                 {
                     $this->message=$this->lang->line('MSG_UNFINISHED_PO');
                     return false;
                 }
             }
         }
+        echo '<PRE>';
+        print_r($po_varieties);
+        echo '</PRE>';
+        die();
         $id = $this->input->post("id");
         if($id>0)
         {

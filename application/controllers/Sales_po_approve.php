@@ -726,7 +726,7 @@ class Sales_po_approve extends Root_Controller
         {
             foreach($po_varieties as $po)
             {
-                if(!(($po['variety_id']>0)&&($po['pack_size_id']>0)&&($po['quantity']>0)))
+                if(!(($po['variety_id']>0)&&($po['pack_size_id']>0)&&($po['quantity']>0)&& isset($po['variety_price'])&& isset($po['variety_price_net'])))
                 {
                     $this->message=$this->lang->line('MSG_UNFINISHED_PO');
                     return false;
@@ -774,6 +774,13 @@ class Sales_po_approve extends Root_Controller
         {
             $ajax['status']=false;
             $ajax['system_message']="Invalid Try";
+            $this->jsonReturn($ajax);
+            die();
+        }
+        elseif((is_null($price_info['variety_price'])||is_null($price_info['variety_price_net'])))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='Full '.$this->lang->line('MSG_PRICE_NOT_SET');;
             $this->jsonReturn($ajax);
             die();
         }
