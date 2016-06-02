@@ -581,10 +581,6 @@ class Sales_po extends Root_Controller
                 }
             }
         }
-        echo '<PRE>';
-        print_r($po_varieties);
-        echo '</PRE>';
-        die();
         $id = $this->input->post("id");
         if($id>0)
         {
