@@ -93,7 +93,7 @@ class Tm_ti_market_visit extends Root_Controller
     {
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
-            $data['title']="Search Schedules";
+            $data['title']="TI Market Visit Search Schedules";
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
             $data['territories']=array();
@@ -144,12 +144,11 @@ class Tm_ti_market_visit extends Root_Controller
         $day=date('w',$time);
         $this->db->from($this->config->item('table_setup_tm_market_visit').' mvst');
         $this->db->select('mvst.*');
-        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
         $this->db->select('d.name district_name');
         $this->db->select('shift.name shift_name');
 
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvst.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        //$this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvst.customer_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvst.district_id','INNER');
         $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvst.shift_id','INNER');
         $this->db->where('mvst.revision',1);
         $this->db->where('mvst.territory_id',$territory_id);
@@ -158,16 +157,30 @@ class Tm_ti_market_visit extends Root_Controller
         $data['schedules']=$this->db->get()->result_array();
         $data['date']=$time;
 
-        $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
-        $this->db->select('mvt.*');
-        $this->db->where('mvt.date',$time);
-        $this->db->where('mvt.territory_id',$territory_id);
+        $customers=array();
+        $this->db->from($this->config->item('table_csetup_customers').' cus');
+        $this->db->select('cus.district_id');
+        $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->where('d.territory_id',$territory_id);
         $results=$this->db->get()->result_array();
-        $data['visit_done']=array();
         foreach($results as $result)
         {
-            $data['visit_done'][$result['shift_id']][]=$result['customer_id'];
+            $customers[$result['value']]=$result;
         }
+        $data['customers']=$customers;
+        $other_customers=array();
+        $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+        $this->db->select('cus.district_id');
+        $this->db->select('cus.id value,cus.name text,cus.status');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->where('d.territory_id',$territory_id);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $other_customers[$result['value']]=$result;
+        }
+        $data['other_customers']=$other_customers;
 
         $data['title']='Schedule for '.$this->input->post('date').'('.date('l',$time).')';
         $ajax['status']=true;
@@ -188,15 +201,12 @@ class Tm_ti_market_visit extends Root_Controller
             $setup_id=$this->input->post('setup_id');
             if($setup_id)
             {
-
                 $this->db->from($this->config->item('table_setup_tm_market_visit').' mvst');
                 $this->db->select('mvst.*');
-                $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+
                 $this->db->select('d.name district_name');
                 $this->db->select('shift.name shift_name');
-
-                $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvst.customer_id','INNER');
-                $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+                $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvst.district_id','INNER');
                 $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvst.shift_id','INNER');
                 $this->db->where('mvst.revision',1);
                 $this->db->where('mvst.day_no',date('w',$this->input->post('date')));
@@ -209,13 +219,45 @@ class Tm_ti_market_visit extends Root_Controller
                     $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                     $this->jsonReturn($ajax);
                 }
+                $data['visit']['setup_id']=$data['visit']['id'];
+                $data['visit']['id']=0;
                 $data['visit']['date']=$this->input->post('date');
                 $data['visit']['activities']='';
                 $data['visit']['picture_url_activities']='';
                 $data['visit']['problem']='';
                 $data['visit']['picture_url_problem']='';
                 $data['visit']['recommendation']='';
-                $data['title']='New Visit';
+                $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
+                $data['visit']['customer_name']='';
+                if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
+                {
+                    $this->db->from($this->config->item('table_csetup_customers').' cus');
+                    $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+                    $this->db->where('cus.id',$data['visit']['host_id']);
+                    $result=$this->db->get()->row_array();
+                    $data['visit']['customer_name']=$result['text'];
+                    if($result['status']!=$this->config->item('system_status_active'))
+                    {
+                        $data['visit']['customer_name'].= '('.$result['status'].')';
+                    }
+                }
+                elseif($data['visit']['host_type']==$this->config->item('system_host_type_other_customer'))
+                {
+                    $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+                    $this->db->select('cus.id value,cus.name text,cus.status');
+                    $this->db->where('cus.id',$data['visit']['host_id']);
+                    $result=$this->db->get()->row_array();
+                    $data['visit']['customer_name']=$result['text'];
+                    if($result['status']!=$this->config->item('system_status_active'))
+                    {
+                        $data['visit']['customer_name'].= '('.$result['status'].')';
+                    }
+                }
+                elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+                {
+                    $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
+                }
+                $data['title']='TI Market Visit(new)';
                 $ajax['status']=true;
                 $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/add_edit",$data,true));
                 if($this->message)
@@ -305,13 +347,11 @@ class Tm_ti_market_visit extends Root_Controller
             }
             $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
             $this->db->select('mvt.*');
-            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
-            $this->db->select('d.name district_name');
+            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id');
             $this->db->select('shift.name shift_name');
 
-            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
             $this->db->where('mvt.id',$visit_id);
             $data['visit']=$this->db->get()->row_array();
             if(!$data['visit'])
@@ -321,7 +361,37 @@ class Tm_ti_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']='Edit Visit';
+            $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
+            $data['visit']['customer_name']='';
+            if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_customers').' cus');
+                $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+                $this->db->select('cus.id value,cus.name text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+            {
+                $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
+            }
+            $data['title']='TI Market Visit(Edit)';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/add_edit",$data,true));
             if($this->message)
@@ -341,27 +411,16 @@ class Tm_ti_market_visit extends Root_Controller
 
     private function system_save()
     {
+        $id = $this->input->post("id");
         $visit = $this->input->post("visit");
-        $info=Query_helper::get_info($this->config->item('table_tm_market_visit_ti'),'*',array('date ='.$visit['date'],'territory_id ='.$visit['territory_id'],'shift_id ='.$visit['shift_id'],'customer_id ='.$visit['customer_id']),1);
-        if($info)
+        $setup_info=$info=Query_helper::get_info($this->config->item('table_setup_tm_market_visit'),'*',array('id ='.$visit['setup_id']),1);
+        if(!$setup_info)
         {
-            $id = $info['id'];
-            $setup_id=$info['setup_id'];
+            System_helper::invalid_try("Invalid try to save",$id);
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
         }
-        else
-        {
-            $id=0;
-            $setup_info=$info=Query_helper::get_info($this->config->item('table_setup_tm_market_visit'),'*',array('revision =1','day_no ='.date('w',$visit['date']),'territory_id ='.$visit['territory_id'],'shift_id ='.$visit['shift_id'],'customer_id ='.$visit['customer_id']),1);
-            if(!$setup_info)
-            {
-                System_helper::invalid_try("Invalid try to save",$id);
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                $this->jsonReturn($ajax);
-            }
-            $setup_id=$setup_info['id'];
-        }
-
         $user = User_helper::get_user();
         if($id>0)
         {
@@ -392,7 +451,8 @@ class Tm_ti_market_visit extends Root_Controller
         }
         else
         {
-            $file_folder='images/ti_market_visit/'.$visit['territory_id'];
+
+            $file_folder='images/ti_market_visit/'.$setup_info['territory_id'];
             $dir=(FCPATH).$file_folder;
             if(!is_dir($dir))
             {
@@ -433,8 +493,6 @@ class Tm_ti_market_visit extends Root_Controller
                     die();
                 }
             }
-            $visit['setup_id']=$setup_id;
-            $visit['day_no']=date('w',$visit['date']);
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -469,9 +527,7 @@ class Tm_ti_market_visit extends Root_Controller
         $this->load->library('form_validation');
         $this->form_validation->set_rules('visit[recommendation]','Recommendation','required');
         $this->form_validation->set_rules('visit[date]','date','required|numeric');
-        $this->form_validation->set_rules('visit[territory_id]','territory','required|numeric');
-        $this->form_validation->set_rules('visit[shift_id]','shift','required|numeric');
-        $this->form_validation->set_rules('visit[customer_id]','customer','required|numeric');
+        $this->form_validation->set_rules('visit[setup_id]','setup_id','required|numeric');
 
         if($this->form_validation->run() == FALSE)
         {
@@ -485,21 +541,20 @@ class Tm_ti_market_visit extends Root_Controller
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
 
         $this->db->select('mvt.*');
-        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('shift.name shift_name');
 
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = stmv.district_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = mvt.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -520,6 +575,7 @@ class Tm_ti_market_visit extends Root_Controller
             $item['date']=System_helper::display_date($item['date']);
         }
         $this->jsonReturn($items);
+
 
     }
 

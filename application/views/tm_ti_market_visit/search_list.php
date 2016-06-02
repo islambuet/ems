@@ -30,7 +30,31 @@ $CI = & get_instance();
                         <tr>
                             <td><?php echo $schedule['shift_name']; ?></td>
                             <td><?php echo $schedule['district_name']; ?></td>
-                            <td><?php echo $schedule['customer_name']; ?></td>
+                            <td>
+                                <?php
+                                if($schedule['host_type']==$CI->config->item('system_host_type_customer'))
+                                {
+                                    echo $customers[$schedule['host_id']]['text'];
+                                    if($customers[$schedule['host_id']]['status']!=$this->config->item('system_status_active'))
+                                    {
+                                        echo '('.$customers[$schedule['host_id']]['status'].')';
+                                    }
+                                }
+                                elseif($schedule['host_type']==$CI->config->item('system_host_type_other_customer'))
+                                {
+                                    echo $other_customers[$schedule['host_id']]['text'];
+                                    if($other_customers[$schedule['host_id']]['status']!=$this->config->item('system_status_active'))
+                                    {
+                                        echo '('.$other_customers[$schedule['host_id']]['status'].')';
+                                    }
+                                }
+                                elseif($schedule['host_type']==$CI->config->item('system_host_type_special'))
+                                {
+                                    echo 'Special '.$schedule['host_id'];
+                                }
+
+                                ?>
+                            </td>
                             <td>
                                 <?php
                                 if(isset($visit_done[$schedule['shift_id']])&& in_array($schedule['customer_id'],$visit_done[$schedule['shift_id']]))
