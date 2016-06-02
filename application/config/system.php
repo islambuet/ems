@@ -42,4 +42,8 @@ $config['system_purpose_customer']='Customer';
 //market survey
 $config['system_msurvey_customers_num']=2;
 
+$config['system_host_type_customer']='customer';
+$config['system_host_type_other_customer']='other_customer';
+$config['system_host_type_special']='special';
+
 

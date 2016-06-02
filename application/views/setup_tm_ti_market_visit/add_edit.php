@@ -208,18 +208,18 @@ jQuery(document).ready(function()
     $(document).on("change",".district_id",function()
     {
         var district_id=$(this).val();
-        var customer_container=$(this).attr('data-customer-container');
         var day_no=$(this).attr('data-day');
         var shift_id=$(this).attr('data-shift-id');
-        $(customer_container).html('');
+        $('#customers_container_'+day_no+'_'+shift_id).html('');
+        $('#other_customers_container_'+day_no+'_'+shift_id).html('');
+        $('#special_container_'+day_no+'_'+shift_id).html('');
         if(district_id>0)
         {
-            $('#upazilla_id_container').show();
             $.ajax({
                 url: "<?php echo site_url($CI->controller_url.'/get_customers')?>",
                 type: 'POST',
                 datatype: "JSON",
-                data:{district_id:district_id,customer_container:customer_container,day_no:day_no,shift_id:shift_id},
+                data:{district_id:district_id,day_no:day_no,shift_id:shift_id},
                 success: function (data, status)
                 {
 
@@ -231,11 +231,6 @@ jQuery(document).ready(function()
                 }
             });
         }
-        else
-        {
-            $('#upazilla_id_container').hide();
-        }
-
     });
 });
 </script>

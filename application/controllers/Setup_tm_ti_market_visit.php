@@ -67,7 +67,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Territory In-Charge Market Visit Setup List";
+            $data['title']="TI Market Visit Setup List";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_ti_market_visit/list",$data,true));
             if($this->message)
@@ -90,7 +90,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
     {
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
-            $data['title']="Territory In-Charge Market Visit Setup";
+            $data['title']="TI Market Visit Setup (new)";
             $data["setup"] = Array(
                 'division_id'=>$this->locations['division_id'],
                 'zone_id'=>$this->locations['zone_id'],
@@ -159,7 +159,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
             $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$data['setup']['division_id']));
             $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['setup']['zone_id']));
 
-            $data['title']="Territory In-Charge Market Visit Setup";
+            $data['title']="TI Market Visit Setup (edit)";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_ti_market_visit/add_edit",$data,true));
             if($this->message)
@@ -207,7 +207,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']="Details of Territory In-Charge Market Visit Setup";
+            $data['title']="TI Market Visit Setup Details";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_tm_ti_market_visit/details",$data,true));
             if($this->message)
@@ -227,6 +227,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
 
     private function system_save()
     {
+
         $territory_id = $this->input->post("territory_id");
         $time=time();
         $user = User_helper::get_user();
@@ -252,61 +253,93 @@ class Setup_tm_ti_market_visit extends Root_Controller
 
             }
         }
-        $customers=$this->input->post('customers');
-        if(sizeof($customers)>0)
+        $data=$this->input->post('data');
+        $this->db->trans_start();  //DB Transaction Handle START
+        $this->db->where('territory_id',$territory_id);
+        $this->db->set('revision', 'revision+1', FALSE);
+        $this->db->update($this->config->item('table_setup_tm_market_visit'));
+        foreach($data as $day_no=>$days)
         {
-
-            $this->db->trans_start();  //DB Transaction Handle START
-            $this->db->where('territory_id',$territory_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_setup_tm_market_visit'));
-            foreach($customers as $day_no=>$days)
+            foreach($days as $shift_id=>$day)
             {
-                foreach($days as $shift_id=>$day)
+                if($day['district_id']>0)
                 {
-                    foreach($day as $customer_id)
+                    if(isset($day['customer']))
                     {
-                        $data=array();
-                        $data['territory_id']=$territory_id;
-                        $data['day_no']=$day_no;
-                        $data['shift_id']=$shift_id;
-                        $data['shift_id']=$shift_id;
-                        $data['customer_id']=$customer_id;
-                        $data['revision']=1;
-                        $data['user_created'] = $user->user_id;
-                        $data['date_created'] =$time;
-                        Query_helper::add($this->config->item('table_setup_tm_market_visit'),$data);
-
+                        foreach($day['customer'] as $host_id)
+                        {
+                            $data=array();
+                            $data['territory_id']=$territory_id;
+                            $data['day_no']=$day_no;
+                            $data['shift_id']=$shift_id;
+                            $data['district_id']=$day['district_id'];
+                            $data['host_type']=$this->config->item('system_host_type_customer');
+                            $data['host_id']=$host_id;
+                            $data['revision']=1;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] =$time;
+                            Query_helper::add($this->config->item('table_setup_tm_market_visit'),$data);
+                        }
                     }
+                    if(isset($day['other_customer']))
+                    {
+                        foreach($day['other_customer'] as $host_id)
+                        {
+                            $data=array();
+                            $data['territory_id']=$territory_id;
+                            $data['day_no']=$day_no;
+                            $data['shift_id']=$shift_id;
+                            $data['district_id']=$day['district_id'];
+                            $data['host_type']=$this->config->item('system_host_type_other_customer');
+                            $data['host_id']=$host_id;
+                            $data['revision']=1;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] =$time;
+                            Query_helper::add($this->config->item('table_setup_tm_market_visit'),$data);
+                        }
+                    }
+                    if(isset($day['special'])&& $day['special']>0)
+                    {
+                        for($i=0;$i<$day['special'];$i++)
+                        {
+                            $data=array();
+                            $data['territory_id']=$territory_id;
+                            $data['day_no']=$day_no;
+                            $data['shift_id']=$shift_id;
+                            $data['district_id']=$day['district_id'];
+                            $data['host_type']=$this->config->item('system_host_type_special');
+                            $data['host_id']=($i+1);
+                            $data['revision']=1;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] =$time;
+                            Query_helper::add($this->config->item('table_setup_tm_market_visit'),$data);
+                        }
+                    }
+
                 }
             }
-            $this->db->trans_complete();   //DB Transaction Handle END
-            if ($this->db->trans_status() === TRUE)
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $save_and_new=$this->input->post('system_save_new_status');
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            if($save_and_new==1)
             {
-                $save_and_new=$this->input->post('system_save_new_status');
-                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
-                if($save_and_new==1)
-                {
-                    $this->system_add();
-                }
-                else
-                {
-                    $this->system_list();
-                }
+                $this->system_add();
             }
             else
             {
-                $ajax['status']=false;
-                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
-                $this->jsonReturn($ajax);
+                $this->system_list();
             }
         }
         else
         {
             $ajax['status']=false;
-            $ajax['system_message']="No customer was selected";
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->jsonReturn($ajax);
         }
+
     }
     private function get_schedule($id)
     {
@@ -338,12 +371,14 @@ class Setup_tm_ti_market_visit extends Root_Controller
     public function get_customers()
     {
         $district_id=$this->input->post('district_id');
-        $customer_container=$this->input->post('customer_container');
         $data['shift_id']=$this->input->post('shift_id');
         $data['day_no']=$this->input->post('day_no');
-        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
+        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text','status'),array('district_id ='.$district_id,'status !="'.$this->config->item('system_status_delete').'"'));
         $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>$customer_container,"html"=>$this->load->view("setup_tm_ti_market_visit/customer_selection",$data,true));
+        $ajax['system_content'][]=array("id"=>'#customers_container_'.$data['day_no'].'_'.$data['shift_id'],"html"=>$this->load->view("setup_tm_ti_market_visit/customer_selection",$data,true));
+        $data['items']=Query_helper::get_info($this->config->item('table_csetup_other_customers'),array('id value','name text','status'),array('district_id ='.$district_id,'status !="'.$this->config->item('system_status_delete').'"'));
+        $ajax['system_content'][]=array("id"=>'#other_customers_container_'.$data['day_no'].'_'.$data['shift_id'],"html"=>$this->load->view("setup_tm_ti_market_visit/other_customer_selection",$data,true));
+        $ajax['system_content'][]=array("id"=>'#special_container_'.$data['day_no'].'_'.$data['shift_id'],"html"=>$this->load->view("setup_tm_ti_market_visit/special_input",$data,true));
         $this->jsonReturn($ajax);
     }
     public function get_items()
