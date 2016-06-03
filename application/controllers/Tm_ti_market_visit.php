@@ -182,6 +182,19 @@ class Tm_ti_market_visit extends Root_Controller
         }
         $data['other_customers']=$other_customers;
 
+        $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
+        $this->db->select('mvst.*');
+        $this->db->join($this->config->item('table_setup_tm_market_visit').' mvst','mvst.id = mvt.setup_id','INNER');
+        $this->db->where('mvt.date',$time);
+        $this->db->where('mvst.territory_id',$territory_id);
+        $results=$this->db->get()->result_array();
+        $data['visit_done']=array();
+        //$data['visit_done']=$results;
+        foreach($results as $result)
+        {
+            $data['visit_done'][$result['shift_id']][$result['host_type']][$result['host_id']]=true;
+        }
+
         $data['title']='Schedule for '.$this->input->post('date').'('.date('l',$time).')';
         $ajax['status']=true;
         $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("tm_ti_market_visit/search_list",$data,true));
@@ -538,9 +551,24 @@ class Tm_ti_market_visit extends Root_Controller
     }
     public function get_items()
     {
+        $results=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text','status'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $customers=array();
+        foreach($results as $result)
+        {
+            $customers[$result['value']]=$result;
+        }
+        $results=Query_helper::get_info($this->config->item('table_csetup_other_customers'),array('id value','name text','status'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $other_customers=array();
+        foreach($results as $result)
+        {
+            $other_customers[$result['value']]=$result;
+        }
+
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
 
         $this->db->select('mvt.*');
+        $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id');
+
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
@@ -573,6 +601,28 @@ class Tm_ti_market_visit extends Root_Controller
         {
             $item['day']=date('l',$item['date']);
             $item['date']=System_helper::display_date($item['date']);
+            if($item['host_type']==$this->config->item('system_host_type_customer'))
+            {
+
+                $item['customer_name']=$customers[$item['host_id']]['text'];
+                if($customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$customers[$item['host_id']]['status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+
+                $item['customer_name']=$other_customers[$item['host_id']]['text'];
+                if($other_customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$other_customers[$item['host_id']]['status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_special'))
+            {
+                $item['customer_name']='Special '.$item['host_id'];
+            }
         }
         $this->jsonReturn($items);
 
