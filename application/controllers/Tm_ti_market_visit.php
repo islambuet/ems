@@ -291,7 +291,7 @@ class Tm_ti_market_visit extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
-    private function system_details($id)
+    /*private function system_details($id)
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
@@ -330,6 +330,90 @@ class Tm_ti_market_visit extends Root_Controller
                 $user_ids[$solution['user_created']]=$solution['user_created'];
             }
             $data['users']=System_helper::get_users_info($user_ids);
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/details",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$visit_id);
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+    }*/
+    private function system_details($id)
+    {
+        if(isset($this->permissions['view'])&&($this->permissions['view']==1))
+        {
+            if(($this->input->post('id')))
+            {
+                $visit_id=$this->input->post('id');
+            }
+            else
+            {
+                $visit_id=$id;
+            }
+            $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
+            $this->db->select('mvt.*');
+            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id');
+            $this->db->select('shift.name shift_name');
+
+            $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
+            $this->db->where('mvt.id',$visit_id);
+            $data['visit']=$this->db->get()->row_array();
+            if(!$data['visit'])
+            {
+                System_helper::invalid_try("Invalid try at edit",$visit_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
+            $data['visit']['customer_name']='';
+            if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_customers').' cus');
+                $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+                $this->db->select('cus.id value,cus.name text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+            {
+                $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
+            }
+            $user_ids=array();
+            $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
+            $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_ti'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
+            foreach($data['previous_solutions'] as $solution)
+            {
+                $user_ids[$solution['user_created']]=$solution['user_created'];
+            }
+            $data['users']=System_helper::get_users_info($user_ids);
+            
+            $data['title']='TI Market Visit(Details)';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/details",$data,true));
             if($this->message)
