@@ -60,6 +60,15 @@
                 <label class="control-label"><?php echo $visit['customer_name'];?></label>
             </div>
         </div>
+        <div style="<?php if($visit['host_type'] !=$CI->config->item('system_host_type_special')){echo 'display:none';} ?>" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TITLE');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input name="visit[title]" type="text" class="form-control" value="<?php echo $visit['title'] ?>">
+
+            </div>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Activities</label>

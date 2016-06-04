@@ -57,8 +57,8 @@ $CI = & get_instance();
                             </td>
                             <td>
                                 <?php
-                                //if(in_array($schedule['id'],$visit_done))
-                                if(isset($visit_done[$schedule['shift_id']][$schedule['host_type']][$schedule['host_id']]))
+                                if(in_array($schedule['id'],$visit_done))
+                                //if(isset($visit_done[$schedule['shift_id']][$schedule['host_type']][$schedule['host_id']]))
                                 {
                                     ?>
                                     <label>Visit Done</label>

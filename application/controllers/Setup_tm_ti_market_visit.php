@@ -257,6 +257,8 @@ class Setup_tm_ti_market_visit extends Root_Controller
         $this->db->trans_start();  //DB Transaction Handle START
         $this->db->where('territory_id',$territory_id);
         $this->db->set('revision', 'revision+1', FALSE);
+        $this->db->set('date_updated', $time);
+        $this->db->set('user_updated', $user->user_id);
         $this->db->update($this->config->item('table_setup_tm_market_visit'));
         foreach($data as $day_no=>$days)
         {

@@ -141,6 +141,31 @@ class Tm_ti_market_visit extends Root_Controller
             $ajax['system_message']='Please Select a valid date';
             $this->jsonReturn($ajax);
         }
+        if($time>time())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']='You cannot select future date';
+            $this->jsonReturn($ajax);
+        }
+        //find proper schedule version
+        $min_revision=0;
+        $this->db->from($this->config->item('table_setup_tm_market_visit').' mvst');
+        $this->db->select('MIN(mvst.revision) min_revision');
+        $this->db->select('mvst.date_updated');
+        $this->db->where('date_created<',$time);
+        $result=$this->db->get()->row_array();
+        if($result && $result['min_revision']>0)
+        {
+            $min_revision=$result['min_revision'];
+            if($min_revision>1)
+            {
+                if($result['date_updated']<$time)
+                {
+                    $min_revision=0;
+                }
+            }
+        }
+        //proper schedule version found
         $day=date('w',$time);
         $this->db->from($this->config->item('table_setup_tm_market_visit').' mvst');
         $this->db->select('mvst.*');
@@ -150,7 +175,7 @@ class Tm_ti_market_visit extends Root_Controller
         //$this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvst.customer_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvst.district_id','INNER');
         $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvst.shift_id','INNER');
-        $this->db->where('mvst.revision',1);
+        $this->db->where('mvst.revision',$min_revision);
         $this->db->where('mvst.territory_id',$territory_id);
         $this->db->where('mvst.day_no',$day);
 
@@ -183,7 +208,7 @@ class Tm_ti_market_visit extends Root_Controller
         $data['other_customers']=$other_customers;
 
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
-        $this->db->select('mvst.*');
+        $this->db->select('mvt.*');
         $this->db->join($this->config->item('table_setup_tm_market_visit').' mvst','mvst.id = mvt.setup_id','INNER');
         $this->db->where('mvt.date',$time);
         $this->db->where('mvst.territory_id',$territory_id);
@@ -192,7 +217,8 @@ class Tm_ti_market_visit extends Root_Controller
         //$data['visit_done']=$results;
         foreach($results as $result)
         {
-            $data['visit_done'][$result['shift_id']][$result['host_type']][$result['host_id']]=true;
+            //$data['visit_done'][$result['shift_id']][$result['host_type']][$result['host_id']]=true;
+            $data['visit_done'][]=$result['setup_id'];
         }
 
         $data['title']='Schedule for '.$this->input->post('date').'('.date('l',$time).')';
@@ -235,6 +261,7 @@ class Tm_ti_market_visit extends Root_Controller
                 $data['visit']['setup_id']=$data['visit']['id'];
                 $data['visit']['id']=0;
                 $data['visit']['date']=$this->input->post('date');
+                $data['visit']['title']='';
                 $data['visit']['activities']='';
                 $data['visit']['picture_url_activities']='';
                 $data['visit']['problem']='';
