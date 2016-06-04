@@ -385,7 +385,7 @@ class Setup_tm_ti_market_visit extends Root_Controller
     {
 
         $this->db->from($this->config->item('table_setup_tm_market_visit').' stmv');
-        $this->db->select('t.id id');
+        $this->db->select('t.id id,stmv.date_created');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
@@ -409,6 +409,10 @@ class Setup_tm_ti_market_visit extends Root_Controller
         $this->db->order_by('stmv.id','DESC');
 
         $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            $item['date_created']=System_helper::display_date($item['date_created']+24*3600);
+        }
 
         $this->jsonReturn($items);
     }
