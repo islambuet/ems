@@ -267,7 +267,7 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
-            $this->db->where('ba.date_adjust <=',$date_start);
+            $this->db->where('ba.date_adjust <',$date_start);
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
             $results=$this->db->get()->result_array();
@@ -312,7 +312,7 @@ class Reports_party_balance extends Root_Controller
                 }
             }
         }
-        $this->db->where('ba.date_adjust >',$date_start);
+        $this->db->where('ba.date_adjust >=',$date_start);
         $this->db->where('ba.date_adjust <=',$date_end);
         $group_array[]=$location_type;
         $this->db->group_by($group_array);
@@ -363,7 +363,7 @@ class Reports_party_balance extends Root_Controller
                 }
             }
 
-            $this->db->where('po.date_approved <=',$date_start);
+            $this->db->where('po.date_approved <',$date_start);
 
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
@@ -409,7 +409,7 @@ class Reports_party_balance extends Root_Controller
             }
         }
 
-        $this->db->where('po.date_approved >',$date_start);
+        $this->db->where('po.date_approved >=',$date_start);
         $this->db->where('po.date_approved <=',$date_end);
 
         $group_array[]=$location_type;
@@ -450,7 +450,7 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
-            $this->db->where('p.date_payment_receive <=',$date_start);
+            $this->db->where('p.date_payment_receive <',$date_start);
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
             $results=$this->db->get()->result_array();
@@ -493,7 +493,7 @@ class Reports_party_balance extends Root_Controller
             }
         }
 
-        $this->db->where('p.date_payment_receive >',$date_start);
+        $this->db->where('p.date_payment_receive >=',$date_start);
         $this->db->where('p.date_payment_receive <=',$date_end);
 
         $results=$this->db->get()->result_array();
@@ -542,7 +542,7 @@ class Reports_party_balance extends Root_Controller
                 }
             }
             $this->db->where('pod.date_return >',0);
-            $this->db->where('pod.date_return <=',$date_start);
+            $this->db->where('pod.date_return <',$date_start);
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
             $results=$this->db->get()->result_array();
@@ -588,7 +588,7 @@ class Reports_party_balance extends Root_Controller
             }
         }
         $this->db->where('pod.date_return >',0);
-        $this->db->where('pod.date_return >',$date_start);
+        $this->db->where('pod.date_return >=',$date_start);
         $this->db->where('pod.date_return <=',$date_end);
         $group_array[]=$location_type;
         $this->db->group_by($group_array);
@@ -795,7 +795,7 @@ class Reports_party_balance extends Root_Controller
 
             $this->db->where('ba.status',$this->config->item('system_status_active'));
             $this->db->where('ba.customer_id',$customer_id);
-            $this->db->where('ba.date_adjust <=',$date_start);
+            $this->db->where('ba.date_adjust <',$date_start);
             $this->db->group_by('ba.customer_id');
             $result=$this->db->get()->row_array();
             if($result)
@@ -811,7 +811,7 @@ class Reports_party_balance extends Root_Controller
             $this->db->where('pod.revision',1);
             $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
             $this->db->where(' po.customer_id',$customer_id);
-            $this->db->where('po.date_approved <=',$date_start);
+            $this->db->where('po.date_approved <',$date_start);
             $this->db->group_by('po.customer_id');
             $result=$this->db->get()->row_array();
             if($result)
@@ -824,7 +824,7 @@ class Reports_party_balance extends Root_Controller
             $this->db->select('SUM(p.amount) amount');
             $this->db->where('p.status',$this->config->item('system_status_active'));
             $this->db->where(' p.customer_id',$customer_id);
-            $this->db->where('p.date_payment_receive <=',$date_start);
+            $this->db->where('p.date_payment_receive <',$date_start);
             $this->db->group_by('p.customer_id');
             $result=$this->db->get()->row_array();
             if($result)
@@ -844,7 +844,7 @@ class Reports_party_balance extends Root_Controller
             $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
 
             $this->db->where('pod.date_return >',0);
-            $this->db->where('pod.date_return <=',$date_start);
+            $this->db->where('pod.date_return <',$date_start);
             $this->db->where(' po.customer_id',$customer_id);
             $this->db->group_by('po.customer_id');
             $result=$this->db->get()->row_array();
@@ -864,7 +864,7 @@ class Reports_party_balance extends Root_Controller
         $this->db->where('pod.revision',1);
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
         $this->db->where(' po.customer_id',$customer_id);
-        $this->db->where('po.date_approved >',$date_start);
+        $this->db->where('po.date_approved >=',$date_start);
         $this->db->where('po.date_approved <=',$date_end);
         $this->db->group_by('po.id');
         $this->db->order_by('po.id DESC');
@@ -875,7 +875,7 @@ class Reports_party_balance extends Root_Controller
         $this->db->select('p.amount,p.date_payment_receive,p.customer_id');
         $this->db->where('p.status',$this->config->item('system_status_active'));
         $this->db->where(' p.customer_id',$customer_id);
-        $this->db->where('p.date_payment_receive >',$date_start);
+        $this->db->where('p.date_payment_receive >=',$date_start);
         $this->db->where('p.date_payment_receive <=',$date_end);
         $this->db->order_by('p.id DESC');
 
@@ -889,7 +889,7 @@ class Reports_party_balance extends Root_Controller
 
         $this->db->where('ba.status',$this->config->item('system_status_active'));
         $this->db->where('ba.customer_id',$customer_id);
-        $this->db->where('ba.date_adjust >',$date_start);
+        $this->db->where('ba.date_adjust >=',$date_start);
         $this->db->where('ba.date_adjust <=',$date_end);
         $adjustments=$this->db->get()->result_array();
 
@@ -906,7 +906,7 @@ class Reports_party_balance extends Root_Controller
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
 
         $this->db->where('pod.date_return >',0);
-        $this->db->where('pod.date_return >',$date_start);
+        $this->db->where('pod.date_return >=',$date_start);
         $this->db->where('pod.date_return <=',$date_end);
         $this->db->where(' po.customer_id',$customer_id);
         $this->db->group_by('po.id');
