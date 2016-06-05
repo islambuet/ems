@@ -91,13 +91,11 @@ class Tm_ti_market_visit_solution extends Root_Controller
             }
             $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
             $this->db->select('mvt.*');
-            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
-            $this->db->select('d.name district_name');
+            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id,stmv.territory_id');
             $this->db->select('shift.name shift_name');
 
-            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
             $this->db->where('mvt.id',$visit_id);
             $data['visit']=$this->db->get()->row_array();
             if(!$data['visit'])
@@ -107,7 +105,34 @@ class Tm_ti_market_visit_solution extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']='Visit Solution';
+            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['visit']['territory_id']),0,0,array('ordering'));
+            $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
+            $data['visit']['customer_name']='';
+            if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_customers').' cus');
+                $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+                $this->db->select('cus.id value,cus.name text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            $data['title']='TI Market Visit Solution';
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
             $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_ti'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
@@ -146,13 +171,11 @@ class Tm_ti_market_visit_solution extends Root_Controller
             }
             $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
             $this->db->select('mvt.*');
-            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
-            $this->db->select('d.name district_name');
+            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id,stmv.territory_id');
             $this->db->select('shift.name shift_name');
 
-            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
             $this->db->where('mvt.id',$visit_id);
             $data['visit']=$this->db->get()->row_array();
             if(!$data['visit'])
@@ -162,7 +185,33 @@ class Tm_ti_market_visit_solution extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-            $data['title']='Visit and Solution Details';
+            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['visit']['territory_id']),0,0,array('ordering'));
+            $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
+            $data['visit']['customer_name']='';
+            if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_customers').' cus');
+                $this->db->select('cus.id value,CONCAT(cus.customer_code," - ",cus.name) text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
+            elseif($data['visit']['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+                $this->db->from($this->config->item('table_csetup_other_customers').' cus');
+                $this->db->select('cus.id value,cus.name text,cus.status');
+                $this->db->where('cus.id',$data['visit']['host_id']);
+                $result=$this->db->get()->row_array();
+                $data['visit']['customer_name']=$result['text'];
+                if($result['status']!=$this->config->item('system_status_active'))
+                {
+                    $data['visit']['customer_name'].= '('.$result['status'].')';
+                }
+            }
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
             $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_ti'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
@@ -171,6 +220,7 @@ class Tm_ti_market_visit_solution extends Root_Controller
                 $user_ids[$solution['user_created']]=$solution['user_created'];
             }
             $data['users']=System_helper::get_users_info($user_ids);
+            $data['title']='TI Market Visit Solution(Details)';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit_solution/details",$data,true));
             if($this->message)
@@ -224,24 +274,32 @@ class Tm_ti_market_visit_solution extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
-
         $this->db->select('mvt.*');
-        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+        $this->db->select('stmv.host_type,stmv.host_id');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('shift.name shift_name');
+        $this->db->select('dd.name special_district_name');
+
+        $this->db->select('cus.name customer_name,cus.status cus_status');
+        $this->db->select('ocus.name ocustomer_name,ocus.status ocus_status');
+
         $this->db->select('count(mvst.id) total_solution',false);
 
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = stmv.district_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = mvt.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_location_districts').' dd','dd.id = mvt.special_district_id','LEFT');
+        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = stmv.host_id','LEFT');
+        $this->db->join($this->config->item('table_csetup_other_customers').' ocus','cus.id = stmv.host_id','LEFT');
         $this->db->join($this->config->item('table_tm_market_visit_solution_ti').' mvst','mvt.id = mvst.visit_id','LEFT');
         if($this->locations['division_id']>0)
         {
@@ -262,7 +320,29 @@ class Tm_ti_market_visit_solution extends Root_Controller
         {
             $item['day']=date('l',$item['date']);
             $item['date']=System_helper::display_date($item['date']);
+            if($item['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                if($item['cus_status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$item['cus_status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+
+                $item['customer_name']=$item['ocustomer_name'];
+                if($item['ocus_status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$item['ocus_status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_special'))
+            {
+                $item['customer_name']=$item['title'];
+                $item['district_name']=$item['special_district_name'];
+            }
         }
+        //$items=$this->db->get()->result_array();
         $this->jsonReturn($items);
 
     }

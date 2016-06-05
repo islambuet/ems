@@ -40,6 +40,36 @@ $CI->load->view("action_buttons",$action_data);
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                if($visit['host_type'] ==$CI->config->item('system_host_type_special'))
+                {
+                    $selected_district=$visit['district_id'];
+                    if($visit['special_district_id']>0)
+                    {
+                        $selected_district=$visit['special_district_id'];
+                    }
+                    foreach($districts as $dis)
+                    {
+                        if($dis['value']==$selected_district){ echo $dis['text'];}
+
+                    }
+                }
+                else
+                {
+                    ?>
+                    <label class="control-label"><?php echo $district['text'];?></label>
+                <?php
+
+                }
+                ?>
+
+            </div>
+        </div>
+        <div style="<?php if($visit['host_type'] ==$CI->config->item('system_host_type_special')){echo 'display:none';} ?>" class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -52,6 +82,7 @@ $CI->load->view("action_buttons",$action_data);
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $visit['title'];?></label>
+
             </div>
         </div>
         <div class="row show-grid">
