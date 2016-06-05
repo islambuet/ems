@@ -262,11 +262,13 @@ class Tm_ti_market_visit extends Root_Controller
                 $data['visit']['id']=0;
                 $data['visit']['date']=$this->input->post('date');
                 $data['visit']['title']='';
+                $data['visit']['special_district_id']='';
                 $data['visit']['activities']='';
                 $data['visit']['picture_url_activities']='';
                 $data['visit']['problem']='';
                 $data['visit']['picture_url_problem']='';
                 $data['visit']['recommendation']='';
+                $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['visit']['territory_id']),0,0,array('ordering'));
                 $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
                 $data['visit']['customer_name']='';
                 if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
@@ -293,10 +295,10 @@ class Tm_ti_market_visit extends Root_Controller
                         $data['visit']['customer_name'].= '('.$result['status'].')';
                     }
                 }
-                elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+                /*elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
                 {
                     $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
-                }
+                }*/
                 $data['title']='TI Market Visit(new)';
                 $ajax['status']=true;
                 $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/add_edit",$data,true));
@@ -401,6 +403,7 @@ class Tm_ti_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
+            //$data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['visit']['territory_id']),0,0,array('ordering'));
             $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
             $data['visit']['customer_name']='';
             if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
@@ -427,10 +430,10 @@ class Tm_ti_market_visit extends Root_Controller
                     $data['visit']['customer_name'].= '('.$result['status'].')';
                 }
             }
-            elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+            /*elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
             {
                 $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
-            }
+            }*/
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
             $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_ti'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
@@ -471,7 +474,7 @@ class Tm_ti_market_visit extends Root_Controller
             }
             $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
             $this->db->select('mvt.*');
-            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id');
+            $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id,stmv.territory_id');
             $this->db->select('shift.name shift_name');
 
             $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
@@ -485,6 +488,7 @@ class Tm_ti_market_visit extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
+            $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['visit']['territory_id']),0,0,array('ordering'));
             $data['district']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('id ='.$data['visit']['district_id']),1);
             $data['visit']['customer_name']='';
             if($data['visit']['host_type']==$this->config->item('system_host_type_customer'))
@@ -511,10 +515,10 @@ class Tm_ti_market_visit extends Root_Controller
                     $data['visit']['customer_name'].= '('.$result['status'].')';
                 }
             }
-            elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
+            /*elseif($data['visit']['host_type']==$this->config->item('system_host_type_special'))
             {
                 $data['visit']['customer_name']='Special '.$data['visit']['host_id'];
-            }
+            }*/
             $data['title']='TI Market Visit(Edit)';
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_ti_market_visit/add_edit",$data,true));
@@ -685,6 +689,7 @@ class Tm_ti_market_visit extends Root_Controller
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('shift.name shift_name');
+        $this->db->select('dd.name special_district_name');
 
         $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = stmv.district_id','INNER');
@@ -694,6 +699,8 @@ class Tm_ti_market_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
         $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_location_districts').' dd','dd.id = mvt.special_district_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -732,7 +739,8 @@ class Tm_ti_market_visit extends Root_Controller
             }
             elseif($item['host_type']==$this->config->item('system_host_type_special'))
             {
-                $item['customer_name']='Special '.$item['host_id'];
+                $item['customer_name']=$item['title'];
+                $item['district_name']=$item['special_district_name'];
             }
         }
         $this->jsonReturn($items);

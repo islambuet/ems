@@ -49,10 +49,39 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $district['text'];?></label>
+                <?php
+                    if($visit['host_type'] ==$CI->config->item('system_host_type_special'))
+                    {
+                        $selected_district=$visit['district_id'];
+                        if($visit['special_district_id']>0)
+                        {
+                            $selected_district=$visit['special_district_id'];
+                        }
+                        ?>
+                        <select id="special_district_id" name="visit[special_district_id]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <?php
+                            foreach($districts as $dis)
+                            {?>
+                                <option value="<?php echo $dis['value']?>"  <?php if($dis['value']==$selected_district){ echo "selected";}?>><?php echo $dis['text'];?></option>
+                            <?php
+                            }
+                            ?>
+                        </select>
+                        <?php
+                    }
+                    else
+                    {
+                        ?>
+                        <label class="control-label"><?php echo $district['text'];?></label>
+                        <?php
+
+                    }
+                ?>
+
             </div>
         </div>
-        <div style="" class="row show-grid">
+        <div style="<?php if($visit['host_type'] ==$CI->config->item('system_host_type_special')){echo 'display:none';} ?>" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
             </div>
