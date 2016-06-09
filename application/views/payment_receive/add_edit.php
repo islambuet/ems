@@ -73,6 +73,48 @@
 
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PAYMENT_WAY');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $payment['payment_way'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHEQUE_NO');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $payment['cheque_no'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                $text='';
+                foreach($banks as $bank)
+                {
+                    if($bank['value']==$payment['bank_id'])
+                    {
+                        $text=$bank['text'];
+                    }
+                }
+                ?>
+                <label class="control-label"><?php echo $text;?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_BANK_BRANCH_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $payment['bank_branch'];?></label>
+            </div>
+        </div>
         <div class="row show-grid" id="credit_tp_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_CURRENT_CREDIT');?></label>

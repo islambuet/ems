@@ -120,7 +120,7 @@ class Payment_receive extends Root_Controller
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
-
+            $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['arm_banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $this->load->model("sales_model");
             $balance=$this->sales_model->get_customer_current_credit($data['payment']['customer_id']);
