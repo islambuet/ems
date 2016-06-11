@@ -86,7 +86,7 @@
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHEQUE_NO');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $payment['cheque_no'];?></label>
+                <input type="text" name="payment[cheque_no]" id="cheque_no" class="form-control" value="<?php echo $payment['cheque_no'];?>"/>
             </div>
         </div>
         <div class="row show-grid">
