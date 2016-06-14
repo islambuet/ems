@@ -87,7 +87,7 @@
                 autoheight: true,
                 autorowheight:true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:100},
+                    { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:200},
                     { text: 'Code', dataField: 'code',width:50},
                     { text: 'Contact Person', dataField: 'contact_person',width:100},
                     { text: 'Contact Number', dataField: 'contact_number',width:100},
