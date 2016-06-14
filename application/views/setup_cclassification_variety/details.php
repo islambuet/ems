@@ -134,6 +134,32 @@ $CI->load->view("action_buttons",$action_data);
                 <label class="control-label"><?php echo $variety['status'];?></label>
             </div>
         </div>
+        <div class="row show-grid" id="principal_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <?php
+                $principal_name='';
+                foreach($principals as $principal)
+                {
+                    if($principal['value']==$variety['principal_id'])
+                    {
+                        $principal_name=$principal['text'];
+                    }
+                }
+                ?>
+                <label class="control-label"><?php echo $principal_name;;?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Import Name</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $variety['name_import'];?></label>
+            </div>
+        </div>
     </div>
 
     <div class="clearfix"></div>

@@ -98,6 +98,7 @@ $lang['LABEL_CROP_TYPE'] = 'Crop Type';
 $lang['LABEL_VARIETY_NAME'] = 'Variety';
 $lang['LABEL_WHOSE'] = 'Whose variety';
 $lang['LABEL_COMPETITOR_NAME'] = 'Competitor';
+$lang['LABEL_PRINCIPAL_NAME'] = 'Principal';
 $lang['LABEL_STOCK_ID'] = 'Stock Id';
 $lang['LABEL_HYBRID'] = 'Hybrid';
 $lang['LABEL_DATE_CREATED'] = 'Creation date';

@@ -81,12 +81,15 @@ class Setup_cclassification_variety extends Root_Controller
                 'hybrid'=>'',
                 'name' => '',
                 'description' => '',
-                'ordering' => 99,
+                'ordering' => 999,
+                'principal_id' => 0,
+                'name_import' => '',
                 'status' => $this->config->item('system_status_active')
             );
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crop_types']=array();
             $data['competitors']=Query_helper::get_info($this->config->item('table_basic_setup_competitor'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['principals']=Query_helper::get_info($this->config->item('table_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
@@ -127,6 +130,7 @@ class Setup_cclassification_variety extends Root_Controller
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['variety']['crop_id']));
             $data['competitors']=Query_helper::get_info($this->config->item('table_basic_setup_competitor'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['principals']=Query_helper::get_info($this->config->item('table_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="Edit Variety (".$data['variety']['name'].')';
             $ajax['status']=true;
@@ -168,6 +172,7 @@ class Setup_cclassification_variety extends Root_Controller
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['crop_types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['variety']['crop_id']));
             $data['competitors']=Query_helper::get_info($this->config->item('table_basic_setup_competitor'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['principals']=Query_helper::get_info($this->config->item('table_basic_setup_principal'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $data['title']="Details of (".$data['variety']['name'].')';
             $ajax['status']=true;

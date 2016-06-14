@@ -166,6 +166,31 @@
                 </select>
             </div>
         </div>
+        <div class="row show-grid" id="principal_id_container">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PRINCIPAL_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="principal_id" name="variety[principal_id]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <?php
+                    foreach($principals as $principal)
+                    {?>
+                        <option value="<?php echo $principal['value']?>" <?php if($principal['value']==$variety['principal_id']){ echo "selected";}?>><?php echo $principal['text'];?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Import Name</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="variety[name_import]" id="name_import" class="form-control" value="<?php echo $variety['name_import'] ?>" >
+            </div>
+        </div>
     </div>
 
     <div class="clearfix"></div>
