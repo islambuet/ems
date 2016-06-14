@@ -88,13 +88,13 @@
                 autorowheight:true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width:200},
-                    { text: 'Code', dataField: 'code',width:50},
+                    { text: 'Code', dataField: 'code',width:80},
                     { text: 'Contact Person', dataField: 'contact_person',width:100},
                     { text: 'Contact Number', dataField: 'contact_number',width:100},
                     { text: 'Email', dataField: 'email',width:100},
                     { text: '<?php echo $CI->lang->line('LABEL_ADDRESS'); ?>', dataField: 'address'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'150',cellsalign: 'right'}
+                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'80',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',filtertype: 'list',width:'100',cellsalign: 'right'}
 
                 ]
             });
