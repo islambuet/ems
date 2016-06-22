@@ -483,6 +483,7 @@ class Sales_po_delivery extends Root_Controller
         $this->db->where('pod.revision',1);
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
         $this->db->group_by('po.id');
+        $this->db->order_by('po.date_approved','DESC');
         $this->db->order_by('po.id','DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
@@ -491,6 +492,7 @@ class Sales_po_delivery extends Root_Controller
             $item['quantity_weight']=number_format($item['quantity_weight']/1000,3,'.','');
             //$item['price_total']=number_format($item['price_total'],2);
             $item['date_po']=System_helper::display_date($item['date_po']);
+            $item['date_approved']=System_helper::display_date($item['date_approved']);
 
         }
         $this->jsonReturn($items);
