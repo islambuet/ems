@@ -40,8 +40,11 @@
         ?>
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="year"><?php echo $CI->lang->line('LABEL_YEAR'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="month"><?php echo $CI->lang->line('LABEL_MONTH'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_approve">Approve Status</label>
             </div>
         </div>
     <?php
@@ -64,8 +67,11 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
+                { name: 'year', type: 'string' },
+                { name: 'month', type: 'string' },
                 { name: 'division_name', type: 'string' },
-                { name: 'zone_name', type: 'string' }
+                { name: 'zone_name', type: 'string' },
+                { name: 'status_approve', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -88,8 +94,11 @@
                 altrows: true,
                 autoheight: true,
                 columns: [
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_MONTH'); ?>', dataField: 'month',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name'}
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name'},
+                    { text: 'Approve Status', dataField: 'status_approve',width:'100',filtertype: 'list'}
                 ]
             });
     });

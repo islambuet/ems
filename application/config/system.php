@@ -5,6 +5,9 @@ $config['offline_controllers']=array('home','sys_site_offline');
 $config['system_status_active']='Active';
 $config['system_status_inactive']='In-Active';
 $config['system_status_delete']='Deleted';
+$config['system_status_pending']='Pending';
+$config['system_status_approved']='Approved';
+$config['system_status_rejected']='Rejected';
 
 $config['system_status_not_done']='Not Done';
 $config['system_status_done']='Done';

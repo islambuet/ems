@@ -63,6 +63,7 @@ $lang['LABEL_NO'] = 'No';
 
 
 $lang['LABEL_YEAR'] = 'Year';
+$lang['LABEL_MONTH'] = 'Month';
 $lang['LABEL_FISCAL_YEAR'] = 'Fiscal Year';
 $lang['LABEL_NAME'] = 'Name';
 $lang['LABEL_ORDER'] = 'Ordering';
