@@ -360,6 +360,82 @@ class Setup_tm_zi_market_visit extends Root_Controller
                 $setup_id=$id;
             }
         }
+        $results=Query_helper::get_info($this->config->item('table_setup_tm_market_visit_zi_details'),'*',array('setup_id ='.$setup_id));
+        $previous_setup=array();
+        foreach($results as $result)
+        {
+            $previous_setup[$result['day']][$result['shift_id']][$result['host_id']]=$result;
+        }
+        $this->db->where('setup_id',$setup_id);
+        $this->db->set('revision', 'revision+1', FALSE);
+        $this->db->set('status', $this->config->item('system_status_inactive'));
+        $this->db->set('date_updated', $time);
+        $this->db->set('user_updated', $user->user_id);
+        $this->db->update($this->config->item('table_setup_tm_market_visit_zi_details'));
+        $inputs=$this->input->post('data');
+        foreach($inputs as $day=>$day_info)
+        {
+            foreach($day_info as $shift_id=>$items)
+            {
+                if(isset($items['customer']))
+                {
+                    foreach($items['customer'] as $host_id)
+                    {
+                        $data=array();
+                        $data['setup_id']=$setup_id;
+                        $data['day']=$day;
+                        $data['date']=mktime(0,0,0,$month,$day,$year);
+                        $data['shift_id']=$shift_id;
+                        $data['host_type']=$this->config->item('system_host_type_customer');
+                        $data['host_id']=$host_id;
+                        $data['status']=$this->config->item('system_status_active');
+                        if((isset($previous_setup[$day][$shift_id][$host_id]))&&($previous_setup[$day][$shift_id][$host_id]['host_type']==$this->config->item('system_host_type_customer')))
+                        {
+
+                            $data['user_updated'] = $user->user_id;
+                            $data['date_updated'] = $time;
+                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$host_id]['id']));
+                        }
+                        else
+                        {
+                            $data['revision']=1;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] =$time;
+                            Query_helper::add($this->config->item('table_setup_tm_market_visit_zi_details'),$data);
+                        }
+                    }
+                }
+                if(isset($items['special'])&& $items['special']>0)
+                {
+                    for($i=0;$i<$items['special'];$i++)
+                    {
+                        $data=array();
+                        $data['setup_id']=$setup_id;
+                        $data['day']=$day;
+                        $data['date']=mktime(0,0,0,$month,$day,$year);
+                        $data['shift_id']=$shift_id;
+                        $data['host_type']=$this->config->item('system_host_type_special');
+                        $data['host_id']=($i+1);
+                        $data['status']=$this->config->item('system_status_active');
+                        if((isset($previous_setup[$day][$shift_id][$i+1]))&&($previous_setup[$day][$shift_id][$i+1]['host_type']==$this->config->item('system_host_type_special')))
+                        {
+
+                            $data['user_updated'] = $user->user_id;
+                            $data['date_updated'] = $time;
+                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$i+1]['id']));
+                        }
+                        else
+                        {
+                            $data['revision']=1;
+                            $data['user_created'] = $user->user_id;
+                            $data['date_created'] =$time;
+                            Query_helper::add($this->config->item('table_setup_tm_market_visit_zi_details'),$data);
+                        }
+                    }
+                }
+            }
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
         if ($this->db->trans_status() === TRUE)
         {
             $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
@@ -371,66 +447,5 @@ class Setup_tm_zi_market_visit extends Root_Controller
             $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
             $this->jsonReturn($ajax);
         }
-        /*$customers=$this->input->post('customers');
-        if(sizeof($customers)>0)
-        {
-
-
-            $this->db->where('zone_id',$zone_id);
-            $this->db->set('revision', 'revision+1', FALSE);
-            $this->db->update($this->config->item('table_setup_tm_market_visit_zi'));
-            foreach($customers as $day_no=>$days)
-            {
-                foreach($days as $shift_id=>$day)
-                {
-                    foreach($day as $customer_id)
-                    {
-                        $data=array();
-                        $data['zone_id']=$zone_id;
-                        $data['day_no']=$day_no;
-                        $data['shift_id']=$shift_id;
-                        $data['shift_id']=$shift_id;
-                        $data['customer_id']=$customer_id;
-                        $data['revision']=1;
-                        $data['user_created'] = $user->user_id;
-                        $data['date_created'] =$time;
-                        Query_helper::add($this->config->item('table_setup_tm_market_visit_zi'),$data);
-
-                    }
-                }
-            }
-            $this->db->trans_complete();   //DB Transaction Handle END
-
-        }
-        else
-        {
-            $ajax['status']=false;
-            $ajax['system_message']="No customer was selected";
-            $this->jsonReturn($ajax);
-        }*/
     }
-
-    public function get_districts()
-    {
-        $territory_id=$this->input->post('territory_id');
-        $data['shift_id']=$this->input->post('shift_id');
-        $data['day_no']=$this->input->post('day_no');
-        $data['items']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering DESC'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>'#district_container_'.$data['day_no'].'_'.$data['shift_id'],"html"=>$this->load->view("setup_tm_zi_market_visit/districts",$data,true));
-        $this->jsonReturn($ajax);
-    }
-    public function get_customers()
-    {
-        $district_id=$this->input->post('district_id');
-        $data['shift_id']=$this->input->post('shift_id');
-        $data['day_no']=$this->input->post('day_no');
-        $data['items']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text'),array('district_id ='.$district_id,'status ="'.$this->config->item('system_status_active').'"'));
-        $ajax['status']=true;
-        $ajax['system_content'][]=array("id"=>'#customers_container_'.$data['day_no'].'_'.$data['shift_id'],"html"=>$this->load->view("setup_tm_ti_market_visit/customer_selection",$data,true));
-        $this->jsonReturn($ajax);
-    }
-
-
-
 }

@@ -3,8 +3,6 @@
     $action_data=array();
     $action_data["action_back"]=base_url($CI->controller_url);
     $action_data["action_save"]='#save_form';
-    $action_data["action_save_new"]='#save_form';
-    $action_data["action_clear"]='#save_form';
     $CI->load->view("action_buttons",$action_data);
 ?>
     <div class="row widget">
