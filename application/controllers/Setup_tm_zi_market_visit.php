@@ -199,6 +199,7 @@ class Setup_tm_zi_market_visit extends Root_Controller
         $zone_id=$this->input->post('zone_id');
         $year=$this->input->post('year');
         $month=$this->input->post('month');
+        $setup_id=0;
         $info=Query_helper::get_info($this->config->item('table_setup_tm_market_visit_zi'),'*',array('zone_id ='.$zone_id,'year ='.$year,'month ='.$month),1);
         if($info)
         {
@@ -213,6 +214,27 @@ class Setup_tm_zi_market_visit extends Root_Controller
                     die();
                 }
 
+            }
+        }
+
+        $data['previous_setup']=array();//only active
+        if($setup_id>0)
+        {
+            $this->db->from($this->config->item('table_setup_tm_market_visit_zi_details').' mvzid');
+            //$this->db->from($this->config->item('table_csetup_customers').' cus');
+            $this->db->select('mvzid.*');
+            $this->db->select('cus.id customer_id');
+            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+            $this->db->select('d.id district_id');
+            $this->db->select('d.territory_id territory_id');
+            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvzid.host_id and mvzid.host_type ="'.$this->config->item('system_host_type_customer').'"','LEFT');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','LEFT');
+            $this->db->where('mvzid.setup_id',$setup_id);
+            $this->db->where('mvzid.status',$this->config->item('system_status_active'));
+            $results=$this->db->get()->result_array();
+            foreach($results as $result)
+            {
+                $data['previous_setup'][$result['day']][$result['shift_id']][$result['host_type']][$result['host_id']]=$result;
             }
         }
 
@@ -360,11 +382,11 @@ class Setup_tm_zi_market_visit extends Root_Controller
                 $setup_id=$id;
             }
         }
+        $previous_setup=array();//active and inactive
         $results=Query_helper::get_info($this->config->item('table_setup_tm_market_visit_zi_details'),'*',array('setup_id ='.$setup_id));
-        $previous_setup=array();
         foreach($results as $result)
         {
-            $previous_setup[$result['day']][$result['shift_id']][$result['host_id']]=$result;
+            $previous_setup[$result['day']][$result['shift_id']][$result['host_type']][$result['host_id']]=$result;
         }
         $this->db->where('setup_id',$setup_id);
         $this->db->set('revision', 'revision+1', FALSE);
@@ -389,12 +411,12 @@ class Setup_tm_zi_market_visit extends Root_Controller
                         $data['host_type']=$this->config->item('system_host_type_customer');
                         $data['host_id']=$host_id;
                         $data['status']=$this->config->item('system_status_active');
-                        if((isset($previous_setup[$day][$shift_id][$host_id]))&&($previous_setup[$day][$shift_id][$host_id]['host_type']==$this->config->item('system_host_type_customer')))
+                        if(isset($previous_setup[$day][$shift_id][$this->config->item('system_host_type_customer')][$host_id]))
                         {
 
                             $data['user_updated'] = $user->user_id;
                             $data['date_updated'] = $time;
-                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$host_id]['id']));
+                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$this->config->item('system_host_type_customer')][$host_id]['id']));
                         }
                         else
                         {
@@ -417,12 +439,12 @@ class Setup_tm_zi_market_visit extends Root_Controller
                         $data['host_type']=$this->config->item('system_host_type_special');
                         $data['host_id']=($i+1);
                         $data['status']=$this->config->item('system_status_active');
-                        if((isset($previous_setup[$day][$shift_id][$i+1]))&&($previous_setup[$day][$shift_id][$i+1]['host_type']==$this->config->item('system_host_type_special')))
+                        if(isset($previous_setup[$day][$shift_id][$this->config->item('system_host_type_special')][$i+1]))
                         {
 
                             $data['user_updated'] = $user->user_id;
                             $data['date_updated'] = $time;
-                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$i+1]['id']));
+                            Query_helper::update($this->config->item('table_setup_tm_market_visit_zi_details'),$data,array("id = ".$previous_setup[$day][$shift_id][$this->config->item('system_host_type_special')][$i+1]['id']));
                         }
                         else
                         {
