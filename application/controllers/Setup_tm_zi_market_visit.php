@@ -578,4 +578,57 @@ class Setup_tm_zi_market_visit extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+    private function system_save_approve()
+    {
+        $setup_id=$this->input->post('setup_id');
+        $status_approve=$this->input->post('status_approve');
+        if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))//editable has approve option
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+            die();
+        }
+        if(!$status_approve)
+        {
+            $ajax['status']=false;
+            $ajax['system_message']="Please Select Approved Option";
+            $this->jsonReturn($ajax);
+            die();
+        }
+        $info=Query_helper::get_info($this->config->item('table_setup_tm_market_visit_zi'),'*',array('id ='.$setup_id),1);
+        if($info)
+        {
+            if($info['status_approve']!=$this->config->item('system_status_pending'))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='Already '.$info['status_approve'];
+                $this->jsonReturn($ajax);
+                die();
+
+            }
+        }
+        $time=time();
+        $user = User_helper::get_user();
+        $this->db->trans_start();  //DB Transaction Handle START
+        $data=array();
+        $data['status_approve']=$status_approve;
+        $data['user_approved'] = $user->user_id;
+        $data['date_approved'] = $time;
+        $data['user_updated'] = $user->user_id;
+        $data['date_updated'] = $time;
+        Query_helper::update($this->config->item('table_setup_tm_market_visit_zi'),$data,array("id = ".$setup_id));
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+            $this->system_list();
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+            $this->jsonReturn($ajax);
+        }
+    }
 }

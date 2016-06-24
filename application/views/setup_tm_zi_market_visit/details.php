@@ -2,20 +2,21 @@
     $CI = & get_instance();
     if($purpose=='approve')
     {
+        $action_data["action_edit_get"]=base_url($CI->controller_url."/index/edit/".$setup_info['id']);
         if($setup_info['status_approve']==$CI->config->item('system_status_pending'))
         {
             $action_data["action_save"]='#save_form';
-
         }
-
     }
     else
     {
         if((isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
         {
+            $action_data["action_edit_get"]=base_url($CI->controller_url."/index/edit/".$setup_info['id']);
             if($setup_info['status_approve']==$CI->config->item('system_status_pending'))
             {
                 $action_data["action_approve_get"]=base_url($CI->controller_url."/index/approve/".$setup_info['id']);
+
             }
         }
     }
@@ -23,9 +24,60 @@
     $CI->load->view("action_buttons",$action_data);
 
 ?>
-<form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" name="setup_id" value="<?php echo $setup_info['id']; ?>" />
-</form>
+<div class="row widget">
+    <div class="widget-header">
+        <div class="title">
+            ZI Market Visit Setup
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div style="" class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_YEAR');?></label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo $setup_info['year'];?></label>
+        </div>
+    </div>
+    <div style="" class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_MONTH');?></label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <label class="control-label"><?php echo date("F", mktime(0, 0, 0,  $setup_info['month'],1, 2000));?></label>
+        </div>
+    </div>
+    <div style="" class="row show-grid">
+        <div class="col-xs-4">
+            <label class="control-label pull-right">Approval Status</label>
+        </div>
+        <div class="col-sm-4 col-xs-8">
+            <?php
+            if($purpose=='approve')
+            {
+                if($setup_info['status_approve']==$CI->config->item('system_status_pending'))
+                {
+                    ?>
+                    <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save_approve');?>" method="post">
+                        <input type="hidden" name="setup_id" value="<?php echo $setup_info['id']; ?>" />
+                        <select id="status_approved" name="status_approve" class="form-control">
+                            <option value=""><?php echo $CI->lang->line('SELECT');?></option>
+                            <option value="<?php echo $CI->config->item('system_status_po_approval_approved');?>"><?php echo $CI->config->item('system_status_po_approval_approved');?></option>
+                        </select>
+                    </form>
+                <?php
+                }
+            }
+            else
+            {
+                echo $setup_info['status_approve'];
+            }
+            ?>
+
+        </div>
+    </div>
+
+</div>
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
