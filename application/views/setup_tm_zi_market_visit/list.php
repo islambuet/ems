@@ -10,6 +10,10 @@
     {
         $action_data["action_edit"]=base_url($CI->controller_url."/index/edit");
     }
+    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+    {
+        $action_data["action_approve"]=base_url($CI->controller_url."/index/approve");
+    }
     if(isset($CI->permissions['view'])&&($CI->permissions['view']==1))
     {
         $action_data["action_details"]=base_url($CI->controller_url."/index/details");
