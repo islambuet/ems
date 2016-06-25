@@ -961,7 +961,7 @@ class Reports_party_balance extends Root_Controller
                     $items[0]['receive_amount']=number_format($payment['amount'],2);
                     if($payment['arm_bank_id']>0)
                     {
-                        $items[0]['receive_bank']=$banks[$payment['arm_bank_id']];
+                        $items[0]['receive_bank']=$arm_banks[$payment['arm_bank_id']];
                     }
                     else
                     {
