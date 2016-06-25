@@ -942,7 +942,7 @@ class Reports_party_balance extends Root_Controller
             if(sizeof($payments)>$i)
             {
                 $payment=$payments[$i];
-                $payment_total+=$payment['amount'];
+                $payment_total+=$payment['amount_customer'];
                 $payment_receive_total+=$payment['amount'];
                 if($i==0)
                 {
