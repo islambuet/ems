@@ -32,7 +32,18 @@ $CI = & get_instance();
                             <td><?php echo $schedule['shift_name']; ?></td>
                             <td><?php echo $schedule['territory_name']; ?></td>
                             <td><?php echo $schedule['district_name']; ?></td>
-                            <td><?php echo $schedule['customer_name']; ?></td>
+                            <td>
+                                <?php
+                                if($schedule['host_type']==$this->config->item('system_host_type_customer'))
+                                {
+                                    echo $schedule['customer_name'];
+                                }
+                                else
+                                {
+                                    echo 'Special '.$schedule['host_id'];
+                                }
+                                ?>
+
                             <td>
                                 <?php
                                 if(isset($visit_done[$schedule['shift_id']])&& in_array($schedule['customer_id'],$visit_done[$schedule['shift_id']]))
@@ -44,9 +55,8 @@ $CI = & get_instance();
                                 else
                                 {
                                     ?>
-                                    <form class="form_valid" id="search_form" action="<?php echo site_url($CI->controller_url.'/index/add');?>" method="post">
-                                        <input type="hidden" name="date" value="<?php echo $date; ?>">
-                                        <input type="hidden" name="setup_id" value="<?php echo $schedule['id']; ?>">
+                                    <form class="form_valid" id="search_form" action="<?php echo site_url($CI->controller_url.'/index/edit');?>" method="post">
+                                        <input type="hidden" name="id" value="<?php echo $schedule['id']; ?>">
                                         <button type="submit" class="btn btn-primary">Visit</button>
                                     </form>
                                     <?php
