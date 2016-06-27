@@ -110,7 +110,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control integer_type_positive" name="data[<?php echo ($day); ?>][<?php echo $shift['value']; ?>][special]" value="<?php if(isset($previous_setup[$day][$shift['value']][$this->config->item('system_host_type_special')])){echo sizeof($previous_setup[$day][$shift['value']][$this->config->item('system_host_type_special')]);} ?>">
+                                    <input type="text" class="form-control integer_type_positive" name="data[<?php echo ($day); ?>][<?php echo $shift['value']; ?>][special]" value="<?php if(isset($previous_setup[$day][$shift['value']][$this->config->item('system_host_type_special')])){echo sizeof($previous_setup[$day][$shift['value']][$this->config->item('system_host_type_special')]);}elseif($setup_id==0){echo '2';} ?>">
                                 </td>
                             </tr>
                             <?php

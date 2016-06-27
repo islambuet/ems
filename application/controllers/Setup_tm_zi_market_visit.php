@@ -245,6 +245,7 @@ class Setup_tm_zi_market_visit extends Root_Controller
                 $data['previous_setup'][$result['day']][$result['shift_id']][$result['host_type']][$result['host_id']]=$result;
             }
         }
+        $data['setup_id']=$setup_id;
 
         $data['title']="ZI Visit Schedule";
         $data['zone_id']=$zone_id;
