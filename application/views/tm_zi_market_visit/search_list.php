@@ -46,7 +46,7 @@ $CI = & get_instance();
 
                             <td>
                                 <?php
-                                if(isset($visit_done[$schedule['shift_id']])&& in_array($schedule['customer_id'],$visit_done[$schedule['shift_id']]))
+                                if(in_array($schedule['id'],$visit_done))
                                 {
                                     ?>
                                     <label>Visit Done</label>
