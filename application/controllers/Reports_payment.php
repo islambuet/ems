@@ -170,7 +170,7 @@ class Reports_payment extends Root_Controller
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('bank.name payment_bank');
-        $this->db->select('arm_Bank.name receive_bank');
+        $this->db->select('arm_bank.name receive_bank');
 
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = payment.customer_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
@@ -179,7 +179,7 @@ class Reports_payment extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
         $this->db->join($this->config->item('table_basic_setup_bank').' bank','bank.id = payment.bank_id','LEFT');
-        $this->db->join($this->config->item('table_basic_setup_arm_bank').' arm_Bank','arm_bank.id = payment.arm_bank_id','LEFT');
+        $this->db->join($this->config->item('table_basic_setup_arm_bank').' arm_bank','arm_bank.id = payment.arm_bank_id','LEFT');
 
         if($division_id>0)
         {
