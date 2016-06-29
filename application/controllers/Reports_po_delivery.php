@@ -308,9 +308,4 @@ class Reports_po_delivery extends Root_Controller
         }
         $this->jsonReturn($items);
     }
-
-
-
-
-
 }
