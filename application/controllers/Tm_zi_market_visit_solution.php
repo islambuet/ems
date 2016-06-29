@@ -343,8 +343,8 @@ class Tm_zi_market_visit_solution extends Root_Controller
 
             $data=array();
             $data['status_read_di']=$this->config->item('system_status_yes');
-            $visit['user_updated'] = $user->user_id;
-            $visit['date_updated'] = $time;
+            $data['user_updated'] = $user->user_id;
+            $data['date_updated'] = $time;
             Query_helper::update($this->config->item('table_tm_market_visit_zi'),$data,array("setup_details_id = ".$setup_details_id));
 
         }

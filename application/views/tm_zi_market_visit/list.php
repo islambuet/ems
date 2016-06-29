@@ -38,6 +38,7 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="unread_solution">Unread Solution</label>
         </div>
     <?php
     }
@@ -66,11 +67,30 @@
                 { name: 'zone_name', type: 'string' },
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
-                { name: 'customer_name', type: 'string' }
+                { name: 'customer_name', type: 'string' },
+                { name: 'num_unread', type: 'string' },
+                { name: 'unread_solution', type: 'string' }
 
             ],
             id: 'id',
             url: url
+        };
+        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
+        {
+            var element = $(defaultHtml);
+            // console.log(defaultHtml);
+
+            if (record.num_unread>0)
+            {
+                element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+
+            return element[0].outerHTML;
+
         };
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
@@ -91,15 +111,17 @@
                 selectionmode: 'checkbox',
                 altrows: true,
                 autoheight: true,
+                rowsheight: 35,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DAY'); ?>',pinned:true, dataField: 'day',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true, dataField: 'shift_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?>', dataField: 'customer_name',rendered:tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>',pinned:true, dataField: 'date',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DAY'); ?>',pinned:true, dataField: 'day',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true, dataField: 'shift_name',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?>', dataField: 'customer_name',rendered:tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Unread Solution', dataField: 'unread_solution',rendered:tooltiprenderer,filtertype:'list',cellsrenderer: cellsrenderer}
                 ]
             });
     });

@@ -95,6 +95,8 @@ class Tm_zi_market_visit extends Root_Controller
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('shift.name shift_name');
+        $this->db->select('count(case when mvsolzi.status_read_zi="'.$this->config->item('system_status_no').'" then 1 end) num_unread',false);
+
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvzi.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = mvzi.territory_id','INNER');
 
@@ -106,6 +108,7 @@ class Tm_zi_market_visit extends Root_Controller
 
         $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvszid.shift_id','INNER');
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvszid.host_id and mvszid.host_type ="'.$this->config->item('system_host_type_customer').'"','LEFT');
+        $this->db->join($this->config->item('table_tm_market_visit_solution_zi').' mvsolzi','mvzi.setup_details_id = mvsolzi.setup_details_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -114,6 +117,7 @@ class Tm_zi_market_visit extends Root_Controller
                 $this->db->where('zone.id',$this->locations['zone_id']);
             }
         }
+        $this->db->group_by('mvzi.setup_details_id');
         $this->db->order_by('mvzi.id DESC');
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
@@ -123,6 +127,14 @@ class Tm_zi_market_visit extends Root_Controller
             if($item['host_type']==$this->config->item('system_host_type_special'))
             {
                 $item['customer_name']=$item['title'];
+            }
+            if($item['num_unread']>0)
+            {
+                $item['unread_solution']=$this->config->item('system_status_yes');
+            }
+            else
+            {
+                $item['unread_solution']=$this->config->item('system_status_no');
             }
         }
         $this->jsonReturn($items);
@@ -350,6 +362,7 @@ class Tm_zi_market_visit extends Root_Controller
             {
                 $setup_details_id=$id;
             }
+
             $this->db->from($this->config->item('table_tm_market_visit_zi').' mvzi');
             $this->db->select('mvzi.*');
             $this->db->select('d.name district_name');
@@ -407,6 +420,17 @@ class Tm_zi_market_visit extends Root_Controller
             $data['visit']['division_id']=$result['division_id'];
             $data['visit']['zone_id']=$result['zone_id'];
             $data['visit']['zone_name']=$result['zone_name'];
+
+            //read feedback by user
+            $user = User_helper::get_user();
+            $time=time();
+            $data_read=array();
+            $data_read['status_read_zi']=$this->config->item('system_status_yes');
+            $data_read['user_updated'] = $user->user_id;
+            $data_read['date_updated'] = $time;
+            Query_helper::update($this->config->item('table_tm_market_visit_solution_zi'),$data_read,array("setup_details_id = ".$setup_details_id));
+
+            //read feedback by user
 
             $data['title']='Visit Details';
             $user_ids=array();
