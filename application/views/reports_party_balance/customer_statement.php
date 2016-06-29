@@ -34,6 +34,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_tp"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> TP</label>
 
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_po">PO Date</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_approved">Approved Date</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_no">Po NO</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_tp">Sales</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_no">Payment ID</label>
@@ -93,6 +94,7 @@
                 { name: 'opening_balance_tp', type: 'string' },
                 { name: 'opening_balance_net', type: 'string' },
                 { name: 'date_po', type: 'string' },
+                { name: 'date_approved', type: 'string' },
                 { name: 'po_no', type: 'string' },
                 { name: 'sales_tp', type: 'string' },
                 { name: 'sales_net', type: 'string' },
@@ -188,6 +190,7 @@
                         }
                     ?>
                     { columngroup: 'sales',text: 'PO Date',dataField: 'date_po',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'sales',text: 'Approve Date',dataField: 'date_approved',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     { columngroup: 'sales',text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>',dataField: 'po_no',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
                     { columngroup: 'sales',text: 'Amount',dataField: 'sales_tp',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php

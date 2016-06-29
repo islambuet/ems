@@ -932,6 +932,7 @@ class Reports_party_balance extends Root_Controller
                 if($i==0)
                 {
                     $items[0]['date_po']=System_helper::display_date($sale['date_po']);
+                    $items[0]['date_approved']=System_helper::display_date($sale['date_approved']);
                     $items[0]['po_no']=str_pad($sale['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
                     $items[0]['sales_tp']=number_format($sale['total_sales_tp'],2);
                     $items[0]['sales_net']=number_format($sale['total_sales_net'],2);
@@ -1147,6 +1148,7 @@ class Reports_party_balance extends Root_Controller
         if($sale)
         {
             $info['date_po']=System_helper::display_date($sale['date_po']);
+            $info['date_approved']=System_helper::display_date($sale['date_approved']);
             $info['po_no']=str_pad($sale['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
             $info['sales_tp']=number_format($sale['total_sales_tp'],2);
             $info['sales_net']=number_format($sale['total_sales_net'],2);
@@ -1154,6 +1156,7 @@ class Reports_party_balance extends Root_Controller
         else
         {
             $info['date_po']='';
+            $info['date_approved']='';
             $info['po_no']='';
             $info['sales_tp']='';
             $info['sales_net']='';
