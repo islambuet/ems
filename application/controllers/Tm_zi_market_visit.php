@@ -49,10 +49,10 @@ class Tm_zi_market_visit extends Root_Controller
         {
             $this->system_edit($id);
         }
-        /*elseif($action=="details")
+        elseif($action=="details")
         {
             $this->system_details($id);
-        }*/
+        }
         elseif($action=="save")
         {
             $this->system_save();
@@ -344,34 +344,74 @@ class Tm_zi_market_visit extends Root_Controller
         {
             if(($this->input->post('id')))
             {
-                $visit_id=$this->input->post('id');
+                $setup_details_id=$this->input->post('id');
             }
             else
             {
-                $visit_id=$id;
+                $setup_details_id=$id;
             }
-            $this->db->from($this->config->item('table_tm_market_visit_zi').' mvz');
-            $this->db->select('mvz.*');
-            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+            $this->db->from($this->config->item('table_tm_market_visit_zi').' mvzi');
+            $this->db->select('mvzi.*');
             $this->db->select('d.name district_name');
-            $this->db->select('shift.name shift_name');
-
-            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvz.customer_id','INNER');
-            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvz.shift_id','INNER');
-            $this->db->where('mvz.id',$visit_id);
+            $this->db->select('t.name territory_name');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = mvzi.district_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = mvzi.territory_id','INNER');
+            $this->db->where('mvzi.setup_details_id',$setup_details_id);
             $data['visit']=$this->db->get()->row_array();
             if(!$data['visit'])
             {
-                System_helper::invalid_try("Invalid try at edit",$visit_id);
+                System_helper::invalid_try("Invalid try at edit",$setup_details_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
             }
+            $this->db->from($this->config->item('table_setup_tm_market_visit_zi_details').' mvzid');
+            $this->db->select('mvzid.date date,mvzid.host_type,mvzid.setup_id');
+            $this->db->select('shift.name shift_name');
+            $this->db->select('cus.id customer_id');
+            $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
+
+            $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvzid.shift_id','INNER');
+            $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvzid.host_id and mvzid.host_type ="'.$this->config->item('system_host_type_customer').'"','LEFT');
+            $this->db->where('mvzid.id',$setup_details_id);
+            $result=$this->db->get()->row_array();
+            if(!$result)
+            {
+                System_helper::invalid_try("Try to use non-existing",$setup_details_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            $setup_id=$result['setup_id'];
+            $data['visit']['date']=$result['date'];
+            $data['visit']['shift_name']=$result['shift_name'];
+            $data['visit']['customer_name']=$result['customer_name'];
+            $data['visit']['host_type']=$result['host_type'];
+
+            $this->db->from($this->config->item('table_setup_tm_market_visit_zi').' mvzi');
+            $this->db->select('zone.id zone_id,zone.name zone_name');
+            $this->db->select('division.id division_id,division.name division_name');
+            $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = mvzi.zone_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+            $this->db->where('mvzi.status_approve',$this->config->item('system_status_approved'));
+            $this->db->where('mvzi.id',$setup_id);
+            $result=$this->db->get()->row_array();
+            if(!$result)
+            {
+                System_helper::invalid_try("Try to use Non approval or not existing setup",$setup_details_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            $data['visit']['division_name']=$result['division_name'];
+            $data['visit']['division_id']=$result['division_id'];
+            $data['visit']['zone_id']=$result['zone_id'];
+            $data['visit']['zone_name']=$result['zone_name'];
+
             $data['title']='Visit Details';
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
-            $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_zi'),'*',array('visit_id ='.$visit_id),0,0,array('date_created DESC'));
+            $data['previous_solutions']=Query_helper::get_info($this->config->item('table_tm_market_visit_solution_zi'),'*',array('setup_details_id ='.$setup_details_id),0,0,array('date_created DESC'));
             foreach($data['previous_solutions'] as $solution)
             {
                 $user_ids[$solution['user_created']]=$solution['user_created'];
@@ -383,7 +423,7 @@ class Tm_zi_market_visit extends Root_Controller
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$visit_id);
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$setup_details_id);
             $this->jsonReturn($ajax);
         }
         else

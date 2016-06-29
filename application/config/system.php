@@ -2,6 +2,8 @@
 $config['system_site_short_name']='ems';
 $config['offline_controllers']=array('home','sys_site_offline');
 
+$config['system_status_yes']='Yes';
+$config['system_status_no']='No';
 $config['system_status_active']='Active';
 $config['system_status_inactive']='In-Active';
 $config['system_status_delete']='Deleted';

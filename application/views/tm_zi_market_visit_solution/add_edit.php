@@ -8,7 +8,7 @@ $action_data["action_clear"]='#save_form';
 $CI->load->view("action_buttons",$action_data);
 ?>
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" name="visit_id" value="<?php echo $visit['id']; ?>">
+    <input type="hidden" name="id" value="<?php echo $visit['setup_details_id']; ?>">
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -45,12 +45,64 @@ $CI->load->view("action_buttons",$action_data);
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $visit['customer_name'];?></label>
+                <label class="control-label"><?php echo $visit['division_name'];?></label>
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZONE_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $visit['zone_name'];?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $visit['territory_name'];?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $visit['district_name'];?></label>
+            </div>
+        </div>
+        <?php
+        if($visit['host_type']==$CI->config->item('system_host_type_customer'))
+        {
+            ?>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $visit['customer_name'];?></label>
+                </div>
+            </div>
+            <?php
+        }
+        else
+        {
+            ?>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_TITLE');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $visit['title'];?></label>
+                </div>
+            </div>
+            <?php
+        }
+        ?>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Activities</label>
