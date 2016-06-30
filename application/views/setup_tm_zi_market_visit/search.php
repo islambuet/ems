@@ -214,7 +214,8 @@ jQuery(document).ready(function()
         var territory_id=$(this).val();
         var day=$(this).attr('data-day');
         var shift_id=$(this).attr('data-shift-id');
-        $("#district_container_"+day+"_"+shift_id).html('hi');
+        $("#district_container_"+day+"_"+shift_id).html('');
+        $('#customers_container_'+day+'_'+shift_id).html('');
         if(territory_id>0)
         {
             var districts=zone_info[territory_id]['districts'];
