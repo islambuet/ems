@@ -42,7 +42,7 @@ class Survey_product_competitor extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="ARM Varieties Settings";
+            $data['title']="Competitor Varieties Settings";
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("survey_product_competitor/list",$data,true));
             if($this->message)

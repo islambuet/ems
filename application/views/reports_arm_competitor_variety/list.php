@@ -59,16 +59,18 @@
             var row=$(this).attr('data-item-no');
             var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
             var html='';
-            html+='<html>';
+            html+='<div style="line-height: 1.8;">';
             html+='<div><b>Crop Name:</b> '+row_info.details['crop_name']+'<div>';
             html+='<div><b>Crop Type:</b> '+row_info.details['crop_type_name']+'<div>';
             html+='<div><b>Variety Name:</b> '+row_info.details['variety_name']+'<div>';
-            html+='<div><b>Characteristics:</b> '+row_info.details['characteristics']+'<div>';
+            html+='<div><b>Characteristics:</b><div>';
+            html+='<div>'+row_info.details['characteristics']+'<div>';
             html+='<div><b>Cultivation Period:</b> '+row_info.details['cultivation_period']+'<div>';
+            html+='<div><b>Remarks:</b> '+row_info.details['remarks']+'<div>';
             html+='<div><b>Picture:</b> <div>';
             html+='<div><img src="'+row_info.details['picture']+'" style="max-width: 100%;"></div>';
-            html+='<div><b>Remarks:</b> '+row_info.details['remarks']+'<div>';
-            html+='</html>';
+
+            html+='</div>';
             $('#popup_content').html(html);
             $("#popup_window").jqxWindow('open');
 
