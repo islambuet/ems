@@ -77,9 +77,9 @@ class Reports_arm_competitor_variety extends Root_Controller
 
         $this->db->where('v.whose','ARM');
         $this->db->where('v.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('crop.ordering','DESC');
-        $this->db->order_by('crop_type.ordering','DESC');
-        $this->db->order_by('v.ordering','DESC');
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
+        $this->db->order_by('v.ordering','ASC');
         $data['arm_varieties']=$this->db->get()->result_array();
         //competitor
         $this->db->from($this->config->item('table_setup_classification_varieties').' v');
@@ -97,9 +97,9 @@ class Reports_arm_competitor_variety extends Root_Controller
 
         $this->db->where('v.whose','Competitor');
         $this->db->where('v.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('crop.ordering','DESC');
-        $this->db->order_by('crop_type.ordering','DESC');
-        $this->db->order_by('v.ordering','DESC');
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('crop_type.ordering','ASC');
+        $this->db->order_by('v.ordering','ASC');
         $data['competitor_varieties']=$this->db->get()->result_array();
         $data['report']=$filters;
         $ajax['status']=true;
@@ -152,6 +152,46 @@ class Reports_arm_competitor_variety extends Root_Controller
     {
         $items=array();
         $variety_ids=json_decode($this->input->post('variety_ids'),true);
+        $this->db->from($this->config->item('table_setup_classification_varieties').' v');
+        $this->db->select('sp.*');
+        $this->db->select('v.id,v.name variety_name');
+        $this->db->select('crop.name crop_name');
+        $this->db->select('type.name crop_type_name');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->join($this->config->item('table_survey_product').' sp','sp.variety_id = v.id','LEFT');
+        $this->db->order_by('crop.ordering','ASC');
+        $this->db->order_by('type.ordering','ASC');
+        $this->db->order_by('v.ordering','ASC');
+        $this->db->where('v.status !=',$this->config->item('system_status_delete'));
+        $this->db->where_in('v.id',$variety_ids);
+        $results=$this->db->get()->result_array();
+        foreach($results as $result)
+        {
+            $item=array();
+            $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'];
+            $item['characteristics']=nl2br($result['characteristics']);
+            $item['cultivation_period']='';
+            if($result['date_start']!=0)
+            {
+                $item['cultivation_period']=date('d-F',$result['date_start']).' to '.date('d-F',$result['date_end']);
+            }
+            $image=base_url().'images/no_image.jpg';
+            if(strlen($result['picture_url'])>0)
+            {
+                $image=$result['picture_url'];
+            }
+            $item['picture']='<img style="max-width: 250px;" src="'.$image.'">';
+            $item['remarks']=$result['remarks'];
+            $item['details']['crop_name']=$result['crop_name'];
+            $item['details']['crop_type_name']=$result['crop_type_name'];
+            $item['details']['variety_name']=$result['variety_name'];
+            $item['details']['characteristics']=nl2br($result['characteristics']);
+            $item['details']['cultivation_period']=$item['cultivation_period'];
+            $item['details']['picture']=$image;
+            $item['details']['remarks']=$result['remarks'];
+            $items[]=$item;
+        }
         $this->jsonReturn($items);
     }
 }
