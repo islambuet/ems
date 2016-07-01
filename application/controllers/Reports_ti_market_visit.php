@@ -50,7 +50,7 @@ class Reports_ti_market_visit extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Search TI Visit";
+            $data['title']="TI Market Visit Report Search";
             $ajax['status']=true;
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
@@ -86,11 +86,8 @@ class Reports_ti_market_visit extends Root_Controller
         }
 
     }
-
     private function system_list()
     {
-
-
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
             $reports=$this->input->post('report');
@@ -129,7 +126,6 @@ class Reports_ti_market_visit extends Root_Controller
         }
 
     }
-
     public function get_items()
     {
         $items=array();
@@ -139,26 +135,43 @@ class Reports_ti_market_visit extends Root_Controller
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
-        $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
+        $results=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','CONCAT(customer_code," - ",name) text','status'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $customers=array();
+        foreach($results as $result)
+        {
+            $customers[$result['value']]=$result;
+        }
+        $results=Query_helper::get_info($this->config->item('table_csetup_other_customers'),array('id value','name text','status'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $other_customers=array();
+        foreach($results as $result)
+        {
+            $other_customers[$result['value']]=$result;
+        }
+        $results=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('status !="'.$this->config->item('system_status_delete').'"'));
+        $districts=array();
+        foreach($results as $result)
+        {
+            $districts[$result['value']]=$result;
+        }
 
+        $users=System_helper::get_users_info(array());
+
+        $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
         $this->db->select('mvt.*');
-        $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
-        $this->db->select('d.name district_name');
+        $this->db->select('stmv.host_type,stmv.host_id,stmv.district_id');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('shift.name shift_name');
-        $this->db->select('mvst.solution solution,mvst.date_created date_solution,mvst.user_created user_solution');
+        $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
 
-        $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = mvt.customer_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
-
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = mvt.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmv.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = mvt.shift_id','INNER');
-        $this->db->join($this->config->item('table_tm_market_visit_solution_ti').' mvst','mvt.id = mvst.visit_id','LEFT');
+        $this->db->join($this->config->item('table_setup_tm_shifts').' shift','shift.id = stmv.shift_id','INNER');
+
+
         if($division_id>0)
         {
             $this->db->where('division.id',$division_id);
@@ -183,9 +196,107 @@ class Reports_ti_market_visit extends Root_Controller
         }
         $this->db->order_by('mvt.date DESC');
         $results=$this->db->get()->result_array();
-        $visits=array();
-        $user_ids=array();
+
         foreach($results as $result)
+        {
+            $item=array();
+            $details=array();
+            $item['date_visit']=System_helper::display_date($result['date']).'<br>'.date('l',$result['date']);
+            $details['date']=System_helper::display_date($result['date']);
+            $details['day']=date('l',$result['date']);
+
+            $item['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>';
+            $details['division_name']=$result['division_name'];
+            $details['zone_name']=$result['zone_name'];
+            $details['territory_name']=$result['territory_name'];
+
+            if($result['host_type']==$this->config->item('system_host_type_customer'))
+            {
+                $item['location'].=$districts[$result['district_id']]['text'];
+                $details['district_name']=$districts[$result['district_id']]['text'];
+                $item['customer_name']=$customers[$result['host_id']]['text'];
+               // $details['customer_name']=$customers[$result['host_id']]['text'];
+            }
+            elseif($result['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+                $item['location'].=$districts[$result['district_id']]['text'];
+                $details['district_name']=$districts[$result['district_id']]['text'];
+                $item['customer_name']=$other_customers[$result['host_id']]['text'];
+             //   $details['customer_name']=$other_customers[$result['host_id']]['text'];
+            }
+            elseif($result['host_type']==$this->config->item('system_host_type_special'))
+            {
+
+                $item['customer_name']=$result['title'];
+             //   $details['customer_name']=$result['title'];
+                if($result['special_district_id']>0)
+                {
+                    $item['location'].=$districts[$result['district_id']]['text'];
+                    $details['district_name']=$districts[$result['special_district_id']]['text'];
+                }
+                else
+                {
+                    $details['district_name']='';
+                }
+            }
+            $item['shift_name']=$result['shift_name'];
+            $item['activities']=$result['activities'];
+            $image=base_url().'images/no_image.jpg';
+            if(strlen($result['picture_url_activities'])>0)
+            {
+                $image=$result['picture_url_activities'];
+            }
+            $item['activities_picture']='<img style="max-width: 100%;max-height: 100%" src="'.$image.'">';
+            $details['activities_picture']=$image;
+
+            $item['problem']=$result['problem'];
+            $image=base_url().'images/no_image.jpg';
+            if(strlen($result['picture_url_problem'])>0)
+            {
+                $image=$result['picture_url_problem'];
+            }
+            $item['problem_picture']='<img style="max-width: 100%;max-height: 100%" src="'.$image.'">';
+            $details['problem_picture']=$image;
+            $item['recommendation']=$result['recommendation'];
+            $details['user_created']= $users[$result['user_created']]['name'];
+            $details['time_created']= System_helper::display_date_time($result['date_created']);;
+
+
+
+
+
+            $item['details']=$details;
+            $items[]=$item;
+            /*$item['day']=date('l',$item['date']);
+            $item['date']=System_helper::display_date($item['date']);
+            if($item['host_type']==$this->config->item('system_host_type_customer'))
+            {
+
+                $item['customer_name']=$customers[$item['host_id']]['text'];
+                if($customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$customers[$item['host_id']]['status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_other_customer'))
+            {
+
+                $item['customer_name']=$other_customers[$item['host_id']]['text'];
+                if($other_customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
+                {
+                    $item['customer_name'].= '('.$other_customers[$item['host_id']]['status'].')';
+                }
+            }
+            elseif($item['host_type']==$this->config->item('system_host_type_special'))
+            {
+                $item['customer_name']=$item['title'];
+                $item['district_name']=$item['special_district_name'];
+            }*/
+        }
+        $this->jsonReturn($items);
+
+        /*
+        /*foreach($results as $result)
         {
             $user_ids[$result['user_created']]=$result['user_created'];
             $visits[$result['id']]['date']=$result['date'];
@@ -269,7 +380,7 @@ class Reports_ti_market_visit extends Root_Controller
             $html_tooltip.='</div>';
             $visit['details']=$html_tooltip;
             $items[]=$visit;
-        }
-        $this->jsonReturn($items);
+        }*/
+
     }
 }

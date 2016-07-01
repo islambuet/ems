@@ -181,7 +181,7 @@ class Reports_arm_competitor_variety extends Root_Controller
             {
                 $image=$result['picture_url'];
             }
-            $item['picture']='<img style="max-width: 250px;" src="'.$image.'">';
+            $item['picture']='<img style="max-width: 100%;max-height: 100%" src="'.$image.'">';
             $item['remarks']=$result['remarks'];
             $item['details']['crop_name']=$result['crop_name'];
             $item['details']['crop_type_name']=$result['crop_type_name'];
