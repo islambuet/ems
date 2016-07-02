@@ -106,6 +106,22 @@ class Reports_ti_market_visit extends Root_Controller
             }
 
             $data['keys']=trim($keys,',');
+            if(isset($reports['activities_picture']))
+            {
+                $data['activities_picture']=true;
+            }
+            else
+            {
+                $data['activities_picture']=false;
+            }
+            if(isset($reports['problem_picture']))
+            {
+                $data['problem_picture']=true;
+            }
+            else
+            {
+                $data['problem_picture']=false;
+            }
 
 
             $ajax['status']=true;
@@ -155,6 +171,44 @@ class Reports_ti_market_visit extends Root_Controller
         }
 
         $users=System_helper::get_users_info(array());
+        //solutions
+        $this->db->from($this->config->item('table_tm_market_visit_solution_ti').' mvsti');
+        $this->db->select('mvsti.solution,mvsti.date_created,mvsti.user_created,mvsti.visit_id');
+
+        $this->db->join($this->config->item('table_tm_market_visit_ti').' mvti','mvti.id = mvsti.visit_id','INNER');
+        $this->db->join($this->config->item('table_setup_tm_market_visit').' stmvti','stmvti.id = mvti.setup_id','INNER');
+
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = stmvti.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        if($division_id>0)
+        {
+            $this->db->where('zone.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                }
+            }
+        }
+        if($date_start>0)
+        {
+            $this->db->where('mvti.date >=',$date_start);
+
+        }
+        if($date_end>0)
+        {
+            $this->db->where('mvti.date <=',$date_end);
+
+        }
+        $this->db->order_by('mvsti.id DESC');
+        $results=$this->db->get()->result_array();
+        $solutions=array();
+        foreach($results as $result)
+        {
+            $solutions[$result['visit_id']][]=array('solution'=>$result['solution'],'created_time'=>System_helper::display_date_time($result['date_created']),'created_user'=>$users[$result['user_created']]['name']);
+        }
 
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
         $this->db->select('mvt.*');
@@ -258,40 +312,21 @@ class Reports_ti_market_visit extends Root_Controller
             $item['problem_picture']='<img style="max-width: 100%;max-height: 100%" src="'.$image.'">';
             $details['problem_picture']=$image;
             $item['recommendation']=$result['recommendation'];
+            if(isset($solutions[$result['id']]))
+            {
+                $item['solution']=$solutions[$result['id']][0]['solution'];
+                $details['solutions']=$solutions[$result['id']];
+            }
+            else
+            {
+                $item['solution']='';
+                $details['solutions']=array();
+            }
             $details['user_created']= $users[$result['user_created']]['name'];
-            $details['time_created']= System_helper::display_date_time($result['date_created']);;
-
-
-
-
-
+            $details['time_created']= System_helper::display_date_time($result['date_created']);
             $item['details']=$details;
             $items[]=$item;
-            /*$item['day']=date('l',$item['date']);
-            $item['date']=System_helper::display_date($item['date']);
-            if($item['host_type']==$this->config->item('system_host_type_customer'))
-            {
 
-                $item['customer_name']=$customers[$item['host_id']]['text'];
-                if($customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
-                {
-                    $item['customer_name'].= '('.$customers[$item['host_id']]['status'].')';
-                }
-            }
-            elseif($item['host_type']==$this->config->item('system_host_type_other_customer'))
-            {
-
-                $item['customer_name']=$other_customers[$item['host_id']]['text'];
-                if($other_customers[$item['host_id']]['status']!=$this->config->item('system_status_active'))
-                {
-                    $item['customer_name'].= '('.$other_customers[$item['host_id']]['status'].')';
-                }
-            }
-            elseif($item['host_type']==$this->config->item('system_host_type_special'))
-            {
-                $item['customer_name']=$item['title'];
-                $item['district_name']=$item['special_district_name'];
-            }*/
         }
         $this->jsonReturn($items);
 

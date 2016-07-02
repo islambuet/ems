@@ -36,7 +36,7 @@
                         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="">
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="<?php echo System_helper::display_date(time());?>">
                     </div>
                 </div>
                 <div class="row show-grid">
@@ -44,10 +44,20 @@
                         <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time());; ?>">
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time());?>">
                     </div>
 
                 </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
+
+                    </div>
+                    <div class="col-xs-6">
+                        <label class="checkbox"><input type="checkbox" name="report[activities_picture]" value="1">Activities Picture</label>
+                        <label class="checkbox"><input type="checkbox" name="report[problem_picture]" value="1">Problem Picture</label>
+                    </div>
+                </div>
+
 
             </div>
             <div class="col-xs-6">

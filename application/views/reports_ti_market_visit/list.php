@@ -66,21 +66,45 @@
             $("#popup_window").jqxWindow({position: { x: left, y: top  }});
             var row=$(this).attr('data-item-no');
             var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
-            /*var html='';
+            var html='';
             html+='<div style="line-height: 1.8;">';
-            html+='<div><b>Crop Name:</b> '+row_info.details['crop_name']+'<div>';
-            html+='<div><b>Crop Type:</b> '+row_info.details['crop_type_name']+'<div>';
-            html+='<div><b>Variety Name:</b> '+row_info.details['variety_name']+'<div>';
-            html+='<div><b>Characteristics:</b><div>';
-            html+='<div>'+row_info.details['characteristics']+'<div>';
-            html+='<div><b>Cultivation Period:</b> '+row_info.details['cultivation_period']+'<div>';
-            html+='<div><b>Remarks:</b> '+row_info.details['remarks']+'<div>';
-            html+='<div><b>Picture:</b> <div>';
-            html+='<div><img src="'+row_info.details['picture']+'" style="max-width: 100%;"></div>';
+            html+='<div><b>Date:</b> '+row_info.details['date']+'<div>';
+            html+='<div><b>Day:</b> '+row_info.details['day']+'<div>';
+            html+='<div><b>Division Name:</b> '+row_info.details['division_name']+'<div>';
+            html+='<div><b>Zone Name:</b> '+row_info.details['zone_name']+'<div>';
+            html+='<div><b>Territory Name:</b> '+row_info.details['territory_name']+'<div>';
+            html+='<div><b>District Name:</b> '+row_info.details['district_name']+'<div>';
+            html+='<div><b>Shift:</b> '+row_info['shift_name']+'<div>';
+            html+='<div><b>Customer/Title:</b> '+row_info['customer_name']+'<div>';
+            html+='<div><b>Activities:</b><div>';
+            html+='<div>'+row_info['activities']+'<div>';
+            html+='<div><b>Activities Picture:</b> <div>';
+            html+='<div><img src="'+row_info.details['activities_picture']+'" style="max-width: 100%;"></div>';
+            html+='<div><b>Problem:</b><div>';
+            html+='<div>'+row_info['problem']+'<div>';
+            html+='<div><b>Problem Picture:</b> <div>';
+            html+='<div><img src="'+row_info.details['problem_picture']+'" style="max-width: 100%;"></div>';
+            html+='<div><b>Recommendation :</b><div>';
+            html+='<div>'+row_info['recommendation']+'<div>';
+            html+='<div><b>Recommendation By:</b> '+row_info.details['user_created']+'<div>';
+            html+='<div><b>Recommendation Time:</b> '+row_info.details['time_created']+'<div>';
+            html+='<div><b>Solutions:</b><div>';
+            if(row_info.details['solutions'].length>0)
+            {
+                $.each( row_info.details['solutions'], function( key, solution )
+                {
+                    html+='<div><b>'+solution['created_user']+' at '+solution['created_time']+':</b> '+solution['solution']+'<div>';
 
-            html+='</div>';*/
-            console.log(row_info.details)
-            $('#popup_content').html(row_info.details);
+                });
+
+            }
+            else
+            {
+                html+='<div>No Solution Given Yet<div>';
+            }
+            html+='</div>';
+            //console.log(row_info.details)
+            $('#popup_content').html(html);
             $("#popup_window").jqxWindow('open');
 
 
@@ -151,9 +175,24 @@
                     { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true,width:'80', dataField: 'shift_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?>',pinned:true,width:'150', dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Activities', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    <?php
+                        if($activities_picture)
+                        {
+                            ?>
                     { text: 'Activities Picture', dataField: 'activities_picture',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                            <?php
+                        }
+                    ?>
                     { text: 'Problem', dataField: 'problem',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    <?php
+                        if($problem_picture)
+                        {
+                            ?>
                     { text: 'Problem Picture', dataField: 'problem_picture',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    <?php
+                        }
+                    ?>
+
                     { text: 'Recommendation', dataField: 'recommendation',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Solution', dataField: 'solution',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Details', dataField: 'details_button',width: '100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
