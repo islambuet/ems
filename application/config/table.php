@@ -18,6 +18,7 @@ $config['table_system_task'] = 'ems_system_task';
 $config['table_system_user_group_role'] = 'ems_system_user_group_role';
 $config['table_history'] = 'ems_history';
 $config['table_system_site_offline'] = 'ems_system_site_offline';
+$config['table_system_po_status_change'] = 'ems_system_po_status_change';
 //location setup
 $config['table_setup_location_divisions'] = 'ems_divisions';
 $config['table_setup_location_zones'] = 'ems_zones';
