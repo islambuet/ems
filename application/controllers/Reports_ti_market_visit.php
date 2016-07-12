@@ -55,12 +55,22 @@ class Reports_ti_market_visit extends Root_Controller
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
             $data['territories']=array();
+            $data['districts']=array();
+            $data['customers']=array();
             if($this->locations['division_id']>0)
             {
                 $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$this->locations['division_id']));
                 if($this->locations['zone_id']>0)
                 {
                     $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$this->locations['zone_id']));
+                    if($this->locations['territory_id']>0)
+                    {
+                        $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$this->locations['territory_id']),0,0,array('ordering ASC'));
+                        if($this->locations['district_id']>0)
+                        {
+                            $data['customers']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$this->locations['district_id'],'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+                        }
+                    }
                 }
             }
             $fiscal_years=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array());
@@ -148,6 +158,8 @@ class Reports_ti_market_visit extends Root_Controller
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $customer_id=$this->input->post('customer_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
@@ -266,6 +278,14 @@ class Reports_ti_market_visit extends Root_Controller
 
             if($result['host_type']==$this->config->item('system_host_type_customer'))
             {
+                if(($customer_id>0)&&($result['host_id']!=$customer_id))
+                {
+                    continue;
+                }
+                elseif(($district_id>0)&&($result['district_id']!=$district_id))
+                {
+                    continue;
+                }
                 $item['location'].=$districts[$result['district_id']]['text'];
                 $details['district_name']=$districts[$result['district_id']]['text'];
                 $item['customer_name']=$customers[$result['host_id']]['text'];
@@ -273,6 +293,14 @@ class Reports_ti_market_visit extends Root_Controller
             }
             elseif($result['host_type']==$this->config->item('system_host_type_other_customer'))
             {
+                if(($customer_id>0)&&($result['host_id']!=$customer_id))
+                {
+                    continue;
+                }
+                elseif(($district_id>0)&&($result['district_id']!=$district_id))
+                {
+                    continue;
+                }
                 $item['location'].=$districts[$result['district_id']]['text'];
                 $details['district_name']=$districts[$result['district_id']]['text'];
                 $item['customer_name']=$other_customers[$result['host_id']]['text'];
@@ -280,12 +308,20 @@ class Reports_ti_market_visit extends Root_Controller
             }
             elseif($result['host_type']==$this->config->item('system_host_type_special'))
             {
+                if($customer_id>0)
+                {
+                    continue;
+                }
+                elseif(($district_id>0)&&($result['special_district_id']!=$district_id))
+                {
+                    continue;
+                }
 
                 $item['customer_name']=$result['title'];
              //   $details['customer_name']=$result['title'];
                 if($result['special_district_id']>0)
                 {
-                    $item['location'].=$districts[$result['district_id']]['text'];
+                    $item['location'].=$districts[$result['special_district_id']]['text'];
                     $details['district_name']=$districts[$result['special_district_id']]['text'];
                 }
                 else
@@ -329,93 +365,6 @@ class Reports_ti_market_visit extends Root_Controller
 
         }
         $this->jsonReturn($items);
-
-        /*
-        /*foreach($results as $result)
-        {
-            $user_ids[$result['user_created']]=$result['user_created'];
-            $visits[$result['id']]['date']=$result['date'];
-            $visits[$result['id']]['date_visit']=System_helper::display_date($result['date']).'<br>'.date('l',$result['date']);
-            //$visits[$result['id']]['date_created']=System_helper::display_date_time($result['date_created']);
-            $visits[$result['id']]['date_created']=$result['date_created'];
-            $visits[$result['id']]['user_created']=$result['user_created'];
-            $visits[$result['id']]['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'];
-            $visits[$result['id']]['shift_name']=$result['shift_name'];
-            $visits[$result['id']]['customer_name']=$result['customer_name'];
-            $visits[$result['id']]['activities']=$result['activities'];
-            $visits[$result['id']]['picture_url_activities']=base_url().'images/no_image.jpg';
-            if($result['picture_url_activities'])
-            {
-                $visits[$result['id']]['picture_url_activities']=$result['picture_url_activities'];
-            }
-            $visits[$result['id']]['problem']=$result['activities'];
-            $visits[$result['id']]['picture_url_problem']=base_url().'images/no_image.jpg';
-            if($result['picture_url_problem'])
-            {
-                $visits[$result['id']]['picture_url_problem']=$result['picture_url_problem'];
-            }
-            $visits[$result['id']]['recommendation']=$result['recommendation'];
-            if($result['solution'])
-            {
-                $user_ids[$result['user_solution']]=$result['user_solution'];
-                $visits[$result['id']]['solutions'][]=array('solution'=>$result['solution'],'date_solution'=>$result['date_solution'],'user_solution'=>$result['user_solution']);
-            }
-
-        }
-        $users=System_helper::get_users_info($user_ids);
-        $count=0;
-        foreach($visits as $visit)
-        {
-            $count++;
-            $visit['sl_no']=$count;
-            $visit['activities_picture']='<img src="'.$visit['picture_url_activities'].'" style="max-height: 100px;max-width: 133px;">';
-            $visit['problem_picture']='<img src="'.$visit['picture_url_problem'].'" style="max-height: 100px;max-width: 133px;">';
-
-            $html_row='<div class="pop_up" data-item-no="'.($count-1).'" style="height: 110px;width: 143px;cursor:pointer;">';
-            if(isset($visit['solutions'])&&(sizeof($visit['solutions'])>0))
-            {
-                $html_row.=$visit['solutions'][sizeof($visit['solutions'])-1]['solution'];
-            }
-            else
-            {
-                $html_row.='No Solution given yet';
-            }
-            $html_row.='</div>';
-            $visit['solution']=$html_row;
-            $html_tooltip='';
-            $html_tooltip.='<div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_DATE').': '.System_helper::display_date($visit['date']).'</div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_DAY').': '.date('l',$visit['date']).'</div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_SHIFT').': '.$visit['shift_name'].'</div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_CUSTOMER_NAME').': '.$visit['customer_name'].'</div>';
-            $html_tooltip.='<div>Activities: <b>'.$visit['activities'].'</b></div>';
-            $html_tooltip.='<div>Activities Picture :</div>';
-            $html_tooltip.='<div><img src="'.$visit['picture_url_activities'].'" style="max-width: 100%;"></div>';
-            $html_tooltip.='<div>Problem: <b>'.$visit['problem'].'</b></div>';
-            $html_tooltip.='<div>Problem Picture :</div>';
-            $html_tooltip.='<div><img src="'.$visit['picture_url_problem'].'" style="max-width: 100%;"></div>';
-            $html_tooltip.='<div>Recommendation: <b>'.$visit['recommendation'].'</b></div>';
-            $html_tooltip.='<div>Recommendation By: '.$users[$visit['user_created']]['name'].'</div>';
-            $html_tooltip.='<div>Recommendation Time: '.System_helper::display_date_time($visit['date_created']).'</div>';
-
-            if(isset($visit['solutions'])&&(sizeof($visit['solutions'])>0))
-            {
-                $html_tooltip.='<div>Solutions: </div>';
-                foreach($visit['solutions'] as $solution)
-                {
-                    $html_tooltip.='<div>'.$users[$solution['user_solution']]['name'].' at '.System_helper::display_date_time($solution['date_solution']).'</div>';
-                    $html_tooltip.='<div><b>'.$solution['solution'].'</b></div>';
-                }
-            }
-            else
-            {
-                $html_tooltip.='<div>Problem: <b>No Solution given yet</b></div>';
-            }
-
-            $html_tooltip.='</div>';
-            $visit['details']=$html_tooltip;
-            $items[]=$visit;
-        }*/
 
     }
 }
