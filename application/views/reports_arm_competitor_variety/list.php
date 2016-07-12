@@ -33,6 +33,8 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="characteristics">Characteristics</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="cultivation_period">Cultivation Period</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="picture">Picture</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="comparison">Compare With Other Variety</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="remarks">Remarks</label>
         </div>
     <?php
     }
@@ -66,6 +68,8 @@
             html+='<div><b>Characteristics:</b><div>';
             html+='<div>'+row_info.details['characteristics']+'<div>';
             html+='<div><b>Cultivation Period:</b> '+row_info.details['cultivation_period']+'<div>';
+            html+='<div><b>Compare With Other Variety:</b><div>';
+            html+='<div>'+row_info.details['comparison']+'<div>';
             html+='<div><b>Remarks:</b> '+row_info.details['remarks']+'<div>';
             html+='<div><b>Picture:</b> <div>';
             html+='<div><img src="'+row_info.details['picture']+'" style="max-width: 100%;"></div>';
@@ -89,6 +93,7 @@
                 { name: 'id', type: 'int' },
                 { name: 'crop_info', type: 'string' },
                 { name: 'characteristics', type: 'string' },
+                { name: 'comparison', type: 'string' },
                 { name: 'picture', type: 'string' },
                 { name: 'cultivation_period', type: 'string' },
                 { name: 'remarks', type: 'string' },
@@ -130,6 +135,7 @@
                     { text: 'characteristics', dataField: 'characteristics',width: '250',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Cultivation Period', dataField: 'cultivation_period',width: '250',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Picture', dataField: 'picture',width: '250',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Compare With Other Variety', dataField: 'comparison',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Remarks', dataField: 'remarks',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Details', dataField: 'details_button',width: '100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]

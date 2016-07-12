@@ -171,6 +171,7 @@ class Reports_arm_variety extends Root_Controller
             $item=array();
             $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'];
             $item['characteristics']=nl2br($result['characteristics']);
+            $item['comparison']=nl2br($result['comparison']);
             $item['cultivation_period']='';
             if($result['date_start']!=0)
             {
@@ -187,9 +188,10 @@ class Reports_arm_variety extends Root_Controller
             $item['details']['crop_type_name']=$result['crop_type_name'];
             $item['details']['variety_name']=$result['variety_name'];
             $item['details']['characteristics']=nl2br($result['characteristics']);
+            $item['details']['comparison']=nl2br($result['comparison']);
             $item['details']['cultivation_period']=$item['cultivation_period'];
             $item['details']['picture']=$image;
-            $item['details']['remarks']=$result['remarks'];
+            $item['details']['remarks']=nl2br($result['remarks']);
             $items[]=$item;
         }
         $this->jsonReturn($items);
