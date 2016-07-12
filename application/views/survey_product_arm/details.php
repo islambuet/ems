@@ -78,6 +78,14 @@ $CI->load->view("action_buttons",$action_data);
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+                <label class="control-label pull-right">Compare With Other Variety</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo nl2br($survey['comparison']);?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">

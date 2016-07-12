@@ -99,6 +99,7 @@ class Survey_product_competitor extends Root_Controller
             else
             {
                 $data['survey']['characteristics']='';
+                $data['survey']['comparison']='';
                 $data['survey']['remarks']='';
                 $data['survey']['picture_file_name']='';
                 $data['survey']['picture_file_full']='';
@@ -165,6 +166,7 @@ class Survey_product_competitor extends Root_Controller
             else
             {
                 $data['survey']['characteristics']='';
+                $data['survey']['comparison']='';
                 $data['survey']['remarks']='';
                 $data['survey']['picture_file_name']='';
                 $data['survey']['picture_file_full']='';
