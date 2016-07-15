@@ -492,7 +492,7 @@ class Sales_po_delivery extends Root_Controller
             $item['quantity_weight']=number_format($item['quantity_weight']/1000,3,'.','');
             //$item['price_total']=number_format($item['price_total'],2);
             $item['date_po']=System_helper::display_date($item['date_po']);
-            $item['date_approved']=System_helper::display_date($item['date_approved']);
+            $item['date_approved']=System_helper::display_date_time($item['date_approved']);
 
         }
         $this->jsonReturn($items);
