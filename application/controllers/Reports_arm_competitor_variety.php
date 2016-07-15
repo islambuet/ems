@@ -76,7 +76,7 @@ class Reports_arm_competitor_variety extends Root_Controller
         }
 
         $this->db->where('v.whose','ARM');
-        $this->db->where('v.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('v.status =',$this->config->item('system_status_active'));
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop_type.ordering','ASC');
         $this->db->order_by('v.ordering','ASC');
@@ -96,7 +96,7 @@ class Reports_arm_competitor_variety extends Root_Controller
         }
 
         $this->db->where('v.whose','Competitor');
-        $this->db->where('v.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('v.status =',$this->config->item('system_status_active'));
         $this->db->order_by('crop.ordering','ASC');
         $this->db->order_by('crop_type.ordering','ASC');
         $this->db->order_by('v.ordering','ASC');
