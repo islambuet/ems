@@ -197,7 +197,7 @@
                 ?>
             </div>
         </div>
-        <div style="<?php if(!($fsetup['upazilla_id']>0)){echo 'display:none';} ?>" class="row show-grid" id="crop_id_container">
+        <div style="" class="row show-grid" id="crop_id_container">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
@@ -235,17 +235,17 @@
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?><span style="color:#FF0000">*</span></label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="variety_id" name="fsetup[variety_id]" class="form-control">
-                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                    <?php
-                    foreach($varieties as $variety)
-                    {?>
-                        <option value="<?php echo $variety['value']?>" <?php if($variety['value']==$fsetup['variety_id']){ echo "selected";}?>><?php echo $variety['text'];?></option>
-                    <?php
-                    }
+            <div class="col-sm-4 col-xs-8" id="variety_list_container">
+                <?php
+                foreach($varieties as $variety)
+                {
                     ?>
-                </select>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="variety_ids[]" value="<?php echo $variety['value']; ?>" <?php if(isset($previous_varieties[$variety['value']])) echo 'checked'; ?>><?php echo $variety['text'].' ('.$variety['whose'].')'; ?></label>
+                    </div>
+                <?php
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">
@@ -337,15 +337,9 @@ jQuery(document).ready(function()
         $("#territory_id").val("");
         $("#district_id").val("");
         $("#upazilla_id").val("");
-        $("#crop_id").val("");
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
         $('#upazilla_id_container').hide();
-        $('#crop_id_container').hide();
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
         var division_id=$('#division_id').val();
         if(division_id>0)
         {
@@ -377,14 +371,8 @@ jQuery(document).ready(function()
         $("#territory_id").val("");
         $("#district_id").val("");
         $("#upazilla_id").val("");
-        $("#crop_id").val("");
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
         $('#district_id_container').hide();
         $('#upazilla_id_container').hide();
-        $('#crop_id_container').hide();
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
         var zone_id=$('#zone_id').val();
         if(zone_id>0)
         {
@@ -413,15 +401,9 @@ jQuery(document).ready(function()
     });
     $(document).on("change","#territory_id",function()
     {
-
+        $("#district_id").val("");
         $("#upazilla_id").val("");
-        $("#crop_id").val("");
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
         $('#upazilla_id_container').hide();
-        $('#crop_id_container').hide();
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
         var territory_id=$('#territory_id').val();
         if(territory_id>0)            {
             $('#district_id_container').show();
@@ -451,12 +433,6 @@ jQuery(document).ready(function()
     {
 
         $("#upazilla_id").val("");
-        $("#crop_id").val("");
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
-        $('#crop_id_container').hide();
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
         var district_id=$("#district_id").val();
         if(district_id>0)
         {
@@ -483,29 +459,10 @@ jQuery(document).ready(function()
         }
 
     });
-    $(document).on("change","#upazilla_id",function()
-    {
-
-        $("#crop_id").val("");
-        $("#crop_type_id").val("");
-        $("#variety_id").val("");
-        $('#crop_type_id_container').hide();
-        $('#variety_id_container').hide();
-
-        var upazilla_id=$("#upazilla_id").val();
-        if(upazilla_id>0)
-        {
-            $('#crop_id_container').show();
-        }
-        else
-        {
-            $('#crop_id_container').hide();
-        }
-    });
     $(document).on("change","#crop_id",function()
     {
         $("#crop_type_id").val("");
-        $("#variety_id").val("");
+        $('#variety_list_container').html('');
         var crop_id=$('#crop_id').val();
         $('#variety_id_container').hide();
         if(crop_id>0)
@@ -534,13 +491,13 @@ jQuery(document).ready(function()
     });
     $(document).on("change","#crop_type_id",function()
     {
-        $("#variety_id").val("");
+        $('#variety_list_container').html('');
         var crop_type_id=$('#crop_type_id').val();
         if(crop_type_id>0)
         {
             $('#variety_id_container').show();
             $.ajax({
-                url: base_url+"common_controller/get_dropdown_varieties_by_croptypeid/",
+                url: '<?php echo base_url($CI->controller_url.'/index/list_variety');?>',
                 type: 'POST',
                 datatype: "JSON",
                 data:{crop_type_id:crop_type_id},

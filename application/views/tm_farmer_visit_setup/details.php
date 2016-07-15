@@ -89,7 +89,19 @@
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $fsetup['variety_name'];?></label>
+                <?php
+                foreach($varieties as $variety)
+                {
+                    if(isset($previous_varieties[$variety['value']]))
+                    {
+                        ?>
+                        <div class="">
+                            <label><?php  echo $variety['text'].' ('.$variety['whose'].')';?></label>
+                        </div>
+                    <?php
+                    }
+                }
+                ?>
             </div>
         </div>
         <div class="row show-grid">

@@ -83,6 +83,8 @@ $config['table_setup_tm_market_visit_di'] = 'ems_setup_tm_market_visit_di';//for
 $config['table_setup_tm_market_visit_trainer'] = 'ems_setup_tm_market_visit_trainer';//same as di
 //task management
 $config['table_tm_farmers'] = 'ems_tm_farmers';
+$config['table_tm_farmer_varieties'] = 'ems_tm_farmer_varieties';
+
 $config['table_tm_visits_picture'] = 'ems_tm_visits_picture';
 $config['table_tm_visits_fruit_picture'] = 'ems_tm_visits_fruit_picture';
 $config['table_tm_visits_disease_picture'] = 'ems_tm_visits_disease_picture';

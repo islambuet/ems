@@ -37,6 +37,14 @@ class Tm_farmer_visit_setup extends Root_Controller
         {
             $this->system_list($id);
         }
+        elseif($action=="get_items")
+        {
+            $this->get_items();
+        }
+        elseif($action=="list_variety")
+        {
+            $this->system_list_variety();
+        }
         elseif($action=="add")
         {
             $this->system_add();
@@ -89,7 +97,84 @@ class Tm_farmer_visit_setup extends Root_Controller
         }
 
     }
+    private function get_items()
+    {
+        //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
+        $this->db->from($this->config->item('table_tm_farmers').' tmf');
+        $this->db->select('tmf.*');
+        $this->db->select('upazilla.name upazilla_name');
+        $this->db->select('d.name district_name');
+        $this->db->select('t.name territory_name');
+        $this->db->select('zone.name zone_name');
+        $this->db->select('division.name division_name');
+        /*$this->db->select('crop.name crop_name');
+        $this->db->select('crop_type.name crop_type_name');
+        $this->db->select('v.name variety_name');*/
 
+        $this->db->select('season.name season_name');
+        $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
+
+        /*$this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');*/
+
+        $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('division.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zone.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('t.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('d.id',$this->locations['district_id']);
+                        if($this->locations['upazilla_id']>0)
+                        {
+                            $this->db->where('upazilla.id',$this->locations['upazilla_id']);
+                        }
+                    }
+                }
+            }
+        }
+        $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
+        $this->db->order_by('id','DESC');
+
+        $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            $item['date_sowing']=System_helper::display_date($item['date_sowing']);
+        }
+
+        $this->jsonReturn($items);
+    }
+    private function system_list_variety()
+    {
+        $crop_type_id=$this->input->post('crop_type_id');
+
+        //ARM
+        $this->db->from($this->config->item('table_setup_classification_varieties').' v');
+        $this->db->select('v.id variety_id,v.name variety_name,v.whose');
+        $this->db->where('v.crop_type_id',$crop_type_id);
+        $this->db->where('v.status',$this->config->item('system_status_active'));
+        $this->db->order_by('v.whose','ASC');
+        $this->db->order_by('v.ordering','ASC');
+        $data['varieties']=$this->db->get()->result_array();
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>"#variety_list_container","html"=>$this->load->view("tm_farmer_visit_setup/list_variety",$data,true));
+
+        if($this->message)
+        {
+            $ajax['system_message']=$this->message;
+        }
+        $this->jsonReturn($ajax);
+    }
     private function system_add()
     {
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
@@ -106,7 +191,6 @@ class Tm_farmer_visit_setup extends Root_Controller
                 'upazilla_id'=>$this->locations['upazilla_id'],
                 'crop_id'=>'',
                 'type_id'=>'',
-                'variety_id'=>'',
                 'name'=>'',
                 'address' => '',
                 'contact_no' => '',
@@ -171,6 +255,24 @@ class Tm_farmer_visit_setup extends Root_Controller
             {
                 $setup_id=$id;
             }
+            $data['previous_varieties']=array();//active and inactive
+            $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+            if(!$results)
+            {
+                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$setup_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            $variety_id=0;
+            foreach($results as $i=>$result)
+            {
+                if($i==0)
+                {
+                    $variety_id=$result['variety_id'];
+                }
+                $data['previous_varieties'][$result['variety_id']]=$result;
+            }
 
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
             $this->db->select('tmf.*');
@@ -181,17 +283,16 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->select('division.name division_name,division.id division_id');
             $this->db->select('crop_type.id type_id,crop_type.name crop_type_name');
             $this->db->select('crop.id crop_id,crop.name crop_name');
-            $this->db->select('v.name variety_name');
+            $this->db->select('v.name variety_name');//invalid
             $this->db->select('season.name season_name');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->where('tmf.id',$setup_id);
             $this->db->where('tmf.status','Active');
@@ -220,10 +321,9 @@ class Tm_farmer_visit_setup extends Root_Controller
             $data['districts']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$data['fsetup']['territory_id']));
 
             $data['upazillas']=Query_helper::get_info($this->config->item('table_setup_location_upazillas'),array('id value','name text'),array('district_id ='.$data['fsetup']['district_id'],'status ="'.$this->config->item('system_status_active').'"'));
-
             $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['types']=Query_helper::get_info($this->config->item('table_setup_classification_crop_types'),array('id value','name text'),array('crop_id ='.$data['fsetup']['crop_id'],'status ="'.$this->config->item('system_status_active').'"'));
-            $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$data['fsetup']['type_id'],'status ="'.$this->config->item('system_status_active').'"'));
+            $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['fsetup']['type_id'],'status ="'.$this->config->item('system_status_active').'"'),0,0,array('whose ASC','ordering ASC'));
 
             $data['seasons']=Query_helper::get_info($this->config->item('table_setup_tm_seasons'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
@@ -263,6 +363,24 @@ class Tm_farmer_visit_setup extends Root_Controller
             {
                 $setup_id=$id;
             }
+            $data['previous_varieties']=array();//active and inactive
+            $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+            if(!$results)
+            {
+                System_helper::invalid_try('details not exists',$setup_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+            $variety_id=0;
+            foreach($results as $i=>$result)
+            {
+                if($i==0)
+                {
+                    $variety_id=$result['variety_id'];
+                }
+                $data['previous_varieties'][$result['variety_id']]=$result;
+            }
 
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
             $this->db->select('tmf.*');
@@ -272,15 +390,15 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->select('zone.name zone_name,zone.id zone_id');
             $this->db->select('division.name division_name,division.id division_id');
             $this->db->select('crop.name crop_name');
-            $this->db->select('crop_type.name crop_type_name');
-            $this->db->select('v.name variety_name');
+            $this->db->select('crop_type.id type_id,crop_type.name crop_type_name');
+            $this->db->select('v.name variety_name');//invalid
             $this->db->select('season.name season_name');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id ='.$variety_id,'INNER');
             $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
@@ -302,12 +420,14 @@ class Tm_farmer_visit_setup extends Root_Controller
                 $this->jsonReturn($ajax);
             }
             $data['title']="Detail Farmer and Field Visit Setup";
+            $data['varieties']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text','whose'),array('crop_type_id ='.$data['fsetup']['type_id'],'status ="'.$this->config->item('system_status_active').'"'),0,0,array('whose ASC','ordering ASC'));
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
+
             $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$setup_id);
             $this->jsonReturn($ajax);
         }
@@ -329,6 +449,7 @@ class Tm_farmer_visit_setup extends Root_Controller
             foreach($ids as $id)
             {
                 Query_helper::update($this->config->item('table_tm_farmers'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
+                Query_helper::update($this->config->item('table_tm_farmer_varieties'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("setup_id = ".$id));
             }
             $this->db->trans_complete();   //DB Transaction Handle END
 
@@ -358,6 +479,7 @@ class Tm_farmer_visit_setup extends Root_Controller
     {
         $id = $this->input->post("id");
         $user = User_helper::get_user();
+        $time=time();
         if($id>0)
         {
             if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
@@ -390,21 +512,64 @@ class Tm_farmer_visit_setup extends Root_Controller
             $data=$this->input->post('fsetup');
             $data['date_sowing']=System_helper::get_time($data['date_sowing']);
             $data['date_transplant']=System_helper::get_time($data['date_transplant']);
+
+
             $this->db->trans_start();  //DB Transaction Handle START
-            if($id>0)
+            if($id==0)
             {
-                $data['user_updated'] = $user->user_id;
-                $data['date_updated'] = time();
-
-                Query_helper::update($this->config->item('table_tm_farmers'),$data,array("id = ".$id));
-
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] =$time;
+                $setup_id=Query_helper::add($this->config->item('table_tm_farmers'),$data);
+                if($setup_id===false)
+                {
+                    $this->db->trans_complete();
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                    $this->jsonReturn($ajax);
+                    die();
+                }
+                else
+                {
+                    $id=$setup_id;
+                }
             }
             else
             {
+                $data['user_updated'] = $user->user_id;
+                $data['date_updated'] = $time;
+                Query_helper::update($this->config->item('table_tm_farmers'),$data,array("id = ".$id));
+            }
+            $previous_varieties=array();//active and inactive
+            $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$id));
+            foreach($results as $result)
+            {
+                $previous_varieties[$result['variety_id']]=$result;
+            }
+            $this->db->where('setup_id',$id);
+            $this->db->set('status', $this->config->item('system_status_delete'));
+            $this->db->set('date_updated', $time);
+            $this->db->set('user_updated', $user->user_id);
+            $this->db->update($this->config->item('table_tm_farmer_varieties'));
+            $variety_ids=$this->input->post('variety_ids');
+            foreach($variety_ids as $variety_id)
+            {
+                $data=array();
+                $data['setup_id']=$id;
+                $data['variety_id']=$variety_id;
+                $data['status']=$this->config->item('system_status_active');
+                if(isset($previous_varieties[$variety_id]))
+                {
 
-                $data['user_created'] = $user->user_id;
-                $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_tm_farmers'),$data);
+                    $data['user_updated'] = $user->user_id;
+                    $data['date_updated'] = $time;
+                    Query_helper::update($this->config->item('table_tm_farmer_varieties'),$data,array("id = ".$previous_varieties[$variety_id]['id']));
+                }
+                else
+                {
+                    $data['user_created'] = $user->user_id;
+                    $data['date_created'] =$time;
+                    Query_helper::add($this->config->item('table_tm_farmer_varieties'),$data);
+                }
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -506,7 +671,6 @@ class Tm_farmer_visit_setup extends Root_Controller
         $this->form_validation->set_rules('fsetup[year]',$this->lang->line('LABEL_YEAR'),'required|numeric');
         $this->form_validation->set_rules('fsetup[season_id]',$this->lang->line('LABEL_SEASON'),'required|numeric');
         $this->form_validation->set_rules('fsetup[upazilla_id]',$this->lang->line('LABEL_UPAZILLA_NAME'),'required|numeric');
-        $this->form_validation->set_rules('fsetup[variety_id]',$this->lang->line('LABEL_VARIETY_NAME'),'required|numeric');
         $this->form_validation->set_rules('fsetup[name]',"Farmer's Name",'required');
         $this->form_validation->set_rules('fsetup[date_sowing]',$this->lang->line('LABEL_DATE_SOWING'),'required');
         $this->form_validation->set_rules('fsetup[num_visits]',$this->lang->line('LABEL_NUM_VISITS'),'required|numeric');
@@ -516,6 +680,14 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->message=validation_errors();
             return false;
         }
+        $variety_ids=$this->input->post('variety_ids');
+
+        if(!((sizeof($variety_ids)>0)))
+        {
+            $this->message="Please Select at lease One Variety";
+            return false;
+        }
+
         $id=$this->input->post('id');
         if($id>0)
         {
@@ -551,12 +723,14 @@ class Tm_farmer_visit_setup extends Root_Controller
             $year=$fsetup['year'];
             $season_id=$fsetup['season_id'];
             $upazilla_id=$fsetup['upazilla_id'];
-            $variety_id=$fsetup['variety_id'];
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
             $this->db->where('year',$year);
             $this->db->where('season_id',$season_id);
             $this->db->where('upazilla_id',$upazilla_id);
-            $this->db->where('variety_id',$variety_id);
+            $this->db->where('upazilla_id',$upazilla_id);
+            $this->db->where('name',$fsetup['name']);
+            $this->db->where('status',$this->config->item('system_status_active'));
+
             $this->db->where('id !=',$id);
             $result=$this->db->get()->row_array();
             if($result)
@@ -567,62 +741,6 @@ class Tm_farmer_visit_setup extends Root_Controller
         }
         return true;
     }
-    public function get_items()
-    {
-        //$this->db->from($this->config->item('table_csetup_other_customers').' cus');
-        $this->db->from($this->config->item('table_tm_farmers').' tmf');
-        $this->db->select('tmf.*');
-        $this->db->select('upazilla.name upazilla_name');
-        $this->db->select('d.name district_name');
-        $this->db->select('t.name territory_name');
-        $this->db->select('zone.name zone_name');
-        $this->db->select('division.name division_name');
-        $this->db->select('crop.name crop_name');
-        $this->db->select('crop_type.name crop_type_name');
-        $this->db->select('v.name variety_name');
 
-        $this->db->select('season.name season_name');
-        $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
-
-        $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
-        if($this->locations['division_id']>0)
-        {
-            $this->db->where('division.id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('zone.id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('t.id',$this->locations['territory_id']);
-                    if($this->locations['district_id']>0)
-                    {
-                        $this->db->where('d.id',$this->locations['district_id']);
-                        if($this->locations['upazilla_id']>0)
-                        {
-                            $this->db->where('upazilla.id',$this->locations['upazilla_id']);
-                        }
-                    }
-                }
-            }
-        }
-        $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
-        $this->db->order_by('id','DESC');
-
-        $items=$this->db->get()->result_array();
-        foreach($items as &$item)
-        {
-            $item['date_sowing']=System_helper::display_date($item['date_sowing']);
-        }
-
-        $this->jsonReturn($items);
-    }
 
 }
