@@ -89,14 +89,6 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <label class="control-label"><?php echo $fsetup['variety_name'];?></label>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
                 <label class="control-label pull-right">Farmer's Name</label>
             </div>
             <div class="col-sm-4 col-xs-8">
@@ -157,86 +149,6 @@
                 for($i=1;$i<=$fsetup['num_visits'];$i++)
                 {
                     ?>
-
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right">Picture - <?php echo $i;?></label>
-                        </div>
-                        <div class="col-xs-4" id="visit_image_<?php echo $i; ?>">
-                            <?php
-                            $editable=false;
-                            $image=base_url().'images/no_image.jpg';
-                            if(isset($visits_picture[$i]['picture_url'])&&strlen($visits_picture[$i]['picture_url'])>0)
-                            {
-                                $image=$visits_picture[$i]['picture_url'];
-                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
-                                {
-                                    $editable=true;
-                                }
-                                else
-                                {
-                                    $editable=false;
-                                }
-                            }
-                            else
-                            {
-                                $editable=true;
-                            }
-                            ?>
-                            <img style="max-width: 250px;" src="<?php echo $image;?>">
-                        </div>
-                        <div class="col-xs-4">
-                            <?php
-                            if($editable)
-                            {
-                                ?>
-                                <input type="file" class="browse_button" data-preview-container="#visit_image_<?php echo $i; ?>" name="visit_image_<?php echo $i; ?>">
-                            <?php
-                            }
-                            ?>
-                        </div>
-                    </div>
-                    <div class="row show-grid">
-                        <div class="col-xs-4">
-                            <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_REMARKS');?></label>
-                        </div>
-                        <div class="col-xs-4">
-                            <?php
-                            $editable=false;
-                            $remarks='';
-                            if(isset($visits_picture[$i]['remarks'])&&strlen($visits_picture[$i]['remarks'])>0)
-                            {
-                                $remarks=$visits_picture[$i]['remarks'];
-                                if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
-                                {
-                                    $editable=true;
-                                }
-                                else
-                                {
-                                    $editable=false;
-                                }
-                            }
-                            else
-                            {
-                                $editable=true;
-                            }
-                            ?>
-                            <?php
-                            if($editable)
-                            {
-                                ?>
-                                <textarea class="form-control" name="visit_remarks[<?php echo $i; ?>]"><?php echo $remarks; ?></textarea>
-                            <?php
-                            }
-                            else
-                            {
-                                ?>
-                                <?php echo $remarks; ?>
-                            <?php
-                            }
-                            ?>
-                        </div>
-                    </div>
                     <div class="row show-grid">
                         <div class="col-xs-4">
                             <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE');?></label>
@@ -245,6 +157,105 @@
                             <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($fsetup['date_sowing']+24*3600*$i*$fsetup['interval']); ?></label>
                         </div>
                     </div>
+                    <div style="overflow-x: auto;" class="row show-grid">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
+                                <th style="min-width: 250px;">Picture - <?php echo $i;?></th>
+                                <th style="min-width: 50px;">UPLOAD</th>
+                                <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php
+                            foreach($previous_varieties as $variety)
+                            {
+                                ?>
+                                <tr>
+                                    <td><?php echo $variety['variety_name']; ?></td>
+                                    <td>
+                                        <?php
+                                        $editable=false;
+                                        $image=base_url().'images/no_image.jpg';
+                                        if(isset($visits_picture[$i][$variety['variety_id']]['picture_url'])&&strlen($visits_picture[$i][$variety['variety_id']]['picture_url'])>0)
+                                        {
+                                            $image=$visits_picture[$i][$variety['variety_id']]['picture_url'];
+                                            if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                            {
+                                                $editable=true;
+                                            }
+                                            else
+                                            {
+                                                $editable=false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $editable=true;
+                                        }
+                                        ?>
+                                        <div class="col-xs-4" id="visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                            <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                        </div>
+                                    </td>
+                                    <td><?php
+                                        if($editable)
+                                        {
+                                            ?>
+                                            <input type="file" class="browse_button" data-preview-container="#visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $editable=false;
+                                        $remarks='';
+                                        if(isset($visits_picture[$i][$variety['variety_id']]['remarks'])&&strlen($visits_picture[$i][$variety['variety_id']]['remarks'])>0)
+                                        {
+                                            $remarks=$visits_picture[$i][$variety['variety_id']]['remarks'];
+                                            if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                            {
+                                                $editable=true;
+                                            }
+                                            else
+                                            {
+                                                $editable=false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $editable=true;
+                                        }
+                                        ?>
+                                        <?php
+                                        if($editable)
+                                        {
+                                            ?>
+                                            <textarea class="form-control" name="visit_remarks[<?php echo $i; ?>][<?php echo $variety['variety_id']; ?>]"><?php echo $remarks; ?></textarea>
+                                        <?php
+                                        }
+                                        else
+                                        {
+                                            ?>
+                                            <?php echo $remarks; ?>
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
+                                </tr>
+                                <?php
+                            }
+                            ?>
+                            </tbody>
+                        </table>
+
+                    </div>
+
+
+
+
                 <?php
                 }
                 ?>
