@@ -115,20 +115,20 @@
                 autoheight: true,
                 columns: [
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'100',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'80',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'80',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100'},
-                    { text: 'Contact No', dataField: 'contact_no',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: 'Number of visit done', dataField: 'num_visit_done',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: 'Number of Fruit Picture', dataField: 'num_fruit_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: 'Number Of Disease', dataField: 'num_disease_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer}
+                    { text: 'Contact No', dataField: 'contact_no',width:'110'},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '#visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '#Fruit Picture', dataField: 'num_fruit_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
+                    { text: '#Disease', dataField: 'num_disease_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer}
                 ]
             });
     });
