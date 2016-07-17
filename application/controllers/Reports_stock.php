@@ -285,6 +285,7 @@ class Reports_stock extends Root_Controller
 
 
                     $info['variety_name']=$pack['variety_name'];
+                    $info['stock_id']=$pack['stock_id'];
                     $info['pack_size_name']=$pack['pack_size_name'];
                     $info['starting_stock']=$initial['stock_in']+$initial['excess']-$initial['sales']+$initial['sales_return']-$initial['sales_bonus']+$initial['sales_return_bonus']-$initial['short']-$initial['rnd']-$initial['sample'];
 
@@ -433,6 +434,7 @@ class Reports_stock extends Root_Controller
         $this->db->select('crop.name crop_name,crop.id crop_id');
         $this->db->select('type.name crop_type_name,type.id type_id');
         $this->db->select('v.name variety_name');
+        $this->db->select('v.stock_id stock_id');
 
         $this->db->group_by(array('variety_id','pack_size_id'));
 
@@ -481,6 +483,7 @@ class Reports_stock extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=0;
 
             $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$result['pack_size_name'];
+            $stocks[$result['variety_id']][$result['pack_size_id']]['stock_id']=$result['stock_id'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['crop_type_name']=$result['crop_type_name'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
@@ -795,6 +798,7 @@ class Reports_stock extends Root_Controller
         $row['crop_name']='';
         $row['crop_type_name']='';
         $row['variety_name']='Total Type';
+        $row['stock_id']='';
         if($report_type=='weight')
         {
 
@@ -835,6 +839,7 @@ class Reports_stock extends Root_Controller
         $row['crop_name']='';
         $row['crop_type_name']='Total Crop';
         $row['variety_name']='';
+        $row['stock_id']='';
 
         if($report_type=='weight')
         {
@@ -873,6 +878,7 @@ class Reports_stock extends Root_Controller
         $row['crop_name']='Grand Total';
         $row['crop_type_name']='';
         $row['variety_name']='';
+        $row['stock_id']='';
         $row['pack_size_name']='';
         $row['current_price']='';
 

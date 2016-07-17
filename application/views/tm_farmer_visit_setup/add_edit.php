@@ -288,23 +288,7 @@
                 <input type="text" name="fsetup[date_transplant]" class="form-control datepicker" value="<?php if($fsetup['date_transplant']>0){echo System_helper::display_date($fsetup['date_transplant']); }?>">
             </div>
         </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <select id="num_picture" name="fsetup[num_visits]" class="form-control">
-                    <?php
-                    for($i=0;$i<=30;$i++)
-                    {
-                        ?>
-                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['num_visits']){ echo "selected";}?>><?php echo $i;?></option>
-                        <?php
-                    }
-                    ?>
-                </select>
-            </div>
-        </div>
+
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_INTERVAL');?><span style="color:#FF0000">*</span></label>
@@ -316,6 +300,23 @@
                     {
                         ?>
                         <option value="<?php echo $i;?>" <?php if($i==$fsetup['interval']){ echo "selected";}?>><?php echo $i;?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_NUM_VISITS');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="num_picture" name="fsetup[num_visits]" class="form-control">
+                    <?php
+                    for($i=0;$i<=30;$i++)
+                    {
+                        ?>
+                        <option value="<?php echo $i;?>" <?php if($i==$fsetup['num_visits']){ echo "selected";}?>><?php echo $i;?></option>
                     <?php
                     }
                     ?>

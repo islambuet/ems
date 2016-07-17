@@ -653,7 +653,7 @@ class Reports_party_balance extends Root_Controller
     {
         $info=array();
         $info['areas']=$row['areas'];
-        if(($row['opening_balance_tp']+$row['sales_tp'])!=0)
+        /*if(($row['opening_balance_tp']+$row['sales_tp'])!=0)
         {
             $info['payment_percentage_tp']=number_format($row['total_payment']*100/($row['opening_balance_tp']+$row['sales_tp']),2);
         }
@@ -668,7 +668,24 @@ class Reports_party_balance extends Root_Controller
         else
         {
             $info['payment_percentage_tp']='-';
+        }*/
+        if(($row['sales_tp'])!=0)
+        {
+            $info['payment_percentage_tp']=number_format(($row['total_payment']-$row['opening_balance_tp'])*100/($row['sales_tp']),2);
         }
+        else
+        {
+            $info['payment_percentage_tp']='-';
+        }
+        if(($row['sales_net'])!=0)
+        {
+            $info['payment_percentage_net']=number_format(($row['total_payment']-$row['opening_balance_net'])*100/($row['sales_net']),2);
+        }
+        else
+        {
+            $info['payment_percentage_net']='-';
+        }
+
         if($row['opening_balance_tp']!=0)
         {
             $info['opening_balance_tp']=number_format($row['opening_balance_tp'],2);
@@ -1106,7 +1123,7 @@ class Reports_party_balance extends Root_Controller
         {
             $items[0]['balance_net']='';
         }
-        if(($opening_balance_tp+$sales_tp_total)!=0)
+        /*if(($opening_balance_tp+$sales_tp_total)!=0)
         {
             $items[0]['payment_percentage_tp']=number_format($payment_receive_total*100/($opening_balance_tp+$sales_tp_total),2);
         }
@@ -1117,6 +1134,22 @@ class Reports_party_balance extends Root_Controller
         if(($opening_balance_net+$sales_net_total)!=0)
         {
             $items[0]['payment_percentage_net']=number_format($payment_receive_total*100/($opening_balance_net+$sales_net_total),2);
+        }
+        else
+        {
+            $items[0]['payment_percentage_net']='';
+        }*/
+        if(($sales_tp_total)!=0)
+        {
+            $items[0]['payment_percentage_tp']=number_format(($payment_receive_total-$opening_balance_tp)*100/($sales_tp_total),2);
+        }
+        else
+        {
+            $items[0]['payment_percentage_tp']='-';
+        }
+        if(($sales_net_total)!=0)
+        {
+            $items[0]['payment_percentage_net']=number_format(($payment_receive_total-$opening_balance_net)*100/($sales_net_total),2);
         }
         else
         {
