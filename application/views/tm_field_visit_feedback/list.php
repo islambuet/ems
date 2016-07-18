@@ -44,19 +44,17 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="upazilla_name"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_name"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="contact_no">Contact No</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_sowing"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done">Number of visit done</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done_feedback">Number of visit feedback</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture">Number of Fruit Picture</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture_feedback">Number of Fruit Picture Feedback</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture">Number Of Disease</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture_feedback">Number Of Disease_feedback</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="feedback_require">Feedback Require</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done">visit done</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done_feedback">visit feedback</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture">Fruit Picture</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture_feedback">Fruit Picture Feedback</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture">Disease</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture_feedback">Disease feedback</label>
             </div>
         </div>
     <?php
@@ -71,7 +69,7 @@
     $(document).ready(function ()
     {
         turn_off_triggers();
-        var url = "<?php echo base_url($CI->controller_url.'/get_items');?>";
+        var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
 
         // prepare the data
         var source =
@@ -87,13 +85,11 @@
                 { name: 'territory_name', type: 'string' },
                 { name: 'district_name', type: 'string' },
                 { name: 'upazilla_name', type: 'string' },
-                { name: 'crop_name', type: 'string' },
-                { name: 'crop_type_name', type: 'string' },
-                { name: 'variety_name', type: 'string' },
                 { name: 'contact_no', type: 'string' },
                 { name: 'date_sowing', type: 'string' },
                 { name: 'num_visits', type: 'string' },
                 { name: 'interval', type: 'string' },
+                { name: 'feedback_require', type: 'string' },
                 { name: 'num_visit_done', type: 'string' },
                 { name: 'num_visit_done_feedback', type: 'string' },
                 { name: 'num_fruit_picture', type: 'string' },
@@ -110,7 +106,11 @@
             var element = $(defaultHtml);
             // console.log(defaultHtml);
 
-            if ((record.num_visit_done!=record.num_visit_done_feedback)||(record.num_fruit_picture!=record.num_fruit_picture_feedback)||(record.num_disease_picture!=record.num_disease_picture_feedback))
+            /*if ((record.num_visit_done!=record.num_visit_done_feedback)||(record.num_fruit_picture!=record.num_fruit_picture_feedback)||(record.num_disease_picture!=record.num_disease_picture_feedback))
+            {
+                element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }*/
+            if (record.feedback_require=='Yes')
             {
                 element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
@@ -118,7 +118,6 @@
             {
                 element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
-
             return element[0].outerHTML;
 
         };
@@ -146,26 +145,24 @@
                 rowsheight: 35,
                 columns: [
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true,cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'80',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'80',filtertype: 'list',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width:'100',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150',cellsrenderer: cellsrenderer},
                     { text: 'Contact No', dataField: 'contact_no',width:'150',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number of visit done', dataField: 'num_visit_done',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number of visit feedback', dataField: 'num_visit_done_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number of Fruit Picture', dataField: 'num_fruit_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number of Fruit Picture Feedback', dataField: 'num_fruit_picture_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number Of Disease', dataField: 'num_disease_picture',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
-                    { text: 'Number Of Disease Feedback', dataField: 'num_disease_picture_feedback',width:'100',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Feedback Require',datafield: 'feedback_require',width:'100', cellsalign: 'right',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: 'visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'visit feedback', dataField: 'num_visit_done_feedback',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Fruit Picture', dataField: 'num_fruit_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Fruit Picture Feedback', dataField: 'num_fruit_picture_feedback',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Disease', dataField: 'num_disease_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: 'Disease Feedback', dataField: 'num_disease_picture_feedback',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer}
                 ]
             });
     });
