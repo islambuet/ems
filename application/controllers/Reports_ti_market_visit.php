@@ -330,6 +330,9 @@ class Reports_ti_market_visit extends Root_Controller
                 }
             }
             $item['shift_name']=$result['shift_name'];
+            $item['market_situation']=$result['market_situation'];
+            $item['payment']=$result['payment'];
+            $item['target']=$result['target'];
             $item['activities']=$result['activities'];
             $image=base_url().'images/no_image.jpg';
             if(strlen($result['picture_url_activities'])>0)

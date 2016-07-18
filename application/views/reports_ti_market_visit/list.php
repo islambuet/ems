@@ -35,7 +35,10 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="location">Locations</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="shift_name"><?php echo $CI->lang->line('LABEL_SHIFT'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities">Activities</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="market_situation">Market Situation</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment">Payment</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="target">Target</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities">Special Activities</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities_picture">Activities Picture</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem">Problem</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem_picture">Problem Picture</label>
@@ -76,7 +79,13 @@
             html+='<div><b>District Name:</b> '+row_info.details['district_name']+'<div>';
             html+='<div><b>Shift:</b> '+row_info['shift_name']+'<div>';
             html+='<div><b>Customer/Title:</b> '+row_info['customer_name']+'<div>';
-            html+='<div><b>Activities:</b><div>';
+            html+='<div><b>Market Situation:</b><div>';
+            html+='<div>'+row_info['market_situation']+'<div>';
+            html+='<div><b>Payment:</b><div>';
+            html+='<div>'+row_info['payment']+'<div>';
+            html+='<div><b>Target:</b><div>';
+            html+='<div>'+row_info['target']+'<div>';
+            html+='<div><b>Special Activities:</b><div>';
             html+='<div>'+row_info['activities']+'<div>';
             html+='<div><b>Activities Picture:</b> <div>';
             html+='<div><img src="'+row_info.details['activities_picture']+'" style="max-width: 100%;"></div>';
@@ -124,6 +133,9 @@
                 { name: 'location', type: 'string' },
                 { name: 'shift_name', type: 'string' },
                 { name: 'customer_name', type: 'string' },
+                { name: 'market_situation', type: 'string' },
+                { name: 'payment', type: 'string' },
+                { name: 'target', type: 'string' },
                 { name: 'activities', type: 'string' },
                 { name: 'activities_picture', type: 'string' },
                 { name: 'problem', type: 'string' },
@@ -174,7 +186,10 @@
                     { text: 'Locations', dataField: 'location',pinned:true,width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_SHIFT'); ?>',pinned:true,width:'80', dataField: 'shift_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?>',pinned:true,width:'150', dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Activities', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Market Situation', dataField: 'market_situation',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Payment', dataField: 'payment',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Target', dataField: 'target',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Special Activities', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         if($activities_picture)
                         {
