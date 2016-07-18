@@ -263,6 +263,9 @@ class Tm_ti_market_visit extends Root_Controller
                 $data['visit']['date']=$this->input->post('date');
                 $data['visit']['title']='';
                 $data['visit']['special_district_id']='';
+                $data['visit']['market_situation']='';
+                $data['visit']['payment']='';
+                $data['visit']['target']='';
                 $data['visit']['activities']='';
                 $data['visit']['picture_url_activities']='';
                 $data['visit']['problem']='';

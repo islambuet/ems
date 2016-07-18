@@ -100,7 +100,31 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Activities</label>
+                <label class="control-label pull-right">Market Situation</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea name="visit[market_situation]" id="market_situation" class="form-control"><?php echo $visit['market_situation'] ?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea name="visit[payment]" id="payment" class="form-control"><?php echo $visit['payment'] ?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Target</label>
+            </div>
+            <div class="col-xs-4">
+                <textarea name="visit[target]" id="target" class="form-control"><?php echo $visit['target'] ?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Special Activities</label>
             </div>
             <div class="col-xs-4">
                 <textarea name="visit[activities]" id="activities" class="form-control"><?php echo $visit['activities'] ?></textarea>
