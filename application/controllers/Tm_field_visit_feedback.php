@@ -376,10 +376,6 @@ class Tm_field_visit_feedback extends Root_Controller
         $setup_id = $this->input->post("id");
         $user = User_helper::get_user();
         $time=time();
-        echo '<PRE>';
-        print_r($this->input->post());
-        echo '</PRE>';
-        die();
         if(!((isset($this->permissions['edit'])&&($this->permissions['edit']==1))||(isset($this->permissions['add'])&&($this->permissions['add']==1))))
         {
             $ajax['status']=false;
@@ -387,114 +383,64 @@ class Tm_field_visit_feedback extends Root_Controller
             $this->jsonReturn($ajax);
             die();
         }
-        $this->db->from($this->config->item('table_tm_farmers').' tmf');
-        $this->db->select('tmf.*');
-        $this->db->select('upazilla.name upazilla_name');
-        $this->db->select('d.name district_name,d.id district_id');
-        $this->db->select('t.name territory_name,t.id territory_id');
-        $this->db->select('zone.name zone_name,zone.id zone_id');
-        $this->db->select('division.name division_name,division.id division_id');
-        $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-        $this->db->where('tmf.id',$setup_id);
-        $this->db->where('tmf.status','Active');
-        $fsetup=$this->db->get()->row_array();
-        if(!$fsetup)
-        {
-
-            System_helper::invalid_try('Save non-existing',$setup_id);
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->jsonReturn($ajax);
-        }
-
-        if(!$this->check_my_editable($fsetup))
-        {
-            System_helper::invalid_try('save not my area',$setup_id);
-            $ajax['status']=false;
-            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-            $this->jsonReturn($ajax);
-        }
-
+        $visit_remarks=$this->input->post('visit_remarks');
+        $fruit_remarks=$this->input->post('fruit_remarks');
+        $diseases=$this->input->post('disease');
         $this->db->trans_start();
-        $visits_picture=array();
-        $infos=Query_helper::get_info($this->config->item('table_tm_visits_picture'),'*',array('setup_id ='.$setup_id));
-        foreach($infos as $info)
+
+        if(sizeof($visit_remarks)>0)
         {
-            $visits_picture[$info['day_no']]=$info;
-        }
-        $visit_feedback=$this->input->post('visit_feedback');
-        if(sizeof($visit_feedback)>0)
-        {
-            foreach($visit_feedback as $i=>$feedback)
+            foreach($visit_remarks as $day_no=>$variety)
             {
-                $data=array();
-                if($feedback)
+                foreach($variety as $variety_id=>$feedback)
                 {
-                    if(isset($visits_picture[$i])&& ($visits_picture[$i]['feedback']!=$feedback))
+                    if((strlen($feedback))>0)
                     {
+                        $data=array();
                         $data['feedback']=$feedback;
                         $data['user_updated'] = $user->user_id;
                         $data['date_updated'] = $time;
                         $data['user_feedback'] = $user->user_id;
                         $data['date_feedback'] = $time;
-                        Query_helper::update($this->config->item('table_tm_visits_picture'),$data,array("id = ".$visits_picture[$i]['id']));
+                        Query_helper::update($this->config->item('table_tm_visits_picture'),$data,array("setup_id = ".$setup_id,'day_no ='.$day_no,'variety_id ='.$variety_id));
                     }
                 }
+
             }
         }
-        $fruits_picture=array();
-        $infos=Query_helper::get_info($this->config->item('table_tm_visits_fruit_picture'),'*',array('setup_id ='.$setup_id));
-        foreach($infos as $info)
+        if(sizeof($fruit_remarks)>0)
         {
-            $fruits_picture[$info['picture_id']]=$info;
-        }
-        $fruit_feedback=$this->input->post('fruit_feedback');
-        if(sizeof($fruit_feedback)>0)
-        {
-            foreach($fruit_feedback as $i=>$feedback)
+            foreach($visit_remarks as $picture_id=>$variety)
             {
-                $data=array();
-                if($feedback)
+                foreach($variety as $variety_id=>$feedback)
                 {
-                    if(isset($fruits_picture[$i])&& ($fruits_picture[$i]['feedback']!=$feedback))
+                    if((strlen($feedback))>0)
                     {
+                        $data=array();
                         $data['feedback']=$feedback;
                         $data['user_updated'] = $user->user_id;
                         $data['date_updated'] = $time;
                         $data['user_feedback'] = $user->user_id;
                         $data['date_feedback'] = $time;
-                        Query_helper::update($this->config->item('table_tm_visits_fruit_picture'),$data,array("id = ".$fruits_picture[$i]['id']));
+                        Query_helper::update($this->config->item('table_tm_visits_fruit_picture'),$data,array("setup_id = ".$setup_id,'picture_id ='.$picture_id,'variety_id ='.$variety_id));
                     }
                 }
+
             }
         }
-        $disease_picture=array();
-        $infos=Query_helper::get_info($this->config->item('table_tm_visits_disease_picture'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
-        foreach($infos as $info)
+        if((sizeof($diseases))>0)
         {
-            $disease_picture[$info['id']]=$info;
-        }
-        $disease_feedback=$this->input->post('disease_feedback');
-        if(sizeof($disease_feedback)>0)
-        {
-            foreach($disease_feedback as $i=>$feedback)
+            foreach($diseases as $disease)
             {
-                $data=array();
-                if($feedback)
+                if((strlen($disease['feedback']))>0)
                 {
-                    if(isset($disease_picture[$i])&& ($disease_picture[$i]['feedback']!=$feedback))
-                    {
-                        $data['feedback']=$feedback;
-                        $data['user_updated'] = $user->user_id;
-                        $data['date_updated'] = $time;
-                        $data['user_feedback'] = $user->user_id;
-                        $data['date_feedback'] = $time;
-                        Query_helper::update($this->config->item('table_tm_visits_disease_picture'),$data,array("id = ".$disease_picture[$i]['id']));
-                    }
+                    $data=array();
+                    $data['feedback']=$disease['feedback'];
+                    $data['user_updated'] = $user->user_id;
+                    $data['date_updated'] = $time;
+                    $data['user_feedback'] = $user->user_id;
+                    $data['date_feedback'] = $time;
+                    Query_helper::update($this->config->item('table_tm_visits_disease_picture'),$data,array("id = ".$disease['id']));
                 }
             }
         }

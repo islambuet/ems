@@ -192,70 +192,73 @@
                                     <?php
                                     foreach($previous_varieties as $variety)
                                     {
-                                        ?>
-                                        <tr>
-                                            <td><?php echo $variety['variety_name']; ?></td>
-                                            <td>
-                                                <?php
-                                                $image=base_url().'images/no_image.jpg';
-                                                if(isset($visits_picture[$i][$variety['variety_id']]['picture_url'])&&strlen($visits_picture[$i][$variety['variety_id']]['picture_url'])>0)
-                                                {
-                                                    $image=$visits_picture[$i][$variety['variety_id']]['picture_url'];
-
-                                                }
-                                                ?>
-                                                <img style="max-width: 250px;" src="<?php echo $image;?>">
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $text='';
-                                                if(isset($visits_picture[$i][$variety['variety_id']]))
-                                                {
-                                                    $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
-                                                    $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
-                                                    $text.='<br><b>Remarks</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
-                                                }
-                                                echo $text;
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $editable=false;
-                                                $feedback='';
-                                                if(isset($visits_picture[$i][$variety['variety_id']]['feedback'])&&strlen($visits_picture[$i][$variety['variety_id']]['feedback'])>0)
-                                                {
-                                                    $feedback=$visits_picture[$i][$variety['variety_id']]['feedback'];
-                                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        if(isset($visits_picture[$i][$variety['variety_id']]))
+                                        {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $variety['variety_name']; ?></td>
+                                                <td>
+                                                    <?php
+                                                    $image=base_url().'images/no_image.jpg';
+                                                    if(isset($visits_picture[$i][$variety['variety_id']]['picture_url'])&&strlen($visits_picture[$i][$variety['variety_id']]['picture_url'])>0)
                                                     {
-                                                        $editable=true;
+                                                        $image=$visits_picture[$i][$variety['variety_id']]['picture_url'];
+
+                                                    }
+                                                    ?>
+                                                    <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $text='';
+                                                    if(isset($visits_picture[$i][$variety['variety_id']]))
+                                                    {
+                                                        $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
+                                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
+                                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
+                                                    }
+                                                    echo $text;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $editable=false;
+                                                    $feedback='';
+                                                    if(isset($visits_picture[$i][$variety['variety_id']]['feedback'])&&strlen($visits_picture[$i][$variety['variety_id']]['feedback'])>0)
+                                                    {
+                                                        $feedback=$visits_picture[$i][$variety['variety_id']]['feedback'];
+                                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                                        {
+                                                            $editable=true;
+                                                        }
+                                                        else
+                                                        {
+                                                            $editable=false;
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        $editable=false;
+                                                        $editable=true;
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    $editable=true;
-                                                }
-                                                ?>
-                                                <?php
-                                                if($editable)
-                                                {
                                                     ?>
-                                                    <textarea class="form-control" name="visit_remarks[<?php echo $i; ?>][<?php echo $variety['variety_id']; ?>][feedback]"><?php echo $feedback; ?></textarea>
-                                                <?php
-                                                }
-                                                else
-                                                {
+                                                    <?php
+                                                    if($editable)
+                                                    {
+                                                        ?>
+                                                        <textarea class="form-control" name="visit_remarks[<?php echo $i; ?>][<?php echo $variety['variety_id']; ?>]"><?php echo $feedback; ?></textarea>
+                                                    <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        ?>
+                                                        <?php echo $feedback; ?>
+                                                    <?php
+                                                    }
                                                     ?>
-                                                    <?php echo $feedback; ?>
-                                                <?php
-                                                }
-                                                ?>
-                                            </td>
-                                        </tr>
-                                        <?php
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
                                     }
                                     ?>
                                     </tbody>
@@ -314,69 +317,72 @@
                                     <?php
                                     foreach($previous_varieties as $variety)
                                     {
-                                        ?>
-                                        <tr>
-                                            <td><?php echo $variety['variety_name']; ?></td>
-                                            <td>
-                                                <?php
-                                                $image=base_url().'images/no_image.jpg';
-                                                if(isset($fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'])&&strlen($fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'])>0)
-                                                {
-                                                    $image=$fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'];
-                                                }
-                                                ?>
-                                                <img style="max-width: 250px;" src="<?php echo $image;?>">
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $text='';
-                                                if(isset($fruits_picture[$headers['id']][$variety['variety_id']]))
-                                                {
-                                                    $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_created']]['name'];
-                                                    $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_created']);
-                                                    $text.='<br><b>Remarks</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
-                                                }
-                                                echo $text;
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $editable=false;
-                                                $feedback='';
-                                                if(isset($fruits_picture[$headers['id']][$variety['variety_id']]['feedback'])&&strlen($fruits_picture[$headers['id']][$variety['variety_id']]['feedback'])>0)
-                                                {
-                                                    $feedback=$fruits_picture[$headers['id']][$variety['variety_id']]['feedback'];
-                                                    if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                        if(isset($fruits_picture[$headers['id']][$variety['variety_id']]))
+                                        {
+                                            ?>
+                                            <tr>
+                                                <td><?php echo $variety['variety_name']; ?></td>
+                                                <td>
+                                                    <?php
+                                                    $image=base_url().'images/no_image.jpg';
+                                                    if(isset($fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'])&&strlen($fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'])>0)
                                                     {
-                                                        $editable=true;
+                                                        $image=$fruits_picture[$headers['id']][$variety['variety_id']]['picture_url'];
+                                                    }
+                                                    ?>
+                                                    <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $text='';
+                                                    if(isset($fruits_picture[$headers['id']][$variety['variety_id']]))
+                                                    {
+                                                        $text.='<b>Entry By</b>:'.$users[$fruits_picture[$headers['id']][$variety['variety_id']]['user_created']]['name'];
+                                                        $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($fruits_picture[$headers['id']][$variety['variety_id']]['date_created']);
+                                                        $text.='<br><b>Remarks</b>:<br>'.nl2br($fruits_picture[$headers['id']][$variety['variety_id']]['remarks']);
+                                                    }
+                                                    echo $text;
+                                                    ?>
+                                                </td>
+                                                <td>
+                                                    <?php
+                                                    $editable=false;
+                                                    $feedback='';
+                                                    if(isset($fruits_picture[$headers['id']][$variety['variety_id']]['feedback'])&&strlen($fruits_picture[$headers['id']][$variety['variety_id']]['feedback'])>0)
+                                                    {
+                                                        $feedback=$fruits_picture[$headers['id']][$variety['variety_id']]['feedback'];
+                                                        if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                                        {
+                                                            $editable=true;
+                                                        }
+                                                        else
+                                                        {
+                                                            $editable=false;
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        $editable=false;
+                                                        $editable=true;
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    $editable=true;
-                                                }
-                                                ?>
-                                                <?php
-                                                if($editable)
-                                                {
                                                     ?>
-                                                    <textarea class="form-control" name="fruit_remarks[<?php echo $headers['id']; ?>][<?php echo $variety['variety_id']['feedback']; ?>]"><?php echo $feedback; ?></textarea>
-                                                <?php
-                                                }
-                                                else
-                                                {
+                                                    <?php
+                                                    if($editable)
+                                                    {
+                                                        ?>
+                                                        <textarea class="form-control" name="fruit_remarks[<?php echo $headers['id']; ?>][<?php echo $variety['variety_id']; ?>]"><?php echo $feedback; ?></textarea>
+                                                    <?php
+                                                    }
+                                                    else
+                                                    {
+                                                        ?>
+                                                        <?php echo $feedback; ?>
+                                                    <?php
+                                                    }
                                                     ?>
-                                                    <?php echo $feedback; ?>
-                                                <?php
-                                                }
-                                                ?>
-                                            </td>
-                                        </tr>
-                                    <?php
+                                                </td>
+                                            </tr>
+                                            <?php
+                                        }
                                     }
                                     ?>
                                     </tbody>
