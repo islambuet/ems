@@ -402,6 +402,16 @@ class Tm_field_visit extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
+        $this->db->from($this->config->item('table_tm_farmer_varieties').' tfv');
+        $this->db->select('tfv.*');
+        $this->db->select('v.name variety_name,v.whose');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tfv.variety_id','INNER');
+        $this->db->where('tfv.setup_id',$setup_id);
+        $this->db->where('tfv.status',$this->config->item('system_status_active'));
+        $this->db->order_by('v.whose ASC');
+        $this->db->order_by('v.ordering ASC');
+        $previous_varieties=$this->db->get()->result_array();
+
         $file_folder='images/field_visit/'.$setup_id;
         $dir=(FCPATH).$file_folder;
         if(!is_dir($dir))
@@ -427,6 +437,7 @@ class Tm_field_visit extends Root_Controller
         }
         $visit_remarks=$this->input->post('visit_remarks');
 
+
         $fruits_picture_headers=Query_helper::get_info($this->config->item('table_setup_tm_fruit_picture'),'*',array('status ="'.$this->config->item('system_status_active').'"'));
         $fruits_picture=array();
         $results=Query_helper::get_info($this->config->item('table_tm_visits_fruit_picture'),'*',array('setup_id ='.$setup_id));
@@ -439,79 +450,90 @@ class Tm_field_visit extends Root_Controller
         $this->db->trans_start();
         for($i=1;$i<=$fsetup['num_visits'];$i++)
         {
-            if(isset($visit_remarks[$i]))
+            foreach($previous_varieties as $variety)
             {
-                foreach($visit_remarks[$i] as $variety_id=>$remarks)
+                $data=array();
+                if(isset($visit_remarks[$i][$variety['variety_id']]))
                 {
-                    $data=array();
-                    if(strlen($remarks)>0)
+                    if((strlen($visit_remarks[$i][$variety['variety_id']]))>0)
                     {
-                        $data['remarks']=$remarks;
+                        $data['remarks']=$visit_remarks[$i][$variety['variety_id']];
                     }
-                    if(isset($uploaded_files['visit_image_'.$i.'_'.$variety_id]))
+                    elseif(isset($visits_picture[$i][$variety['variety_id']]))
                     {
-                        $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety_id]['info']['file_name'];
-                        $data['picture_file_full']=$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety_id]['info']['file_name'];
-                        $data['picture_file_name']=$uploaded_files['visit_image_'.$i.'_'.$variety_id]['info']['file_name'];
-                    }
-                    if($data)
-                    {
-                        if(isset($visits_picture[$i][$variety_id]))
-                        {
-                            $data['user_updated'] = $user->user_id;
-                            $data['date_updated'] = $time;
-                            Query_helper::update($this->config->item('table_tm_visits_picture'),$data,array("id = ".$visits_picture[$i][$variety_id]['id']));
-                        }
-                        else
-                        {
-                            $data['setup_id'] = $setup_id;
-                            $data['day_no'] = $i;
-                            $data['variety_id'] = $variety_id;
-                            $data['user_created'] = $user->user_id;
-                            $data['date_created'] = $time;
-                            Query_helper::add($this->config->item('table_tm_visits_picture'),$data);
-                        }
+                        $data['remarks']='';
                     }
                 }
+                if(isset($uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]))
+                {
+                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['picture_file_name']=$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                }
+                if($data)
+                {
+                    if(isset($visits_picture[$i][$variety['variety_id']]))
+                    {
+                        $data['user_updated'] = $user->user_id;
+                        $data['date_updated'] = $time;
+                        Query_helper::update($this->config->item('table_tm_visits_picture'),$data,array("id = ".$visits_picture[$i][$variety['variety_id']]['id']));
+                    }
+                    else
+                    {
+                        $data['setup_id'] = $setup_id;
+                        $data['day_no'] = $i;
+                        $data['variety_id'] = $variety['variety_id'];
+                        $data['user_created'] = $user->user_id;
+                        $data['date_created'] = $time;
+                        Query_helper::add($this->config->item('table_tm_visits_picture'),$data);
+                    }
+                }
+
             }
         }
 
         foreach($fruits_picture_headers as $header)
         {
-            if(isset($fruit_remarks[$header['id']]))
+            foreach($previous_varieties as $variety)
             {
-                foreach($fruit_remarks[$header['id']] as $variety_id=>$remarks)
+                $data=array();
+                if(isset($fruit_remarks[$header['id']][$variety['variety_id']]))
                 {
-                    $data=array();
-                    if(strlen($remarks)>0)
+                    if((strlen($fruit_remarks[$header['id']][$variety['variety_id']]))>0)
                     {
-                        $data['remarks']=$remarks;
+                        $data['remarks']=$fruit_remarks[$header['id']][$variety['variety_id']];
                     }
-                    if(isset($uploaded_files['fruit_image_'.$header['id'].'_'.$variety_id]))
+
+                    elseif(isset($fruits_picture[$header['id']][$variety['variety_id']]))
                     {
-                        $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id'].'_'.$variety_id]['info']['file_name'];
-                        $data['picture_file_full']=$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id'].'_'.$variety_id]['info']['file_name'];
-                        $data['picture_file_name']=$uploaded_files['fruit_image_'.$header['id'].'_'.$variety_id]['info']['file_name'];
-                    }
-                    if($data)
-                    {
-                        if(isset($fruits_picture[$header['id'].'_'.$variety_id]))
-                        {
-                            $data['user_updated'] = $user->user_id;
-                            $data['date_updated'] = $time;
-                            Query_helper::update($this->config->item('table_tm_visits_fruit_picture'),$data,array("id = ".$fruits_picture[$header['id'].'_'.$variety_id]['id']));
-                        }
-                        else
-                        {
-                            $data['setup_id'] = $setup_id;
-                            $data['picture_id'] = $header['id'];
-                            $data['variety_id'] = $variety_id;
-                            $data['user_created'] = $user->user_id;
-                            $data['date_created'] = $time;
-                            Query_helper::add($this->config->item('table_tm_visits_fruit_picture'),$data);
-                        }
+                        $data['remarks']='';
                     }
                 }
+                if(isset($uploaded_files['fruit_image_'.$header['id'].'_'.$variety['variety_id']]))
+                {
+                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id'].'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['fruit_image_'.$header['id'].'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['picture_file_name']=$uploaded_files['fruit_image_'.$header['id'].'_'.$variety['variety_id']]['info']['file_name'];
+                }
+                if($data)
+                {
+                    if(isset($fruits_picture[$header['id']][$variety['variety_id']]))
+                    {
+                        $data['user_updated'] = $user->user_id;
+                        $data['date_updated'] = $time;
+                        Query_helper::update($this->config->item('table_tm_visits_fruit_picture'),$data,array("id = ".$fruits_picture[$header['id']][$variety['variety_id']]['id']));
+                    }
+                    else
+                    {
+                        $data['setup_id'] = $setup_id;
+                        $data['picture_id'] = $header['id'];
+                        $data['variety_id'] = $variety['variety_id'];;
+                        $data['user_created'] = $user->user_id;
+                        $data['date_created'] = $time;
+                        Query_helper::add($this->config->item('table_tm_visits_fruit_picture'),$data);
+                    }
+                }
+
             }
         }
         $this->db->where('setup_id',$setup_id);
