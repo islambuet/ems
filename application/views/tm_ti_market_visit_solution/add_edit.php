@@ -92,7 +92,31 @@ $CI->load->view("action_buttons",$action_data);
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Activities</label>
+                <label class="control-label pull-right">Market Situation</label>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label"><?php echo $visit['market_situation'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment</label>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label"><?php echo $visit['payment'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Target</label>
+            </div>
+            <div class="col-xs-4">
+                <label class="control-label"><?php echo $visit['target'];?></label>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Special Events</label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $visit['activities'];?></label>

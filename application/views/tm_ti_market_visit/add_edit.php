@@ -124,7 +124,7 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Special Activities</label>
+                <label class="control-label pull-right">Special Events</label>
             </div>
             <div class="col-xs-4">
                 <textarea name="visit[activities]" id="activities" class="form-control"><?php echo $visit['activities'] ?></textarea>

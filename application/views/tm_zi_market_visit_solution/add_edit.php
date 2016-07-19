@@ -102,10 +102,22 @@ $CI->load->view("action_buttons",$action_data);
             </div>
             <?php
         }
+        foreach($territories as $territory)
+        {?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $territory['text'];?></label>
+                </div>
+                <div class="col-xs-4">
+                    <label class="control-label"><?php if(isset($territory_visit[$territory['value']])){echo $territory_visit[$territory['value']];}?></label>
+                </div>
+            </div>
+        <?php
+        }
         ?>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Activities</label>
+                <label class="control-label pull-right">Special Events</label>
             </div>
             <div class="col-xs-4">
                 <label class="control-label"><?php echo $visit['activities'];?></label>

@@ -38,7 +38,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="market_situation">Market Situation</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment">Payment</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="target">Target</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities">Special Activities</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities">Special Events</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities_picture">Activities Picture</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem">Problem</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem_picture">Problem Picture</label>
@@ -85,7 +85,7 @@
             html+='<div>'+row_info['payment']+'<div>';
             html+='<div><b>Target:</b><div>';
             html+='<div>'+row_info['target']+'<div>';
-            html+='<div><b>Special Activities:</b><div>';
+            html+='<div><b>Special Events:</b><div>';
             html+='<div>'+row_info['activities']+'<div>';
             html+='<div><b>Activities Picture:</b> <div>';
             html+='<div><img src="'+row_info.details['activities_picture']+'" style="max-width: 100%;"></div>';
@@ -189,7 +189,7 @@
                     { text: 'Market Situation', dataField: 'market_situation',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Payment', dataField: 'payment',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Target', dataField: 'target',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Special Activities', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Special Events', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         if($activities_picture)
                         {

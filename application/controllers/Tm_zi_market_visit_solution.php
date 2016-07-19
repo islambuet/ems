@@ -195,7 +195,21 @@ class Tm_zi_market_visit_solution extends Root_Controller
             $data['visit']['division_id']=$result['division_id'];
             $data['visit']['zone_id']=$result['zone_id'];
             $data['visit']['zone_name']=$result['zone_name'];
-
+            
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['visit']['zone_id']));
+            $data['territory_visit']=array();
+            foreach($data['territories'] as $territory)
+            {
+                $data['territory_visit'][$territory['value']]='';
+            }
+            $territory_visit=json_decode($data['visit']['territory_visit'],true);
+            if(is_array($territory_visit))
+            {
+                foreach($territory_visit as $tid=>$tv)
+                {
+                    $data['territory_visit'][$tid]=$tv['task'];
+                }
+            }
             $data['title']='Visit Solution';
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];
@@ -291,6 +305,20 @@ class Tm_zi_market_visit_solution extends Root_Controller
             $data['visit']['zone_id']=$result['zone_id'];
             $data['visit']['zone_name']=$result['zone_name'];
 
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['visit']['zone_id']));
+            $data['territory_visit']=array();
+            foreach($data['territories'] as $territory)
+            {
+                $data['territory_visit'][$territory['value']]='';
+            }
+            $territory_visit=json_decode($data['visit']['territory_visit'],true);
+            if(is_array($territory_visit))
+            {
+                foreach($territory_visit as $tid=>$tv)
+                {
+                    $data['territory_visit'][$tid]=$tv['task'];
+                }
+            }
             $data['title']='Visit Details';
             $user_ids=array();
             $user_ids[$data['visit']['user_created']]=$data['visit']['user_created'];

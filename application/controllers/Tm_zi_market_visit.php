@@ -289,6 +289,12 @@ class Tm_zi_market_visit extends Root_Controller
         $data['visit']['division_id']=$result['division_id'];
         $data['visit']['zone_id']=$result['zone_id'];
         $data['visit']['zone_name']=$result['zone_name'];
+        $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['visit']['zone_id']));
+        $data['territory_visit']=array();
+        foreach($data['territories'] as $territory)
+        {
+            $data['territory_visit'][$territory['value']]='';
+        }
         $result=Query_helper::get_info($this->config->item('table_tm_market_visit_zi'),'*',array('setup_details_id ='.$setup_details_id),1);
         if($result)
         {
@@ -306,6 +312,14 @@ class Tm_zi_market_visit extends Root_Controller
                 $data['visit']['district_id']=$result['district_id'];
             }
             $data['visit']['title']=$result['title'];
+            $territory_visit=json_decode($result['territory_visit'],true);
+            if(is_array($territory_visit))
+            {
+                foreach($territory_visit as $tid=>$tv)
+                {
+                    $data['territory_visit'][$tid]=$tv['task'];
+                }
+            }
             $data['visit']['activities']=$result['activities'];
             $data['visit']['picture_url_activities']=$result['picture_url_activities'];
             $data['visit']['problem']=$result['problem'];
@@ -331,7 +345,7 @@ class Tm_zi_market_visit extends Root_Controller
             $data['visit']['recommendation']='';
         }
 
-        $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['visit']['zone_id']));
+
         $data['districts']=array();
         if($data['visit']['territory_id']>0)
         {
@@ -420,6 +434,22 @@ class Tm_zi_market_visit extends Root_Controller
             $data['visit']['division_id']=$result['division_id'];
             $data['visit']['zone_id']=$result['zone_id'];
             $data['visit']['zone_name']=$result['zone_name'];
+
+
+            $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$data['visit']['zone_id']));
+            $data['territory_visit']=array();
+            foreach($data['territories'] as $territory)
+            {
+                $data['territory_visit'][$territory['value']]='';
+            }
+            $territory_visit=json_decode($data['visit']['territory_visit'],true);
+            if(is_array($territory_visit))
+            {
+                foreach($territory_visit as $tid=>$tv)
+                {
+                    $data['territory_visit'][$tid]=$tv['task'];
+                }
+            }
 
             //read feedback by user
             $user = User_helper::get_user();
@@ -519,6 +549,7 @@ class Tm_zi_market_visit extends Root_Controller
         else
         {
             $visit = $this->input->post("visit");
+            $visit['territory_visit']=json_encode($this->input->post('territory_visit'));
             $visit['setup_details_id']=$setup_details_id;
 
             $file_folder='images/zi_market_visit/'.$setup_info['zone_id'];

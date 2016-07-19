@@ -139,11 +139,25 @@
             </div>
             <?php
         }
+        foreach($territories as $territory)
+        {?>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right"><?php echo $territory['text'];?></label>
+                </div>
+                <div class="col-xs-4">
+                    <input type="hidden" name="territory_visit[<?php echo $territory['value'];?>][name]" value="<?php echo $territory['text'];?>">
+                    <textarea name="territory_visit[<?php echo $territory['value'];?>][task]" class="form-control"><?php if(isset($territory_visit[$territory['value']])){echo $territory_visit[$territory['value']];}?></textarea>
+                </div>
+            </div>
+        <?php
+        }
         ?>
+
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Activities</label>
+                <label class="control-label pull-right">Special Events</label>
             </div>
             <div class="col-xs-4">
                 <textarea name="visit[activities]" id="activities" class="form-control"><?php echo $visit['activities'] ?></textarea>
