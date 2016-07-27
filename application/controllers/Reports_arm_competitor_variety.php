@@ -175,7 +175,11 @@ class Reports_arm_competitor_variety extends Root_Controller
             $item['cultivation_period']='';
             if($result['date_start']!=0)
             {
-                $item['cultivation_period']=date('d-F',$result['date_start']).' to '.date('d-F',$result['date_end']);
+                $item['cultivation_period'].=''.date('d-F',$result['date_start']).' to '.date('d-F',$result['date_end']);
+            }
+            if($result['date_start2']!=0)
+            {
+                $item['cultivation_period'].='<br>'.date('d-F',$result['date_start2']).' to '.date('d-F',$result['date_end2']);
             }
             $image=base_url().'images/no_image.jpg';
             if(strlen($result['picture_url'])>0)
