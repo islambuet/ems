@@ -131,6 +131,22 @@
                 <label class="control-label" id="amount_customer"><?php echo number_format($payment['amount_customer'],2);?></label>
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment Entry Time</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo System_helper::display_date_time($payment['date_created']);?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment Entry By</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $users[$payment['user_created']]['name'];?></label>
+            </div>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right">Receive <?php echo $this->lang->line('LABEL_AMOUNT');?><span style="color:#FF0000">*</span></label>

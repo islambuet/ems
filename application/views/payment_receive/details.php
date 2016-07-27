@@ -79,6 +79,22 @@
                 <label class="control-label"><?php echo number_format($payment['amount_customer'],2);?></label>
             </div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment Entry Time</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo System_helper::display_date_time($payment['date_created']);?></label>
+            </div>
+        </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Payment Entry By</label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <label class="control-label"><?php echo $users[$payment['user_created']]['name'];?></label>
+            </div>
+        </div>
         <div class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_CHEQUE_NO');?></label>
@@ -171,6 +187,22 @@
                     }
                     ?>
                     <label class="control-label"><?php echo $text;?></label>
+                </div>
+            </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Payment Receive Time</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo System_helper::display_date_time($payment['date_receive']);?></label>
+                </div>
+            </div>
+            <div style="" class="row show-grid">
+                <div class="col-xs-4">
+                    <label class="control-label pull-right">Payment Received By</label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <label class="control-label"><?php echo $users[$payment['user_receive']]['name'];?></label>
                 </div>
             </div>
         <?php

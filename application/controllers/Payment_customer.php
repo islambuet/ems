@@ -268,7 +268,13 @@ class Payment_customer extends Root_Controller
             {
                 $data['arm_bank_accounts']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('bank_id'=>$data['payment']['arm_bank_id'],'status ="'.$this->config->item('system_status_active').'"'));
             }
-
+            $user_ids=array();
+            $user_ids[$data['payment']['user_created']]=$data['payment']['user_created'];
+            if($data['payment']['user_receive']>0)
+            {
+                $user_ids[$data['payment']['user_receive']]=$data['payment']['user_receive'];
+            }
+            $data['users']=System_helper::get_users_info($user_ids);
 
             $data['title']="Details of Payment";
             $ajax['status']=true;

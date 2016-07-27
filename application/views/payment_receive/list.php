@@ -10,9 +10,13 @@
     {
         $action_data["action_details"]=base_url($CI->controller_url."/index/details");
     }
-    if(isset($CI->permissions['delete'])&&($CI->permissions['delete']==1))
+    if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
     {
-        $action_data["action_delete"]=base_url($CI->controller_url."/index/delete");
+        $action_data["action_print"]='print';
+    }
+    if(isset($CI->permissions['download'])&&($CI->permissions['download']==1))
+    {
+        $action_data["action_csv"]='csv';
     }
     $action_data["action_refresh"]=base_url($CI->controller_url."/index/list");
     $CI->load->view("action_buttons",$action_data);

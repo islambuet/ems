@@ -18,6 +18,14 @@
     {
         $action_data["action_delete"]=base_url($CI->controller_url."/index/delete");
     }
+    if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
+    {
+        $action_data["action_print"]='print';
+    }
+    if(isset($CI->permissions['download'])&&($CI->permissions['download']==1))
+    {
+        $action_data["action_csv"]='csv';
+    }
     $action_data["action_refresh"]=base_url($CI->controller_url."/index/list");
     $CI->load->view("action_buttons",$action_data);
 ?>
