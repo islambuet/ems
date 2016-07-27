@@ -53,13 +53,24 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Cultivation Period</label>
+                <label class="control-label pull-right">Cultivation Period 1</label>
             </div>
             <div class="col-xs-2">
                 <input type="text" name="date_start" class="form-control datepicker" value="<?php if($survey['date_start']!=0){echo date('d-F',$survey['date_start']);}?>"/>
             </div>
             <div class="col-xs-2">
                 <input type="text" name="date_end" class="form-control datepicker" value="<?php if($survey['date_end']!=0){echo date('d-F',$survey['date_end']);}?>"/>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Cultivation Period 2</label>
+            </div>
+            <div class="col-xs-2">
+                <input type="text" name="date_start2" class="form-control datepicker" value="<?php if($survey['date_start2']!=0){echo date('d-F',$survey['date_start2']);}?>"/>
+            </div>
+            <div class="col-xs-2">
+                <input type="text" name="date_end2" class="form-control datepicker" value="<?php if($survey['date_end2']!=0){echo date('d-F',$survey['date_end2']);}?>"/>
             </div>
         </div>
         <div class="row show-grid">

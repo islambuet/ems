@@ -51,13 +51,25 @@ $CI->load->view("action_buttons",$action_data);
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right">Cultivation Period</label>
+                <label class="control-label pull-right">Cultivation Period 1</label>
             </div>
             <div class="col-xs-2">
                 <label class="form-control"><?php if($survey['date_start']!=0){echo date('d-F',$survey['date_start']);}?></label>
             </div>
             <div class="col-xs-2">
                 <label class="form-control"><?php if($survey['date_end']!=0){echo date('d-F',$survey['date_end']);}?></label>
+
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right">Cultivation Period 2</label>
+            </div>
+            <div class="col-xs-2">
+                <label class="form-control"><?php if($survey['date_start2']!=0){echo date('d-F',$survey['date_start2']);}?></label>
+            </div>
+            <div class="col-xs-2">
+                <label class="form-control"><?php if($survey['date_end2']!=0){echo date('d-F',$survey['date_end2']);}?></label>
 
             </div>
         </div>

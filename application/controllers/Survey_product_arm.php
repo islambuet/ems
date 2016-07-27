@@ -106,9 +106,9 @@ class Survey_product_arm extends Root_Controller
                 $data['survey']['picture_url']='';
                 $data['survey']['date_start']=time();
                 $data['survey']['date_end']=time();
+                $data['survey']['date_start2']=0;
+                $data['survey']['date_end2']=0;
             }
-            $data['date_start']=time();
-            $data['date_end']=time();
 
             $data['title']="Settings for (".$data['variety']['name'].')';
             $ajax['status']=true;
@@ -173,9 +173,9 @@ class Survey_product_arm extends Root_Controller
                 $data['survey']['picture_url']='';
                 $data['survey']['date_start']=time();
                 $data['survey']['date_end']=time();
+                $data['survey']['date_start2']=0;
+                $data['survey']['date_end2']=0;
             }
-            $data['date_start']=time();
-            $data['date_end']=time();
 
             $data['title']="Settings Detail of (".$data['variety']['name'].')';
             $ajax['status']=true;
@@ -233,6 +233,16 @@ class Survey_product_arm extends Root_Controller
             if($data['date_end']!=0)
             {
                 $data['date_end']+=24*3600-1;
+            }
+            $data['date_start2']=System_helper::get_time($this->input->post('date_start2').'-1970');
+            $data['date_end2']=System_helper::get_time($this->input->post('date_end2').'-1970');
+            if($data['date_end2']<$data['date_start2'])
+            {
+                $data['date_end2']=System_helper::get_time($this->input->post('date_end2').'-1971');
+            }
+            if($data['date_end2']!=0)
+            {
+                $data['date_end2']+=24*3600-1;
             }
 
             $file_folder='images/survey_product/'.$id;
