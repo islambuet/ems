@@ -155,6 +155,7 @@ class Sales_po_approve extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
             $this->db->where('wc.warehouse_id',$data['po']['warehouse_id']);
             $this->db->where('wc.revision',1);
+            $this->db->order_by('c.ordering');
             $data['crops']=$this->db->get()->result_array();
 
             $this->db->from($this->config->item('table_sales_po_details').' spd');
