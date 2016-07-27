@@ -543,4 +543,53 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function vtimes()
+    {
+        $this->db->from('ems_variety_time et');
+        $this->db->select('et.*');
+        $this->db->where('et.revision',1);
+        $items=$this->db->get()->result_array();
+        echo sizeof($items);
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($items as $item)
+        {
+            $data=array();
+            $data['territory_id']=$item['territory_id'];
+            $data['crop_type_id']=$item['crop_type_id'];
+            $month_start=date('n',$item['date_start']);
+            $month_end=date('n',$item['date_end']);
+            if($month_end<$month_start)
+            {
+                $month_end+=12;
+            }
+            for($i=$month_start;$i<=$month_end;$i++)
+            {
+                if($i%12)
+                {
+                    $key='month_'.($i%12);
+                }
+                else
+                {
+                    $key='month_12';
+                }
+                $data[$key]=1;
+            }
+
+            $data['revision']=$item['revision'];
+            $data['date_created']=$item['date_created'];
+            $data['user_created']=$item['user_created'];
+            $data['date_updated']=$item['date_updated'];
+            $data['user_updated']=$item['user_updated'];
+            $this->db->insert('ems_variety_time1',$data);
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }

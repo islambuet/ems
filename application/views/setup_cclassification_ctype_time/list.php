@@ -3,8 +3,8 @@ $CI = & get_instance();
 ?>
 
 <form class="form_valid" id="save_form" action="<?php echo site_url($CI->controller_url.'/index/save');?>" method="post">
-    <input type="hidden" name="crop_type_id" value="<?php echo $crop_type_id; ?>" />
-    <input type="hidden" name="territory_id" value="<?php echo $territory_id; ?>" />
+    <input type="hidden" name="type_time[crop_type_id]" value="<?php echo $type_time['crop_type_id']; ?>" />
+    <input type="hidden" name="type_time[territory_id]" value="<?php echo $type_time['territory_id']; ?>" />
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -13,20 +13,25 @@ $CI = & get_instance();
             <div class="clearfix"></div>
         </div>
 
-        <div class="row show-grid">
+        <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_START');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right">Months</label>
             </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="date_start" class="form-control datepicker" value="<?php echo date('d-M',$date_start);?>"/>
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_END');?><span style="color:#FF0000">*</span></label>
-            </div>
-            <div class="col-sm-4 col-xs-8">
-                <input type="text" name="date_end" class="form-control datepicker" value="<?php echo date('d-M',$date_end);?>"/>
+            <div class="col-xs-8">
+
+                    <?php
+                    for($i=1;$i<13;$i++)
+                    {
+
+                        ?>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="type_time[month_<?php echo $i;?>]" value="1" <?php if($type_time['month_'.$i]==1){echo 'checked';} ?>><?php echo date("M", mktime(0, 0, 0,$i,1, 2000));?></label>
+                        </div>
+
+                    <?php
+                    }
+                    ?>
+
             </div>
         </div>
     </div>

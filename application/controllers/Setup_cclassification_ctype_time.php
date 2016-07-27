@@ -91,26 +91,25 @@ class Setup_cclassification_ctype_time extends Root_Controller
 
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['crop_type_id']=$this->input->post('crop_type_id');
-            $data['territory_id']=$this->input->post('territory_id');
-
-
-
-
+            $crop_type_id=$this->input->post('crop_type_id');
+            $territory_id=$this->input->post('territory_id');
             $ajax['status']=true;
 
-            $info=Query_helper::get_info($this->config->item('table_setup_classification_variety_time'),array('date_start','date_end'),array('crop_type_id ='.$data['crop_type_id'],'territory_id ='.$data['territory_id'],'revision =1'),1);
+            $info=Query_helper::get_info($this->config->item('table_setup_classification_variety_time'),'*',array('crop_type_id ='.$crop_type_id,'territory_id ='.$territory_id,'revision =1'),1);
             if($info)
             {
                 $data['title']="Edit Season";
-                $data['date_start']=$info['date_start'];
-                $data['date_end']=$info['date_end'];
+                $data['type_time']=$info;
             }
             else
             {
                 $data['title']="Add New Season";
-                $data['date_start']=time();
-                $data['date_end']=time();
+                $data['type_time']['crop_type_id']=$crop_type_id;
+                $data['type_time']['territory_id']=$territory_id;
+                for($i=1;$i<13;$i++)
+                {
+                    $data['type_time']['month_'.$i]=0;
+                }
             }
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("setup_cclassification_ctype_time/list",$data,true));
             if($this->message)
@@ -131,6 +130,7 @@ class Setup_cclassification_ctype_time extends Root_Controller
     private function system_save()
     {
         $user = User_helper::get_user();
+        $time=time();
         if(!(isset($this->permissions['edit'])&&($this->permissions['edit']==1)))
         {
             $ajax['status']=false;
@@ -148,27 +148,7 @@ class Setup_cclassification_ctype_time extends Root_Controller
         }
         else
         {
-            $data['crop_type_id']=$this->input->post('crop_type_id');
-            $data['territory_id']=$this->input->post('territory_id');
-            $data['date_start']=System_helper::get_time($this->input->post('date_start').'-1970');
-            $data['date_end']=System_helper::get_time($this->input->post('date_end').'-1970');
-            if($data['date_end']<$data['date_start'])
-            {
-                $data['date_end']=System_helper::get_time($this->input->post('date_end').'-1971');
-            }
-            if(($data['date_start']==0))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']="Invalid Start date.";
-                $this->jsonReturn($ajax);
-            }
-            elseif(($data['date_end']==0))
-            {
-                $ajax['status']=false;
-                $ajax['system_message']="Invalid End date.";
-                $this->jsonReturn($ajax);
-            }
-            $data['date_end']+=24*3600-1;
+            $data=$this->input->post('type_time');
             $this->db->trans_start();  //DB Transaction Handle START
             $this->db->where('crop_type_id',$data['crop_type_id']);
             $this->db->where('territory_id',$data['territory_id']);
@@ -176,7 +156,7 @@ class Setup_cclassification_ctype_time extends Root_Controller
             $this->db->update($this->config->item('table_setup_classification_variety_time'));
 
             $data['user_created'] = $user->user_id;
-            $data['date_created'] = time();
+            $data['date_created'] = $time;
             $data['revision'] = 1;
             Query_helper::add($this->config->item('table_setup_classification_variety_time'),$data);
 
@@ -196,15 +176,6 @@ class Setup_cclassification_ctype_time extends Root_Controller
     }
     private function check_validation()
     {
-        $this->load->library('form_validation');
-        $this->form_validation->set_rules('date_start',$this->lang->line('LABEL_DATE_START'),'required');
-        $this->form_validation->set_rules('date_end',$this->lang->line('LABEL_DATE_END'),'required');
-
-        if($this->form_validation->run() == FALSE)
-        {
-            $this->message=validation_errors();
-            return false;
-        }
         return true;
     }
 
