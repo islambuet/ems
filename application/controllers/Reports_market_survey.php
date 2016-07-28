@@ -194,7 +194,9 @@ class Reports_market_survey extends Root_Controller
         $varieties=array();
         foreach($results as $result)
         {
-            $varieties[$result['crop_id']][$result['crop_type_id']][$result['whose']][$result['variety_id']]=$result;
+            $varieties[$result['crop_id']][$result['crop_type_id']]['crop_name']=$result['crop_name'];
+            $varieties[$result['crop_id']][$result['crop_type_id']]['crop_type_name']=$result['crop_type_name'];
+            $varieties[$result['crop_id']][$result['crop_type_id']][$result['whose']][]=$result;
         }
 
         $quantity_survey=array();
@@ -257,129 +259,91 @@ class Reports_market_survey extends Root_Controller
         {
             foreach($crops as $type_id=>$types)
             {
-                $arm_total=0;
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'ARM Variety'),0);
+                $arm_size=0;
+                $competitor_size=0;
                 if(isset($types['ARM']))
                 {
-                    $count=0;
-                    foreach($types['ARM'] as $variety)
-                    {
-                        $weight=0;
-                        if(isset($quantity_survey[$type_id][$variety['variety_id']])&&($quantity_survey[$type_id][$variety['variety_id']]['weight_final']>0))
-                        {
-                            $weight=$quantity_survey[$type_id][$variety['variety_id']]['weight_final'];
-                            $arm_total+=$weight;
-                        }
-                        $items[]=$this->get_variety_row($count,$variety,$weight);
-                        $count++;
-                    }
-
+                    $arm_size=sizeof($types['ARM']);
                 }
-                else
-                {
-                    $items[]=array('variety_name'=>'Not Found');
-                }
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'Total','variety_name'=>''),$arm_total);
-                $competitor_total=0;
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'Competitor Variety'),0);
                 if(isset($types['Competitor']))
                 {
-                    $count=0;
-                    foreach($types['Competitor'] as $variety)
-                    {
-                        $weight=0;
-                        if(isset($quantity_survey[$type_id][$variety['variety_id']])&&($quantity_survey[$type_id][$variety['variety_id']]['weight_final']>0))
-                        {
-                            $weight=$quantity_survey[$type_id][$variety['variety_id']]['weight_final'];
-                            $competitor_total+=$weight;
-                        }
-                        $items[]=$this->get_variety_row($count,$variety,$weight);
-                        $count++;
-                    }
-
+                    $competitor_size=sizeof($types['Competitor']);
                 }
-                else
-                {
-                    $items[]=array('variety_name'=>'Not Found');
-                }
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'Total','variety_name'=>''),$competitor_total);
-
+                $arm_total=0;
+                $competitor_total=0;
                 $other_total=0;
-
-                if(isset($quantity_survey[$type_id][0])&&($quantity_survey[$type_id][0]['weight_final']>0))
+                for($i=0;$i<max($arm_size,$competitor_size,1);$i++)
                 {
-                    $other_total=$quantity_survey[$type_id][0]['weight_final'];
-                }
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'Others variety'),$other_total);
+                    $item=array();
+                    $item['crop_name']='';
+                    $item['crop_type_name']='';
+                    $item['arm_variety_name']='';
+                    $item['arm_weight']='';
+                    $item['competitor_variety_name']='';
+                    $item['competitor_weight']='';
+                    $item['op_weight']='';
+                    if($i==0)
+                    {
+                        $item['crop_name']=$types['crop_name'];
+                        $item['crop_type_name']=$types['crop_type_name'];
+                        if(isset($quantity_survey[$type_id][0])&&($quantity_survey[$type_id][0]['weight_final']>0))
+                        {
+                            $other_total=$quantity_survey[$type_id][0]['weight_final'];
+                            $item['op_weight']=$other_total;
+                        }
+                    }
+                    if(isset($types['ARM'][$i]))
+                    {
+                        $item['arm_variety_name']=$types['ARM'][$i]['variety_name'];
+                        if(isset($quantity_survey[$type_id][$types['ARM'][$i]['variety_id']])&&($quantity_survey[$type_id][$types['ARM'][$i]['variety_id']]['weight_final']>0))
+                        {
+                            $item['arm_weight']=$quantity_survey[$type_id][$types['ARM'][$i]['variety_id']]['weight_final'];
+                            $arm_total+=$item['arm_weight'];
+                        }
 
+                    }
+                    if(isset($types['Competitor'][$i]))
+                    {
+                        $item['competitor_variety_name']=$types['Competitor'][$i]['variety_name'];
+                        if(isset($quantity_survey[$type_id][$types['Competitor'][$i]['variety_id']])&&($quantity_survey[$type_id][$types['Competitor'][$i]['variety_id']]['weight_final']>0))
+                        {
+                            $item['competitor_weight']=$quantity_survey[$type_id][$types['Competitor'][$i]['variety_id']]['weight_final'];
+                            $competitor_total+=$item['competitor_weight'];
+                        }
+                    }
+                    $items[]=$item;
+                }
+                //total row
+                $item=array();
+                $item['crop_name']='';
+                $item['crop_type_name']='Total';
+                $item['arm_variety_name']='';
+                $item['arm_weight']=$arm_total;
+                $item['competitor_variety_name']='';
+                $item['competitor_weight']=$competitor_total;
+                $item['op_weight']=$other_total;
+                $items[]=$item;
+                //percentage row
+                $item=array();
+                $item['crop_name']='';
+                $item['crop_type_name']='Percentage';
+                $item['arm_variety_name']='';
+                $item['arm_weight']='N/A';
+                $item['competitor_variety_name']='';
+                $item['competitor_weight']='N/A';
+                $item['op_weight']='N/A';
                 $total_market_size=$arm_total+$competitor_total+$other_total;
-                $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'Total Market Size','variety_name'=>''),$total_market_size);
                 if($total_market_size>0)
                 {
-                    $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'ARM % '),round($arm_total/$total_market_size*100,2));
-                    $items[]=$this->get_variety_row(0,array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'OP % '),round($other_total/$total_market_size*100,2));
+                    $item['arm_weight']=round($arm_total/$total_market_size*100,2);
+                    $item['competitor_weight']=round($competitor_total/$total_market_size*100,2);
+                    $item['op_weight']=round($other_total/$total_market_size*100,2);
                 }
-                else
-                {
-                    $items[]=array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'ARM % ','weight_final'=>'N/A');
-                    $items[]=array('crop_name'=>'','crop_type_name'=>'','variety_name'=>'OP % ','weight_final'=>'N/A');
-                }
+                $items[]=$item;
             }
         }
 
         $this->jsonReturn($items);
-    }
-    private function get_variety_row($first,$variety,$quantity_survey)
-    {
-        $row=array();
-        if($first==0)
-        {
-            $row['crop_name']=$variety['crop_name'];
-            $row['crop_type_name']=$variety['crop_type_name'];
-        }
-        else
-        {
-            $row['crop_name']='';
-            $row['crop_type_name']='';
-        }
-        $row['variety_name']=$variety['variety_name'];
-        if($quantity_survey==0)
-        {
-            $row['weight_final']='';
-        }
-        else
-        {
-            $row['weight_final']=$quantity_survey;
-        }
-
-        /*if(isset($quantity_survey[$variety['survey_id']][$variety['variety_id']]))
-        {
-            $row['weight_assumed']=$quantity_survey[$variety['survey_id']][$variety['variety_id']]['weight_assumed'];
-            $row['weight_final']=$quantity_survey[$variety['survey_id']][$variety['variety_id']]['weight_final'];
-        }*/
-
-        return $row;
-    }
-    private function get_arm_header_row()
-    {
-/*{ name: 'id', type: 'int' },
-{ name: 'crop_name', type: 'string' },
-{ name: 'crop_type_name', type: 'string' },
-{ name: 'variety_name', type: 'string' },
-<?php
-                    for($i=1;$i<=$max_customers_number;$i++)
-                    {?>{ name: '<?php echo 'weight_sales_'.$i;?>', type: 'string' },
-                        { name: '<?php echo 'weight_market_'.$i;?>', type: 'string' },
-                    <?php
-                    }
-                ?>
-
-{ name: 'weight_assumed', type: 'string' },
-{ name: 'weight_final', type: 'string' },
-{ name: 'unions', type: 'string' }*/
-        $row=array();
-        $row['crop_name']='ARM Variety';
-        return $row;
     }
 
 }

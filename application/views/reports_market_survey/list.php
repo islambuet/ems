@@ -31,8 +31,11 @@
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_name"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="weight_final">Market Size</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="arm_variety_name">ARM <?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="arm_weight">ARM Market Size</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="competitor_variety_name">Competitor <?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="competitor_weight">Competitor Market Size</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="op_weight">OP Market Size</label>
         </div>
     <?php
     }
@@ -58,8 +61,11 @@
                 { name: 'id', type: 'int' },
                 { name: 'crop_name', type: 'string' },
                 { name: 'crop_type_name', type: 'string' },
-                { name: 'variety_name', type: 'string' },
-                { name: 'weight_final', type: 'string' }
+                { name: 'arm_variety_name', type: 'string' },
+                { name: 'arm_weight', type: 'string' },
+                { name: 'competitor_variety_name', type: 'string' },
+                { name: 'competitor_weight', type: 'string' },
+                { name: 'op_weight', type: 'string' }
 
             ],
             id: 'id',
@@ -72,26 +78,14 @@
             var element = $(defaultHtml);
            // console.log(defaultHtml);
 
-            if (record.variety_name=="ARM Variety")
+            if (record.crop_type_name=="Total")
             {
-                element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-            }
-            else if (record.variety_name=="Competitor Variety")
-            {
-                element.css({ 'background-color': '#0CA2C5','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-
-            }
-            else if (record.crop_type_name=="Total Market Size")
-            {
-
                 element.css({ 'background-color': grand_total_color,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
 
             }
-            else if (record.crop_type_name=="Total")
+            else if (record.crop_type_name=="Percentage")
             {
-
                 element.css({ 'background-color': '#FEE3B4','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-
             }
             else
             {
@@ -119,9 +113,17 @@
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
-                    { text: 'Market Size', dataField: 'weight_final',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
-                ]
+                    { columngroup: 'arm',text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'arm_variety_name',align:'center',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { columngroup: 'arm',text: 'Market Size', dataField: 'arm_weight',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { columngroup: 'competitor',text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'competitor_variety_name',align:'center',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { columngroup: 'competitor',text: 'Market Size', dataField: 'competitor_weight',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Others variety', dataField: 'op_weight',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                ],
+                columngroups:
+                    [
+                        { text: 'ARM', align: 'center', name: 'arm' },
+                        { text: 'Competitor', align: 'center', name: 'competitor' }
+                    ]
             });
     });
 </script>
