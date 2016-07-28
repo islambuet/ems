@@ -87,7 +87,7 @@
             }*/
             if(record.color_code!='')
             {
-                if(column=='variety_name')
+                if(column!='crop_name')
                 {
                     element.css({ 'background-color': record.color_code,'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
                 }

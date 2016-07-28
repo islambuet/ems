@@ -63,7 +63,7 @@ class Reports_ctype_time extends Root_Controller
                     $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$this->locations['zone_id']));
                 }
             }
-            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array());
+            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array(),0,0,array('ordering ASC'));
             $data['ranges']=Query_helper::get_info($this->config->item('table_basic_setup_vcolors'),array('days value','name text'),array(),0,0,array('days'));
             $data['date_report']=System_helper::display_date(time());
 
@@ -140,8 +140,10 @@ class Reports_ctype_time extends Root_Controller
         //getting date ranges
         $this->db->from($this->config->item('table_setup_classification_variety_time').' vt');
         $this->db->select('vt.crop_type_id');
-        $this->db->select('MIN(vt.date_start) date_start');
-        $this->db->select('MAX(vt.date_end) date_end');
+        for($i=1;$i<13;$i++)
+        {
+            $this->db->select('SUM(month_'.$i.') month_'.$i);
+        }
 
         $this->db->where('vt.revision',1);
 
@@ -176,7 +178,7 @@ class Reports_ctype_time extends Root_Controller
         foreach($results as $result)
         {
             $info=array();
-            $info['distance']=$this->get_distance_from_date($result['date_start'],$result['date_end'],$date_report);
+            $info['distance']=$this->get_distance_from_date($result,$date_report);
             $color=$this->get_colors($info['distance'],$colors);
             $info['color_code']=$color['color_code'];
             $info['days']=$color['days'];
@@ -258,32 +260,55 @@ class Reports_ctype_time extends Root_Controller
 
         $this->jsonReturn($items);
     }
-    private function get_distance_from_date($date_start,$date_end,$date_now)
+    private function get_distance_from_date($type_months,$date_now)
     {
-        $date_70=strtotime(date('d-M',$date_now).'-1970');
-        $date_71=strtotime(date('d-M',$date_now).'-1971');
-        if(($date_70>=$date_start)&&($date_70<=$date_end))
+        $before_days=$after_days=365;
+        $from_month=date('n',$date_now);
+        $from_day=date('d',$date_now);
+        $from_year=date('Y',$date_now);
+        $from_date = new DateTime(date('d-m-Y',$date_now));
+        for($i=1;$i<13;$i++)
         {
-            return 0;
-        }
-        elseif(($date_71>=$date_start)&&($date_71<=$date_end))
-        {
-            return 0;
-        }
-        if($date_70>$date_start)
-        {
-            $date_70=strtotime(date('d-M',$date_now).'-1969');
-            $date_71=strtotime(date('d-M',$date_now).'-1970');
-        }
-        if(($date_start-$date_70)>($date_71-$date_end))
-        {
-            return ceil(($date_71-$date_end)/(24*3600));
-        }
-        else
-        {
-            return (ceil(($date_start-$date_70)/(24*3600)))*-1;
-        }
+            if($type_months['month_'.$i]>0)
+            {
+                if($i==$from_month)
+                {
+                    return 0;
+                }
+                else
+                {
+                    if($i>$from_month)
+                    {
+                        if($i==12)
+                        {
+                            $year1=new DateTime(date('d-m-Y',mktime(0,0,0,1,1,$from_year)));
+                        }
+                        else
+                        {
+                            $year1=new DateTime(date('d-m-Y',mktime(0,0,0,$i+1,1,$from_year-1)));
+                        }
+                        $year2=new DateTime(date('d-m-Y',mktime(0,0,0,$i,1,$from_year)));
+                    }
+                    else
+                    {
+                        $year1=new DateTime(date('d-m-Y',mktime(0,0,0,$i+1,1,$from_year)));
+                        $year2=new DateTime(date('d-m-Y',mktime(0,0,0,$i,1,$from_year+1)));
+                    }
+                    $after_diff=($from_date->diff($year1)->format("%a"));
+                    if($after_diff<$after_days)
+                    {
+                        $after_days=$after_diff;
+                    }
+                    $before_diff=$from_date->diff($year2)->format("%a")-1;
+                    if($before_diff<$before_days)
+                    {
+                        $before_days=$before_diff;
+                    }
 
+                }
+            }
+        }
+        return $before_days>$after_days?($after_days):-1*$before_days;
 
     }
     private function get_color_and_is_item($report_range,$item,$distances)
