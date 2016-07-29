@@ -79,7 +79,7 @@ class Reports_field_visit extends Root_Controller
                     }
                 }
             }
-            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['crops']=Query_helper::get_info($this->config->item('table_setup_classification_crops'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
             $data['seasons']=Query_helper::get_info($this->config->item('table_setup_tm_seasons'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
 
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("reports_field_visit/search",$data,true));
@@ -105,14 +105,15 @@ class Reports_field_visit extends Root_Controller
 
         $this->db->from($this->config->item('table_tm_farmers').' tmf');
         $this->db->select('v.name variety_name');
-        $this->db->select('tmf.variety_id');
+        $this->db->select('tmfv.variety_id');
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+        $this->db->join($this->config->item('table_tm_farmer_varieties').' tmfv','tmfv.setup_id =tmf.id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmfv.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
 
@@ -157,13 +158,14 @@ class Reports_field_visit extends Root_Controller
         }
         $this->db->where('v.whose','ARM');
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('tmfv.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('v.ordering','DESC');
-        $this->db->group_by('tmf.variety_id');
+        $this->db->group_by('tmfv.variety_id');
 
         $data['arm_varieties']=$this->db->get()->result_array();
         //competitor
         $this->db->from($this->config->item('table_tm_farmers').' tmf');
-        $this->db->select('tmf.variety_id');
+        $this->db->select('tmfv.variety_id');
         $this->db->select('v.name variety_name');
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
@@ -171,7 +173,8 @@ class Reports_field_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+        $this->db->join($this->config->item('table_tm_farmer_varieties').' tmfv','tmfv.setup_id =tmf.id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmfv.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
 
@@ -216,8 +219,9 @@ class Reports_field_visit extends Root_Controller
         }
         $this->db->where('v.whose','Competitor');
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('tmfv.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('v.ordering','DESC');
-        $this->db->group_by('tmf.variety_id');
+        $this->db->group_by('tmfv.variety_id');
         $data['competitor_varieties']=$this->db->get()->result_array();
         $data['report']=$filters;
         $ajax['status']=true;
@@ -256,16 +260,12 @@ class Reports_field_visit extends Root_Controller
             $data['max_diseases']=1;
 
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
-            $this->db->select('count(distinct case when vp.remarks IS NOT NULL or vp.picture_url IS NOT NULL then vp.id end) num_visit_done',true);
+            $this->db->select('Max(vp.day_no) num_visit_done');
             $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
             $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
 
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
@@ -300,9 +300,7 @@ class Reports_field_visit extends Root_Controller
 
             }
             $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
-            $this->db->where_in('tmf.variety_id',$variety_ids);
-            $this->db->group_by('tmf.id');
-            $this->db->order_by('num_visit_done DESC');
+            $this->db->where_in('vp.variety_id',$variety_ids);
             $result=$this->db->get()->row_array();
             if($result)
             {
@@ -319,10 +317,6 @@ class Reports_field_visit extends Root_Controller
             $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
             $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
             $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
-
-            $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
-            $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
 
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->join($this->config->item('table_tm_visits_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
@@ -357,8 +351,9 @@ class Reports_field_visit extends Root_Controller
 
             }
             $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
-            $this->db->where_in('tmf.variety_id',$variety_ids);
-            $this->db->group_by('tmf.id');
+
+            $this->db->where_in('vdp.variety_id',$variety_ids);
+            $this->db->group_by('vdp.variety_id');
             $this->db->order_by('num_disease_picture DESC');
             $result=$this->db->get()->row_array();
             if($result)
@@ -419,7 +414,7 @@ class Reports_field_visit extends Root_Controller
         $this->db->select('division.name division_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('crop_type.name crop_type_name');
-        $this->db->select('v.name variety_name');
+        $this->db->select('v.name variety_name,v.id variety_id');
 
         $this->db->select('season.name season_name');
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
@@ -428,7 +423,8 @@ class Reports_field_visit extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
 
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmf.variety_id','INNER');
+        $this->db->join($this->config->item('table_tm_farmer_varieties').' tmfv','tmf.id =tmfv.setup_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tmfv.variety_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
         $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
 
@@ -464,7 +460,7 @@ class Reports_field_visit extends Root_Controller
 
         }
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
-        $this->db->where_in('tmf.variety_id',$variety_ids);
+        $this->db->where_in('tmfv.variety_id',$variety_ids);
         $this->db->order_by('v.whose','ASC');
         $this->db->order_by('v.ordering','DESC');
 
@@ -472,8 +468,9 @@ class Reports_field_visit extends Root_Controller
         $setup_ids=array();
         foreach($results as $result)
         {
-            $item['id']=$result['id'];
-            $setup_ids[]=$result['id'];
+            $item['setup_id']=$result['id'];
+            $item['variety_id']=$result['variety_id'];
+            $setup_ids[$result['id']]=$result['id'];
             $item['year_season']=$result['year'].'<br>'.$result['season_name'];
             $item['crop_info']=$result['crop_name'].'<br>'.$result['crop_type_name'].'<br>'.$result['variety_name'];
             $item['location']=$result['division_name'].'<br>'.$result['zone_name'].'<br>'.$result['territory_name'].'<br>'.$result['district_name'].'<br>'.$result['upazilla_name'].'<br>'.$result['name'];
@@ -484,19 +481,18 @@ class Reports_field_visit extends Root_Controller
         $this->db->from($this->config->item('table_tm_visits_picture').' vp');
         $this->db->select('vp.*');
         $this->db->where_in('vp.setup_id',$setup_ids);
-        $this->db->order_by('vp.day_no','ASC');
+        //$this->db->order_by('vp.day_no','ASC');
         $results=$this->db->get()->result_array();
         $visit_infos=array();
         foreach($results as $result)
         {
-            $visit_infos[$result['setup_id']][$result['day_no']]=$result;
+            $visit_infos[$result['setup_id']][$result['variety_id']][$result['day_no']]=$result;
             $user_ids[$result['user_created']]=$result['user_created'];
             if($result['user_feedback'])
             {
                 $user_ids[$result['user_feedback']]=$result['user_feedback'];
             }
         }
-
         $this->db->from($this->config->item('table_tm_visits_fruit_picture').' vfp');
         $this->db->select('vfp.*');
         $this->db->where_in('vfp.setup_id',$setup_ids);
@@ -505,7 +501,7 @@ class Reports_field_visit extends Root_Controller
         $fruit_infos=array();
         foreach($results as $result)
         {
-            $fruit_infos[$result['setup_id']][$result['picture_id']]=$result;
+            $fruit_infos[$result['setup_id']][$result['variety_id']][$result['picture_id']]=$result;
             $user_ids[$result['user_created']]=$result['user_created'];
             if($result['user_feedback'])
             {
@@ -515,11 +511,12 @@ class Reports_field_visit extends Root_Controller
         $this->db->from($this->config->item('table_tm_visits_disease_picture').' vdp');
         $this->db->select('vdp.*');
         $this->db->where_in('vdp.setup_id',$setup_ids);
+        $this->db->where('vdp.status !=',$this->config->item('system_status_delete'));
         $results=$this->db->get()->result_array();
         $disease_infos=array();
         foreach($results as $result)
         {
-            $disease_infos[$result['setup_id']][]=$result;
+            $disease_infos[$result['setup_id']][$result['variety_id']][]=$result;
             $user_ids[$result['user_created']]=$result['user_created'];
             if($result['user_feedback'])
             {
@@ -529,9 +526,9 @@ class Reports_field_visit extends Root_Controller
         $users=System_helper::get_users_info($user_ids);
         foreach($items as $i=>&$item)
         {
-            if(isset($visit_infos[$item['id']]))
+            if(isset($visit_infos[$item['setup_id']][$item['variety_id']]))
             {
-                foreach($visit_infos[$item['id']] as $visit)
+                foreach($visit_infos[$item['setup_id']][$item['variety_id']] as $visit)
                 {
                     $image=base_url().'images/no_image.jpg';
                     if(strlen($visit['picture_url'])>0)
@@ -572,9 +569,9 @@ class Reports_field_visit extends Root_Controller
                     $item['details']['visit_pictures_'.$visit['day_no']]=$html_tooltip;
                 }
             }
-            if(isset($fruit_infos[$item['id']]))
+            if(isset($fruit_infos[$item['setup_id']][$item['variety_id']]))
             {
-                foreach($fruit_infos[$item['id']] as $visit)
+                foreach($fruit_infos[$item['setup_id']][$item['variety_id']] as $visit)
                 {
                     $image=base_url().'images/no_image.jpg';
                     if(strlen($visit['picture_url'])>0)
@@ -615,9 +612,9 @@ class Reports_field_visit extends Root_Controller
                     $item['details']['fruit_pictures_'.$visit['picture_id']]=$html_tooltip;
                 }
             }
-            if(isset($disease_infos[$item['id']]))
+            if(isset($disease_infos[$item['setup_id']][$item['variety_id']]))
             {
-                foreach($disease_infos[$item['id']] as $index=>$visit)
+                foreach($disease_infos[$item['setup_id']][$item['variety_id']] as $index=>$visit)
                 {
                     $image=base_url().'images/no_image.jpg';
                     if(strlen($visit['picture_url'])>0)
@@ -658,7 +655,6 @@ class Reports_field_visit extends Root_Controller
                     $item['details']['disease_pictures_'.$index]=$html_tooltip;
                 }
             }
-
         }
         $this->jsonReturn($items);
     }

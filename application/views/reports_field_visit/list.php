@@ -49,6 +49,7 @@
     {
         $(document).off("click", "#fruit_images");
         $(document).off("click", "#visit_images");
+        $(document).off("click", "#disease_images");
         $(document).on("click", "#fruit_images", function(event)
         {
             var jqxgrid_id='#system_jqx_container';
@@ -184,6 +185,15 @@
                 altrows: true,
                 rowsheight: 133,
                 columns: [
+                    {
+                        text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: '',pinned:true,width:'50', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,
+                        cellsrenderer: function(row, column, value, defaultHtml, columnSettings, record)
+                        {
+                            var element = $(defaultHtml);
+                            element.html(value+1);
+                            return element[0].outerHTML;
+                        }
+                    },
                     { text: 'Time Info', dataField: 'year_season',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: 'Crop Info', dataField: 'crop_info',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: 'Locations', dataField: 'location',width: '150',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
