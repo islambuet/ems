@@ -98,3 +98,6 @@ $config['table_tm_market_visit_di'] = 'ems_tm_market_visit_di';
 $config['table_tm_market_visit_solution_di'] = 'ems_tm_market_visit_solution_di';
 $config['table_tm_market_visit_trainer'] = 'ems_tm_market_visit_trainer';
 $config['table_tm_market_visit_solution_trainer'] = 'ems_tm_market_visit_solution_trainer';
+
+$config['table_tm_rnd_demo_setup'] = 'ems_tm_rnd_demo_setup';
+$config['table_tm_rnd_demo_varieties'] = 'ems_tm_rnd_demo_varieties';
