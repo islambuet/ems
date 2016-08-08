@@ -101,3 +101,6 @@ $config['table_tm_market_visit_solution_trainer'] = 'ems_tm_market_visit_solutio
 
 $config['table_tm_rnd_demo_setup'] = 'ems_tm_rnd_demo_setup';
 $config['table_tm_rnd_demo_varieties'] = 'ems_tm_rnd_demo_varieties';
+$config['table_tm_rnd_demo_picture'] = 'ems_tm_rnd_demo_picture';
+$config['table_tm_rnd_demo_fruit_picture'] = 'ems_tm_rnd_demo_fruit_picture';
+$config['table_tm_rnd_demo_disease_picture'] = 'ems_tm_rnd_demo_disease_picture';
