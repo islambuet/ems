@@ -682,9 +682,9 @@ class Tm_farmer_visit_setup extends Root_Controller
         }
         $variety_ids=$this->input->post('variety_ids');
 
-        if(!((sizeof($variety_ids)>0)))
+        if(!((sizeof($variety_ids)>1)))
         {
-            $this->message="Please Select at lease One Variety";
+            $this->message="Minimum 2 variety must be selected";
             return false;
         }
 
@@ -726,7 +726,6 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->from($this->config->item('table_tm_farmers').' tmf');
             $this->db->where('year',$year);
             $this->db->where('season_id',$season_id);
-            $this->db->where('upazilla_id',$upazilla_id);
             $this->db->where('upazilla_id',$upazilla_id);
             $this->db->where('name',$fsetup['name']);
             $this->db->where('status',$this->config->item('system_status_active'));
