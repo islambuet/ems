@@ -75,12 +75,21 @@ class Tm_rnd_demo_picture extends Root_Controller
         $this->db->select('count(distinct vfp.picture_id) num_fruit_picture',false);
         $this->db->select('count(distinct case when vdp.status="Active" then vdp.id end) num_disease_picture',false);
 
+        $this->db->select('crop.name crop_name');
+        $this->db->select('crop_type.name type_name');
+
+        $this->db->join($this->config->item('table_tm_rnd_demo_varieties').' tfv','tfv.setup_id =tmf.id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id =tfv.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' crop_type','crop_type.id =v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
+
         $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
         $this->db->join($this->config->item('table_tm_rnd_demo_picture').' vp','tmf.id =vp.setup_id','LEFT');
         $this->db->join($this->config->item('table_tm_rnd_demo_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
         $this->db->join($this->config->item('table_tm_rnd_demo_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
 
         $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('tfv.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('tmf.id','DESC');
         $this->db->group_by('tmf.id');
         $items=$this->db->get()->result_array();
