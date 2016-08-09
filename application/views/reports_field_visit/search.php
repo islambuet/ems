@@ -237,7 +237,9 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-
+                <div class="action_button pull-right">
+                    <button type="button" class="btn" id="but_load_crop">Load Crop</button>
+                </div>
             </div>
             <div class="col-xs-4">
                 <div class="action_button pull-right">
@@ -288,6 +290,7 @@
 
         $(document).off("change", "#select_all_arm");
         $(document).off("change", "#select_all_competitor");
+        $(document).off("change", "#select_all_upcoming");
 
         $(document).on("change","#select_all_arm",function()
         {
@@ -311,6 +314,40 @@
             {
                 $('.setup_competitor').prop('checked', false);
             }
+
+        });
+        $(document).on("change","#select_all_upcoming",function()
+        {
+            if($(this).is(':checked'))
+            {
+                $('.setup_upcoming').prop('checked', true);
+            }
+            else
+            {
+                $('.setup_upcoming').prop('checked', false);
+            }
+
+        });
+        $(document).off("click", "#but_load_crop");
+        $(document).on("click","#but_load_crop",function()
+        {
+            $.ajax({
+                url: '<?php echo site_url($CI->controller_url.'/index/load_crops');?>',
+                type: 'post',
+                dataType: "JSON",
+                data: new FormData(document.getElementById('search_form')),
+                processData: false,
+                contentType: false,
+                success: function (data, status)
+                {
+
+                },
+                error: function (xhr, desc, err)
+                {
+
+
+                }
+            });
 
         });
         $(document).on("change","#year",function()

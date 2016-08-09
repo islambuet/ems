@@ -14,7 +14,7 @@
     <input type="hidden" name="report[upazilla_id]" value="<?php echo $report['upazilla_id'] ?>">
     <div class="row widget">
         <div class="row show-grid">
-            <div class="col-xs-6">
+            <div class="col-xs-4">
                 <div class="widget-header">
                     <div class="title">
                         ARM Variety
@@ -35,7 +35,7 @@
                 }
                 ?>
             </div>
-            <div class="col-xs-6">
+            <div class="col-xs-4">
                 <div class="widget-header">
                     <div class="title">
                         Competitor Variety
@@ -51,6 +51,27 @@
                     ?>
                     <div class="checkbox">
                         <label><input type="checkbox" class="setup_competitor" name="variety_ids[]" value="<?php echo $variety['variety_id']; ?>"><?php echo $variety['variety_name']; ?></label>
+                    </div>
+                <?php
+                }
+                ?>
+            </div>
+            <div class="col-xs-4">
+                <div class="widget-header">
+                    <div class="title">
+                        Upcoming Variety
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" id="select_all_upcoming">SELECT ALL</label>
+                </div>
+                <?php
+                foreach($upcoming_varieties as $variety)
+                {
+                    ?>
+                    <div class="checkbox">
+                        <label><input type="checkbox" class="setup_upcoming" name="variety_ids[]" value="<?php echo $variety['variety_id']; ?>"><?php echo $variety['variety_name']; ?></label>
                     </div>
                 <?php
                 }
