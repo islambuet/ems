@@ -237,9 +237,20 @@
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
+
+            </div>
+            <div class="col-xs-4">
                 <div class="action_button pull-right">
                     <button type="button" class="btn" id="but_load_crop">Load Crop</button>
                 </div>
+            </div>
+            <div class="col-xs-4">
+
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+
             </div>
             <div class="col-xs-4">
                 <div class="action_button pull-right">
@@ -251,6 +262,7 @@
 
             </div>
         </div>
+
 
     </div>
     <div class="clearfix"></div>
