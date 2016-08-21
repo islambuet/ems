@@ -32,6 +32,7 @@ $config['table_setup_classification_crop_types'] = 'ems_crop_types';
 $config['table_setup_classification_varieties'] = 'ems_varieties';
 $config['table_setup_classification_vpack_size'] = 'ems_variety_pack_size';
 $config['table_setup_classification_variety_price'] = 'ems_variety_price';
+$config['table_setup_classification_variety_price_kg'] = 'ems_variety_price_kg';
 $config['table_setup_classification_variety_bonus'] = 'ems_variety_bonus';
 $config['table_setup_classification_variety_bonus_details'] = 'ems_variety_bonus_details';
 $config['table_setup_classification_variety_time'] = 'ems_variety_time';
