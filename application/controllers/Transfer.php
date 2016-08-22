@@ -592,4 +592,37 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
+    public function vprice_kg()
+    {
+        $this->db->from('ems_variety_price vp');
+        $this->db->select('distinct(vp.variety_id)');
+        $this->db->select('vp.price_net');
+        $this->db->select('p.name pack_size');
+        $this->db->join('ems_variety_pack_size p','p.id =vp.pack_size_id','INNER');
+        $this->db->where('vp.revision',1);
+        $this->db->order_by('vp.variety_id');
+        $items=$this->db->get()->result_array();
+
+        $this->db->trans_start();  //DB Transaction Handle START
+        foreach($items as $item)
+        {
+            $data=array();
+            $data['year0_id']=2;
+            $data['variety_id']=$item['variety_id'];
+            $data['price_net']=$item['price_net']*1000/$item['pack_size'];
+
+            $data['date_created']=System_helper::get_time('22-08-2016');
+            $data['user_created']=1;
+            $this->db->insert('ems_variety_price_kg',$data);
+        }
+        $this->db->trans_complete();   //DB Transaction Handle END
+        if ($this->db->trans_status() === TRUE)
+        {
+            echo 'success';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
 }

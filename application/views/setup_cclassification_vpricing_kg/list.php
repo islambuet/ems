@@ -14,6 +14,7 @@
     {
         $action_data["action_csv"]='csv';
     }
+    $action_data["action_refresh"]=base_url($CI->controller_url."/index/list/".$year0_id);
     $CI->load->view("action_buttons",$action_data);
 ?>
 

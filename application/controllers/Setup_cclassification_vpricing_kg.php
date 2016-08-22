@@ -105,6 +105,8 @@ class Setup_cclassification_vpricing_kg extends Root_Controller
         $this->db->order_by('crop.ordering ASC');
         $this->db->order_by('type.ordering ASC');
         $this->db->order_by('v.ordering ASC');
+        $this->db->where('v.whose','ARM');
+        $this->db->where('v.status !=',$this->config->item('system_status_delete'));
 
         $items=$this->db->get()->result_array();
         $this->jsonReturn($items);
