@@ -592,9 +592,9 @@ class Transfer extends CI_Controller {
             echo 'failed';
         }
     }
-    public function vprice_kg()
+    public function vprice_kg()//commented for security
     {
-        $this->db->from('ems_variety_price vp');
+        /*$this->db->from('ems_variety_price vp');
         $this->db->select('distinct(vp.variety_id)');
         $this->db->select('vp.price_net');
         $this->db->select('p.name pack_size');
@@ -623,6 +623,6 @@ class Transfer extends CI_Controller {
         else
         {
             echo 'failed';
-        }
+        }*/
     }
 }
