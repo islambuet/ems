@@ -175,6 +175,7 @@ class Reports_ctype_time extends Root_Controller
 
         $results=$this->db->get()->result_array();
         $distances=array();
+        $type_months=array();
         foreach($results as $result)
         {
             $info=array();
@@ -183,9 +184,9 @@ class Reports_ctype_time extends Root_Controller
             $info['color_code']=$color['color_code'];
             $info['days']=$color['days'];
             $distances[$result['crop_type_id']]=$info;
+
+            $type_months[$result['crop_type_id']]=$result;
         }
-
-
         $this->db->from($this->config->item('table_setup_classification_varieties').' v');
 
         $this->db->select('v.name variety_name,v.id variety_id');
@@ -251,6 +252,14 @@ class Reports_ctype_time extends Root_Controller
                     $prev_crop_type_name=$result['crop_type_name'];;
                 }
                 $count++;
+                $result['months']='';
+                if($result['crop_type_name']!='')
+                {
+                    if(isset($type_months[$result['crop_type_id']]))
+                    {
+                        $result['months']=$this->get_months($type_months[$result['crop_type_id']]);
+                    }
+                }
                 $result['color_code']=$info['color_code'];
                 $items[]=$result;
             }
@@ -259,6 +268,18 @@ class Reports_ctype_time extends Root_Controller
 
 
         $this->jsonReturn($items);
+    }
+    private function get_months($months)
+    {
+        $text=',';
+        for($i=1;$i<13;$i++)
+        {
+            if($months['month_'.$i]>0)
+            {
+                $text.=date("M", mktime(0, 0, 0,$i,1, 2000)).',';
+            }
+        }
+        return trim($text,',');
     }
     private function get_distance_from_date($type_months,$date_now)
     {

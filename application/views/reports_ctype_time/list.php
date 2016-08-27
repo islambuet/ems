@@ -60,7 +60,8 @@
                 { name: 'crop_name', type: 'string' },
                 { name: 'crop_type_name', type: 'string' },
                 { name: 'variety_name', type: 'string' },
-                { name: 'color_code', type: 'string' }
+                { name: 'color_code', type: 'string' },
+                { name: 'months', type: 'string' }
             ],
             id: 'id',
             url: url,
@@ -119,7 +120,8 @@
                 columns: [
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',align:'center',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',align:'center',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',align:'center',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',align:'center',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Months', dataField: 'months',align:'center',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]
 
             });
