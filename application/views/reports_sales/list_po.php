@@ -72,6 +72,7 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
+                { name: 'sl_no', type: 'string' },
                 { name: 'po_no', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'date_po', type: 'string' },
@@ -155,6 +156,7 @@
                 showstatusbar: true,
                 rowsheight: 35,
                 columns: [
+                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', dataField: 'sl_no',width: '50',cellsalign: 'right',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>', dataField: 'po_no',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name',width: '200',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_PO'); ?>', dataField: 'date_po',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},

@@ -885,7 +885,7 @@ class Reports_sales extends Root_Controller
         {
             $this->jsonReturn($items);
         }
-
+        $sl_no=1;
         foreach($results as $count=>$result)
         {
             $info=array();
@@ -895,6 +895,7 @@ class Reports_sales extends Root_Controller
                 {
                     $current_po_no=$result['po_no'];
                     $total_info=array();
+                    $total_info['sl_no']='';
                     $total_info['po_no']='';
                     $total_info['name']='';
                     $total_info['date_po']='';
@@ -950,6 +951,16 @@ class Reports_sales extends Root_Controller
                 $info['district_name']=$result['district_name'];
 
             }
+            if($info['po_no']>0)
+            {
+                $info['sl_no']=$sl_no;
+                $sl_no++;
+            }
+            else
+            {
+                $info['sl_no']='';
+            }
+
             $info['crop_name']=$result['crop_name'];
             $info['crop_type_name']=$result['crop_type_name'];
             $info['variety_name']=$result['variety_name'];
@@ -988,6 +999,7 @@ class Reports_sales extends Root_Controller
         }
 
         $total_info=array();
+        $total_info['sl_no']='';
         $total_info['po_no']='';
         $total_info['name']='';
         $total_info['date_po']='';
@@ -1007,6 +1019,7 @@ class Reports_sales extends Root_Controller
         $items[]=$this->get_po_row($report_type,$total_info);
 
         $total_info=array();
+        $total_info['sl_no']=($sl_no-1);
         $total_info['po_no']='';
         $total_info['name']='';
         $total_info['date_po']='';
@@ -1029,6 +1042,7 @@ class Reports_sales extends Root_Controller
     private function get_po_row($report_type,$info)
     {
         $row=array();
+        $row['sl_no']=$info['sl_no'];
         $row['po_no']=$info['po_no'];
         if($info['po_no'])
         {
