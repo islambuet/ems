@@ -102,10 +102,7 @@
 
             if (record.variety_name=="Total")
             {
-                if(column!='po_no')
-                {
                     element.css({ 'background-color': '#6CAB44','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
-                }
             }
             else if (record.crop_type_name=="Grand Total")
             {
