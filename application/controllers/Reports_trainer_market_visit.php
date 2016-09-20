@@ -211,72 +211,66 @@ class Reports_trainer_market_visit extends Root_Controller
 
         }
         $users=System_helper::get_users_info($user_ids);
-        $count=0;
         foreach($visits as $visit)
         {
-            $count++;
-            $visit['sl_no']=$count;
+
             $visit['activities_picture']='<img src="'.$visit['picture_url_activities'].'" style="max-height: 100px;max-width: 133px;">';
             $visit['problem_picture']='<img src="'.$visit['picture_url_problem'].'" style="max-height: 100px;max-width: 133px;">';
 
-            $html_row='<div class="pop_up" data-item-no="'.($count-1).'" style="height: 110px;width: 143px;cursor:pointer;">';
             if(isset($visit['solutions'])&&(sizeof($visit['solutions'])>0))
             {
-                $html_row.=$visit['solutions'][sizeof($visit['solutions'])-1]['solution'];
+                $visit['solution']=$visit['solutions'][sizeof($visit['solutions'])-1]['solution'];
             }
             else
             {
-                $html_row.='No Solution given yet';
+                $visit['solution']='No Solution given yet';
             }
-            $html_row.='</div>';
-            $visit['solution']=$html_row;
-            $html_tooltip='';
-            $html_tooltip.='<div>';
+            $details=array();
+            //$html_tooltip='';
+            //$html_tooltip.='<div>';
             $visit_setup_info=$this->get_visit_setup($visit['date'],$visit_setups);
             if($visit_setup_info)
             {
-                $html_tooltip.='<div>'.$this->lang->line('LABEL_TITLE').': '.$visit_setup_info['title'].'</div>';
-                $html_tooltip.='<div>Visit Purpose: '.$visit_setup_info['visit_purpose'].'</div>';
-                $html_tooltip.='<div>'.$this->lang->line('LABEL_DESCRIPTION').': '.$visit_setup_info['description'].'</div>';
-                $html_tooltip.='<div>'.$this->lang->line('LABEL_DATE_START').': '.System_helper::display_date($visit_setup_info['date_start']).'</div>';
-                $html_tooltip.='<div>'.$this->lang->line('LABEL_DATE_END').': '.System_helper::display_date($visit_setup_info['date_end']).'</div>';
+                $details['has_setup']=true;
+                $details['title']=$visit_setup_info['title'];
+                $details['visit_purpose']=$visit_setup_info['visit_purpose'];
+                $details['description']=$visit_setup_info['description'];
+                $details['date_start']=System_helper::display_date($visit_setup_info['date_start']);
+                $details['date_end']=System_helper::display_date($visit_setup_info['date_end']);
             }
             else
             {
-                $html_tooltip.='<div><b>No Visit Setup Found.</b></div>';
-
+                $details['has_setup']=false;
+                $details['title']='';
+                $details['visit_purpose']='';
+                $details['description']='';
+                $details['date_start']='';
+                $details['date_end']='';
             }
-
-            $html_tooltip.='<div>Visit '.$this->lang->line('LABEL_DATE').': '.System_helper::display_date($visit['date']).'</div>';
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_DAY').': '.date('l',$visit['date']).'</div>';
-
-            $html_tooltip.='<div>'.$this->lang->line('LABEL_CUSTOMER_NAME').': '.$visit['customer_name'].'</div>';
-            $html_tooltip.='<div>Activities: <b>'.$visit['activities'].'</b></div>';
-            $html_tooltip.='<div>Activities Picture :</div>';
-            $html_tooltip.='<div><img src="'.$visit['picture_url_activities'].'" style="max-width: 100%;"></div>';
-            $html_tooltip.='<div>Problem: <b>'.$visit['problem'].'</b></div>';
-            $html_tooltip.='<div>Problem Picture :</div>';
-            $html_tooltip.='<div><img src="'.$visit['picture_url_problem'].'" style="max-width: 100%;"></div>';
-            $html_tooltip.='<div>Recommendation: <b>'.$visit['recommendation'].'</b></div>';
-            $html_tooltip.='<div>Recommendation By: '.$users[$visit['user_created']]['name'].'</div>';
-            $html_tooltip.='<div>Recommendation Time: '.System_helper::display_date_time($visit['date_created']).'</div>';
+            $details['date']=System_helper::display_date($visit['date']);
+            $details['day']=date('l',$visit['date']);
+            $details['customer_name']=$visit['customer_name'];
+            $details['activities']=$visit['activities'];
+            $details['activities_picture']=$visit['picture_url_activities'];
+            $details['problem']=$visit['problem'];
+            $details['problem_picture']=$visit['picture_url_problem'];
+            $details['recommendation']=$visit['recommendation'];
+            $details['user_created']=$users[$visit['user_created']]['name'];
+            $details['time_created']=System_helper::display_date_time($visit['date_created']);
+            $details['solutions']=array();
 
             if(isset($visit['solutions'])&&(sizeof($visit['solutions'])>0))
             {
-                $html_tooltip.='<div>Solutions: </div>';
+
                 foreach($visit['solutions'] as $solution)
                 {
-                    $html_tooltip.='<div>'.$users[$solution['user_solution']]['name'].' at '.System_helper::display_date_time($solution['date_solution']).'</div>';
-                    $html_tooltip.='<div><b>'.$solution['solution'].'</b></div>';
-                }
+                    $info=array();
+                    $info['created_user']=$users[$solution['user_solution']]['name'];
+                    $info['created_time']=System_helper::display_date_time($solution['date_solution']);
+                    $info['solution']=$solution['solution'];
+                    $details['solutions'][]=$info;                }
             }
-            else
-            {
-                $html_tooltip.='<div>Problem: <b>No Solution given yet</b></div>';
-            }
-
-            $html_tooltip.='</div>';
-            $visit['details']=$html_tooltip;
+            $visit['details']=$details;
             $items[]=$visit;
         }
         $this->jsonReturn($items);

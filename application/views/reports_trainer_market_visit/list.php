@@ -40,6 +40,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem_picture">Problem Picture</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="recommendation">Recommendation</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="solution">Solution</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="details_button">Details</label>
             </div>
         </div>
     <?php
@@ -53,6 +54,66 @@
 <script type="text/javascript">
     $(document).ready(function ()
     {
+        $(document).off("click", ".pop_up");
+        $(document).on("click", ".pop_up", function(event)
+        {
+
+            var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
+            var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
+
+            //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
+            $("#popup_window").jqxWindow({position: { x: left, y: top  }});
+            var row=$(this).attr('data-item-no');
+            var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
+            var html='';
+            html+='<div style="line-height: 1.8;">';
+            if(row_info.details['has_setup'])
+            {
+                html+='<div><b>Title:</b> '+row_info.details['title']+'<div>';
+                html+='<div><b>Visit Purpose:</b> '+row_info.details['visit_purpose']+'<div>';
+                html+='<div><b>Description:</b> '+row_info.details['description']+'<div>';
+                html+='<div><b>Starting Date:</b> '+row_info.details['date_start']+'<div>';
+                html+='<div><b>End Date:</b> '+row_info.details['date_end']+'<div>';
+            }
+            else
+            {
+                html+='<div><b>No Visit Setup Found.</b><div>';
+            }
+            html+='<div><b>Visit Date:</b> '+row_info.details['date']+'<div>';
+            html+='<div><b>Day:</b> '+row_info.details['day']+'<div>';
+            html+='<div><b>Customer:</b> '+row_info.details['customer_name']+'<div>';
+            html+='<div><b>Activities:</b><div>';
+            html+='<div>'+row_info['activities']+'<div>';
+            html+='<div><b>Activities Picture:</b> <div>';
+            html+='<div><img src="'+row_info.details['activities_picture']+'" style="max-width: 100%;"></div>';
+            html+='<div><b>Problem:</b><div>';
+            html+='<div>'+row_info['problem']+'<div>';
+            html+='<div><b>Problem Picture:</b> <div>';
+            html+='<div><img src="'+row_info.details['problem_picture']+'" style="max-width: 100%;"></div>';
+            html+='<div><b>Recommendation :</b><div>';
+            html+='<div>'+row_info['recommendation']+'<div>';
+            html+='<div><b>Recommendation By:</b> '+row_info.details['user_created']+'<div>';
+            html+='<div><b>Recommendation Time:</b> '+row_info.details['time_created']+'<div>';
+            html+='<div><b>Solutions:</b><div>';
+            if(row_info.details['solutions'].length>0)
+            {
+                $.each( row_info.details['solutions'], function( key, solution )
+                {
+                    html+='<div><b>'+solution['created_user']+' at '+solution['created_time']+':</b> '+solution['solution']+'<div>';
+
+                });
+
+            }
+            else
+            {
+                html+='<div>No Solution Given Yet<div>';
+            }
+            html+='</div>';
+            $('#popup_content').html(html);
+            $("#popup_window").jqxWindow('open');
+
+
+        });
         //var grand_total_color='#AEC2DD';
         var grand_total_color='#AEC2DD';
 
@@ -64,10 +125,8 @@
             dataType: "json",
             dataFields: [
                 { name: 'id', type: 'int' },
-                { name: 'sl_no', type: 'int' },
                 { name: 'date_visit', type: 'string' },
                 { name: 'location', type: 'string' },
-
                 { name: 'customer_name', type: 'string' },
                 { name: 'activities', type: 'string' },
                 { name: 'activities_picture', type: 'string' },
@@ -86,6 +145,15 @@
         {
             var element = $(defaultHtml);
             element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','whiteSpace':'normal'});
+            if(column=='sl')
+            {
+                element.html(value+1);
+
+            }
+            else if(column=='details_button')
+            {
+                element.html('<div><button class="btn btn-primary pop_up" data-item-no="'+row+'">Details</button></div>');
+            }
             return element[0].outerHTML;
 
         };
@@ -105,7 +173,7 @@
                 enabletooltips: true,
                 rowsheight: 110,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>', dataField: 'sl_no',pinned:true,width:'40',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SL_NO'); ?>',datafield: 'sl',pinned:true,width:'40', columntype: 'number',cellsalign: 'right',sortable:false,filterable:false,cellsrenderer: cellsrenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE'); ?>', dataField: 'date_visit',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Locations', dataField: 'location',pinned:true,width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>',pinned:true, dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
@@ -114,7 +182,8 @@
                     { text: 'Problem', dataField: 'problem',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Problem Picture', dataField: 'problem_picture',width:'143',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,enabletooltips:false},
                     { text: 'Recommendation', dataField: 'recommendation',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Solution', dataField: 'solution',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,enabletooltips:false}
+                    { text: 'Solution', dataField: 'solution',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Details', dataField: 'details_button',width: '100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer}
                 ]
 
             });

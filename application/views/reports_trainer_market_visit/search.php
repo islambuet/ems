@@ -71,25 +71,6 @@
     jQuery(document).ready(function()
     {
         turn_off_triggers();
-        $(document).off("click", ".pop_up");
-
-
-        $(document).on("click", ".pop_up", function(event)
-        {
-
-            var left=((($(window).width() - 550) / 2) +$(window).scrollLeft());
-            var top=((($(window).height() - 550) / 2) +$(window).scrollTop());
-
-            //$("#popup_window").jqxWindow({width: 630,height:550,position: { x: 60, y: 60  }});to change position always
-            $("#popup_window").jqxWindow({position: { x: left, y: top  }});
-            var row=$(this).attr('data-item-no');
-            var row_info = $("#system_jqx_container").jqxGrid('getrowdata', row);
-            $('#popup_content').html(row_info.details);
-            $("#popup_window").jqxWindow('open');
-
-
-        });
-
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-1:c+1"});
         $(document).on("change","#fiscal_year_id",function()
         {
