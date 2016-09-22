@@ -827,6 +827,7 @@ class Sales_po_approve extends Root_Controller
         $this->db->select('SUM(pod.quantity) quantity_total');
         $this->db->select('SUM(pod.quantity*pod.pack_size) quantity_weight');
         $this->db->select('SUM(pod.quantity*pod.variety_price) price_total');
+        $this->db->select('pod.remarks po_remarks');
 
 
         //$this->db->from($this->config->item('table_sales_po').' po');

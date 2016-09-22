@@ -52,6 +52,7 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_approved"><?php echo $CI->lang->line('LABEL_APPROVAL'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_delivered"><?php echo $CI->lang->line('LABEL_DELIVERY'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_received"><?php echo $CI->lang->line('LABEL_RECEIVED'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="po_remarks">PO Remarks</label>
         </div>
         <?php
     }
@@ -86,7 +87,8 @@
                 { name: 'price_total', type: 'string' },
                 { name: 'status_approved', type: 'string' },
                 { name: 'status_delivered', type: 'string' },
-                { name: 'status_received', type: 'string' }
+                { name: 'status_received', type: 'string' },
+                { name: 'po_remarks', type: 'string' }
 
             ],
             id: 'id',
@@ -104,7 +106,7 @@
                 sortable: true,
                 showfilterrow: true,
                 columnsresize: true,
-                pagesize:50,
+                pagesize:20,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
                 selectionmode: 'checkbox',
                 altrows: true,
@@ -134,7 +136,8 @@
                     { text: '<?php echo $CI->lang->line('LABEL_TOTAL_PRICE'); ?>', dataField: 'price_total',width:'100',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_APPROVAL'); ?>', dataField: 'status_approved',width:'80',cellsalign: 'right',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DELIVERY'); ?>', dataField: 'status_delivered',width:'80',cellsalign: 'right',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_RECEIVED'); ?>', dataField: 'status_received',width:'80',cellsalign: 'right',filtertype: 'list'}
+                    { text: '<?php echo $CI->lang->line('LABEL_RECEIVED'); ?>', dataField: 'status_received',width:'80',cellsalign: 'right',filtertype: 'list'},
+                    { text: 'PO Remarks', dataField: 'po_remarks',width:'200'}
 
                 ]
             });
