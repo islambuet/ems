@@ -196,7 +196,7 @@ class Reports_trainer_market_visit extends Root_Controller
             {
                 $visits[$result['id']]['picture_url_activities']=$result['picture_url_activities'];
             }
-            $visits[$result['id']]['problem']=$result['activities'];
+            $visits[$result['id']]['problem']=$result['problem'];
             $visits[$result['id']]['picture_url_problem']=base_url().'images/no_image.jpg';
             if($result['picture_url_problem'])
             {
