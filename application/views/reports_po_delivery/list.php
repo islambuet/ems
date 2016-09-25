@@ -144,7 +144,7 @@
                     { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'80',cellsrenderer: cellsrenderer,cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME_COURIER'); ?>',dataField: 'courier_name',width:'150',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_BOOKING'); ?>',dataField: 'date_booking',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO'); ?>',dataField: 'track_no',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO'); ?>',dataField: 'track_no',width:'150',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>',dataField: 'remarks',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer}
 
                 ]
