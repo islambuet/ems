@@ -34,7 +34,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="division_name"><?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="zone_name"><?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="territory_name"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="district_name"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_no">Payment ID</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_date">Payment Date</label>
@@ -145,7 +145,7 @@
                     { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>',pinned:true, dataField: 'division_name',width:'100',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>',pinned:true, dataField: 'zone_name',width:'100',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>',pinned:true, dataField: 'territory_name',width:'100',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>',pinned:true, dataField: 'district_name',width:'100',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>',hidden:true,pinned:true, dataField: 'district_name',width:'100',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>',pinned:true, dataField: 'customer_name',width:'150',rendered:tooltiprenderer},
                     { text: 'Payment ID',dataField: 'payment_no',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_PAYMENT'); ?>',dataField: 'payment_date',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
