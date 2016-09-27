@@ -38,12 +38,12 @@
                 <?php
                 foreach($arm_banks as $arm_bank)
                 {?>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="<?php echo 'payment_'.$arm_bank['value']; ?>"><?php echo $arm_bank['text']; ?></label>
+                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="<?php echo 'payment_'.$arm_bank['value']; ?>"><?php echo $arm_bank['text']; ?></label>
                 <?php
                 }
                 ?>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="total_payment">Total Payment</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_tp">Adjust TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="adjust_tp">Adjust TP</label>
 
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_tp">Balance TP</label>
 
@@ -56,7 +56,7 @@
                 ?>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_net"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> NET</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_net">Sales NET</label>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_net">Adjust NET</label>
+                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="adjust_net">Adjust NET</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_net">Balance Net</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_net">Payment % Net</label>
                 <?php
@@ -172,18 +172,18 @@
 
             <?php
                 foreach($arm_banks as $arm_bank)
-                {?>{ columngroup: 'arm_bank_account',text: '<?php echo $arm_bank['text'];?>', dataField: '<?php echo 'payment_'.$arm_bank['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                {?>{ columngroup: 'arm_bank_account',text: '<?php echo $arm_bank['text'];?>',hidden:true, dataField: '<?php echo 'payment_'.$arm_bank['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                             <?php
                         }
 
                     ?>
                     { text: 'Total Payment', dataField: 'total_payment',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
-                    { columngroup: 'adjustment',text: 'TP', dataField: 'adjust_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                    { columngroup: 'adjustment',text: 'TP',hidden:true, dataField: 'adjust_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
                     <?php
                         if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
                         {
                             ?>
-                            { columngroup: 'adjustment',text: 'NET', dataField: 'adjust_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
+                            { columngroup: 'adjustment',text: 'NET',hidden:true, dataField: 'adjust_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'150'},
                             <?php
                         }
                     ?>

@@ -37,8 +37,8 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="market_situation">Market Situation</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment">Payment</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="target">Target</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities">Special Events</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="target">Target</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="activities">Special Events</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="activities_picture">Activities Picture</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem">Problem</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="problem_picture">Problem Picture</label>
@@ -188,8 +188,8 @@
                     { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME').'/'.$CI->lang->line('LABEL_TITLE'); ?>',pinned:true,width:'150', dataField: 'customer_name',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Market Situation', dataField: 'market_situation',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     { text: 'Payment', dataField: 'payment',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Target', dataField: 'target',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
-                    { text: 'Special Events', dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Target',hidden:true, dataField: 'target',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Special Events',hidden:true, dataField: 'activities',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                     <?php
                         if($activities_picture)
                         {

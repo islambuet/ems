@@ -46,11 +46,11 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="receive_bank">Receive Amount</label>
 
 
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_date">Adjust Date</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_tp">Adjust TP</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_return">Sale Return Date</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_po_no">Return Po NO</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_tp">Sales Return</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="adjust_date">Adjust Date</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="adjust_tp">Adjust TP</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="date_return">Sale Return Date</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="return_po_no">Return Po NO</label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="return_tp">Sales Return</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_tp">Balance TP</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_tp">Payment % Tp</label>
                 <?php
@@ -60,8 +60,8 @@
                 ?>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="opening_balance_net"><?php echo $CI->lang->line('LABEL_OPENING_BALANCE'); ?> NET</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sales_net">Sales NET</label>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="adjust_net">Adjust NET</label>
-                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="return_net">Sales Return Net</label>
+                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="adjust_net">Adjust NET</label>
+                    <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="return_net">Sales Return Net</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="balance_net">Balance Net</label>
                     <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payment_percentage_net">Payment % Net</label>
                 <?php
@@ -208,24 +208,24 @@
                     { columngroup: 'payment',text: 'Receive <?php echo $CI->lang->line('LABEL_DATE'); ?>',dataField: 'receive_date',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     { columngroup: 'payment',text: 'Receive <?php echo $CI->lang->line('LABEL_AMOUNT'); ?>',dataField: 'receive_amount',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { columngroup: 'payment',text: 'Receive Bank',dataField: 'receive_bank',width:'200',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
-                    { columngroup: 'adjustment',text: 'Adjust Date', dataField: 'adjust_date',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',width:'100'},
-                    { columngroup: 'adjustment',text: 'Amount', dataField: 'adjust_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { columngroup: 'adjustment',text: 'Adjust Date',hidden:true, dataField: 'adjust_date',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',width:'100'},
+                    { columngroup: 'adjustment',text: 'Amount',hidden:true, dataField: 'adjust_tp',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php
                         if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
                         {
                             ?>
-                            { columngroup: 'adjustment',text: 'NET Amount', dataField: 'adjust_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            { columngroup: 'adjustment',text: 'NET Amount',hidden:true, dataField: 'adjust_net',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsalign: 'right',width:'100',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                             <?php
                         }
                     ?>
-                    { columngroup: 'sales_return',text: 'Return Date',dataField: 'date_return',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
-                    { columngroup: 'sales_return',text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>',dataField: 'return_po_no',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
-                    { columngroup: 'sales_return',text: 'Amount',dataField: 'return_tp',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { columngroup: 'sales_return',text: 'Return Date',hidden:true,dataField: 'date_return',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
+                    { columngroup: 'sales_return',text: '<?php echo $CI->lang->line('LABEL_PO_NO'); ?>',hidden:true,dataField: 'return_po_no',width:'80',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center'},
+                    { columngroup: 'sales_return',text: 'Amount',dataField: 'return_tp',hidden:true,width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php
                         if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
                         {
                             ?>
-                            { columngroup: 'sales_return',text: 'NET Amount',dataField: 'return_net',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            { columngroup: 'sales_return',text: 'NET Amount',hidden:true,dataField: 'return_net',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right',aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                             <?php
                         }
                     ?>
