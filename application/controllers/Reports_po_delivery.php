@@ -176,7 +176,7 @@ class Reports_po_delivery extends Root_Controller
 
         $this->db->select('courier.name courier_name');
 
-        $this->db->select('delivery.date_delivery date_delivery,delivery.date_booking,delivery.track_no,delivery.remarks');
+        $this->db->select('delivery.date_delivery date_delivery,delivery.date_booking,delivery.track_no,delivery.remarks,delivery.invoice_no');
 
         $this->db->join($this->config->item('table_sales_po').' po','po.id = pod.sales_po_id','INNER');
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = po.customer_id','INNER');
@@ -303,6 +303,7 @@ class Reports_po_delivery extends Root_Controller
             $item['courier_name']=$result['courier_name'];
             $item['date_booking']=System_helper::display_date($result['date_booking']);
             $item['track_no']=$result['track_no'];
+            $item['invoice_no']=$result['invoice_no'];
             $item['remarks']=$result['remarks'];
             $items[]=$item;
         }

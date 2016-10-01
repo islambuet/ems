@@ -42,6 +42,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_delivery">Delivered Date</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_total"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_weight"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="invoice_no"><?php echo $CI->lang->line('LABEL_INVOICE_NO'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="courier_name"><?php echo $CI->lang->line('LABEL_NAME_COURIER'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_booking"><?php echo $CI->lang->line('LABEL_DATE_BOOKING'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="track_no"><?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO'); ?></label>
@@ -81,6 +82,7 @@
                 { name: 'date_delivery', type: 'string' },
                 { name: 'quantity_total', type: 'string' },
                 { name: 'quantity_weight', type: 'string' },
+                { name: 'invoice_no', type: 'string' },
                 { name: 'courier_name', type: 'string' },
                 { name: 'date_booking', type: 'string' },
                 { name: 'track_no', type: 'string' },
@@ -142,6 +144,7 @@
                     { text: 'Delivered Date',dataField: 'date_delivery',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,align:'center',cellsAlign:'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?>', dataField: 'quantity_total',width:'60',cellsrenderer: cellsrenderer,cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'80',cellsrenderer: cellsrenderer,cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_INVOICE_NO'); ?>',dataField: 'invoice_no',width:'150',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME_COURIER'); ?>',dataField: 'courier_name',width:'150',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_BOOKING'); ?>',dataField: 'date_booking',width:'100',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_COURIER_TRACK_NO'); ?>',dataField: 'track_no',width:'150',cellsrenderer: cellsrenderer,rendered:tooltiprenderer},
