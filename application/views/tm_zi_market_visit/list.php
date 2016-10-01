@@ -80,7 +80,7 @@
             var element = $(defaultHtml);
             // console.log(defaultHtml);
 
-            if (record.num_unread>0)
+            if ((record.num_unread>0)&& (column!="date"))
             {
                 element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
             }
@@ -108,7 +108,7 @@
                 columnsresize: true,
                 pagesize:50,
                 pagesizeoptions: ['20', '50', '100', '200','300','500'],
-                selectionmode: 'checkbox',
+                selectionmode: 'singlerow',
                 altrows: true,
                 autoheight: true,
                 rowsheight: 35,
