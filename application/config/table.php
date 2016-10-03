@@ -105,3 +105,6 @@ $config['table_tm_rnd_demo_varieties'] = 'ems_tm_rnd_demo_varieties';
 $config['table_tm_rnd_demo_picture'] = 'ems_tm_rnd_demo_picture';
 $config['table_tm_rnd_demo_fruit_picture'] = 'ems_tm_rnd_demo_fruit_picture';
 $config['table_tm_rnd_demo_disease_picture'] = 'ems_tm_rnd_demo_disease_picture';
+
+$config['table_tm_ict_monitoring_ti'] = 'ems_tm_ict_monitoring_ti';
+$config['table_tm_ict_monitoring_zi'] = 'ems_tm_ict_monitoring_zi';
