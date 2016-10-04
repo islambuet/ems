@@ -424,7 +424,8 @@ class Reports_party_balance extends Root_Controller
         if($date_start>0)
         {
             $this->db->from($this->config->item('table_payment_payment').' p');
-            $this->db->select('p.amount,p.date_payment_receive,p.customer_id');
+            $this->db->select('SUM(p.amount) amount');
+            $this->db->select('p.date_payment_receive,p.customer_id');
             $this->db->select('d.id district_id');
             $this->db->select('t.id territory_id');
             $this->db->select('zone.id zone_id');
@@ -653,22 +654,6 @@ class Reports_party_balance extends Root_Controller
     {
         $info=array();
         $info['areas']=$row['areas'];
-        /*if(($row['opening_balance_tp']+$row['sales_tp'])!=0)
-        {
-            $info['payment_percentage_tp']=number_format($row['total_payment']*100/($row['opening_balance_tp']+$row['sales_tp']),2);
-        }
-        else
-        {
-            $info['payment_percentage_tp']='-';
-        }
-        if(($row['opening_balance_net']+$row['sales_net'])!=0)
-        {
-            $info['payment_percentage_net']=number_format($row['total_payment']*100/($row['opening_balance_net']+$row['sales_net']),2);
-        }
-        else
-        {
-            $info['payment_percentage_tp']='-';
-        }*/
         if(($row['sales_tp'])!=0)
         {
             $info['payment_percentage_tp']=number_format(($row['total_payment']-$row['opening_balance_tp'])*100/($row['sales_tp']),2);
