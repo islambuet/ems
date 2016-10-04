@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Reports_ict_monitoring_ti extends Root_Controller
+class Reports_ict_monitoring_zi extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -10,7 +10,7 @@ class Reports_ict_monitoring_ti extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Reports_ict_monitoring_ti');
+        $this->permissions=User_helper::get_permission('Reports_ict_monitoring_zi');
         $this->locations=User_helper::get_locations();
         if(!is_array($this->locations))
         {
@@ -28,7 +28,7 @@ class Reports_ict_monitoring_ti extends Root_Controller
             }
 
         }
-        $this->controller_url='reports_ict_monitoring_ti';
+        $this->controller_url='reports_ict_monitoring_zi';
     }
 
     public function index($action="search",$id=0)
@@ -50,18 +50,13 @@ class Reports_ict_monitoring_ti extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="ICT Monitoring(TI) Report Search";
+            $data['title']="ICT Monitoring (ZI) Report Search";
             $ajax['status']=true;
             $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
             $data['zones']=array();
-            $data['territories']=array();
             if($this->locations['division_id']>0)
             {
                 $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$this->locations['division_id']));
-                if($this->locations['zone_id']>0)
-                {
-                    $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$this->locations['zone_id']));
-                }
             }
             $fiscal_years=Query_helper::get_info($this->config->item('table_basic_setup_fiscal_year'),'*',array());
             $data['fiscal_years']=array();
@@ -70,7 +65,7 @@ class Reports_ict_monitoring_ti extends Root_Controller
                 $data['fiscal_years'][]=array('text'=>$year['name'],'value'=>System_helper::display_date($year['date_start']).'/'.System_helper::display_date($year['date_end']));
             }
 
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("reports_ict_monitoring_ti/search",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("reports_ict_monitoring_zi/search",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -109,7 +104,7 @@ class Reports_ict_monitoring_ti extends Root_Controller
 
             $ajax['status']=true;
             $data['title']="ICT Monitoring(TI) Report";
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_ict_monitoring_ti/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view("reports_ict_monitoring_zi/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -130,17 +125,14 @@ class Reports_ict_monitoring_ti extends Root_Controller
         //$items=array();
         $division_id=$this->input->post('division_id');
         $zone_id=$this->input->post('zone_id');
-        $territory_id=$this->input->post('territory_id');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
-        $this->db->from($this->config->item('table_tm_ict_monitoring_ti').' ictm');
+        $this->db->from($this->config->item('table_tm_ict_monitoring_zi').' ictm');
         $this->db->select('ictm.*');
-        $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
-        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = ictm.territory_id','INNER');
-        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = ictm.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         if($division_id>0)
         {
@@ -148,10 +140,6 @@ class Reports_ict_monitoring_ti extends Root_Controller
             if($zone_id>0)
             {
                 $this->db->where('zone.id',$zone_id);
-                if($territory_id>0)
-                {
-                    $this->db->where('t.id',$territory_id);
-                }
             }
         }
         if($date_start>0)
