@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Setup_bsetup_arm_bank_accounts extends Root_Controller
+class Setup_bsetup_arm_bank_accounts_expense extends Root_Controller
 {
     private  $message;
     public $permissions;
@@ -9,8 +9,8 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
     {
         parent::__construct();
         $this->message="";
-        $this->permissions=User_helper::get_permission('Setup_bsetup_arm_bank_accounts');
-        $this->controller_url='setup_bsetup_arm_bank_accounts';
+        $this->permissions=User_helper::get_permission('Setup_bsetup_arm_bank_accounts_expense');
+        $this->controller_url='setup_bsetup_arm_bank_accounts_expense';
         //$this->load->model("sys_module_task_model");
     }
 
@@ -19,6 +19,10 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
         if($action=="list")
         {
             $this->system_list($id);
+        }
+        elseif($action=="get_items")
+        {
+            $this->get_items();
         }
         elseif($action=="add")
         {
@@ -42,9 +46,9 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
     {
         if(isset($this->permissions['view'])&&($this->permissions['view']==1))
         {
-            $data['title']="Bank Accounts";
+            $data['title']="Expense Bank Accounts";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -60,13 +64,25 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
         }
 
     }
+    private function get_items()
+    {
+        $this->db->from($this->config->item('table_basic_setup_arm_bank_accounts_expense').' bb');
+        $this->db->select('bb.id,bb.account_no,bb.status,bb.ordering,bb.description');
+        $this->db->select('b.name bank_name');
+        $this->db->join($this->config->item('table_basic_setup_arm_bank').' b','b.id = bb.bank_id','INNER');
+        $this->db->order_by('bb.ordering','ASC');
+        $this->db->where('bb.status !=',$this->config->item('system_status_delete'));
+        $items=$this->db->get()->result_array();
+        $this->jsonReturn($items);
+
+    }
 
     private function system_add()
     {
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
 
-            $data['title']="Create New Bank Account";
+            $data['title']="Create New Expense Bank Account";
             $data["account"] = Array(
                 'id' => 0,
                 'bank_id'=>0,
@@ -79,7 +95,7 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -106,11 +122,11 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
                 $account_id=$id;
             }
 
-            $data['account']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank_accounts'),'*',array('id ='.$account_id),1);
+            $data['account']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank_accounts_expense'),'*',array('id ='.$account_id),1);
             $data['banks']=Query_helper::get_info($this->config->item('table_basic_setup_arm_bank'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
-            $data['title']="Edit Bank Account (".$data['account']['account_no'].')';
+            $data['title']="Edit Expense Bank Account (".$data['account']['account_no'].')';
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_bsetup_arm_bank_accounts/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -167,7 +183,7 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
                 $data['user_updated'] = $user->user_id;
                 $data['date_updated'] = time();
 
-                Query_helper::update($this->config->item('table_basic_setup_arm_bank_accounts'),$data,array("id = ".$id));
+                Query_helper::update($this->config->item('table_basic_setup_arm_bank_accounts_expense'),$data,array("id = ".$id));
 
             }
             else
@@ -175,7 +191,7 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
 
                 $data['user_created'] = $user->user_id;
                 $data['date_created'] = time();
-                Query_helper::add($this->config->item('table_basic_setup_arm_bank_accounts'),$data);
+                Query_helper::add($this->config->item('table_basic_setup_arm_bank_accounts_expense'),$data);
             }
             $this->db->trans_complete();   //DB Transaction Handle END
             if ($this->db->trans_status() === TRUE)
@@ -213,19 +229,6 @@ class Setup_bsetup_arm_bank_accounts extends Root_Controller
         }
         return true;
     }
-    public function get_items()
-    {
-        $user = User_helper::get_user();
 
-        $this->db->from($this->config->item('table_basic_setup_arm_bank_accounts').' bb');
-        $this->db->select('bb.id,bb.account_no,bb.status,bb.ordering,bb.description');
-        $this->db->select('b.name bank_name');
-        $this->db->join($this->config->item('table_basic_setup_arm_bank').' b','b.id = bb.bank_id','INNER');
-        $this->db->order_by('bb.ordering','ASC');
-        $this->db->where('bb.status !=',$this->config->item('system_status_delete'));
-        $items=$this->db->get()->result_array();
-        $this->jsonReturn($items);
-
-    }
 
 }
