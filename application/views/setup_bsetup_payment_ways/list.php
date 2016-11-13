@@ -1,6 +1,10 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
     $action_data=array();
+    if(isset($CI->permissions['add'])&&($CI->permissions['add']==1))
+    {
+        $action_data["action_new"]=base_url($CI->controller_url."/index/add");
+    }
     if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
     {
         $action_data["action_edit"]=base_url($CI->controller_url."/index/edit");
@@ -32,8 +36,8 @@
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="id"><?php echo $CI->lang->line('ID'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bank_name"><?php echo $CI->lang->line('LABEL_BANK_NAME'); ?></label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="receive_account_no"><?php echo $CI->lang->line('LABEL_ACCOUNT_NO'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name"><?php echo $CI->lang->line('LABEL_NAME'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="ordering"><?php echo $CI->lang->line('LABEL_ORDER'); ?></label>
             </div>
         </div>
     <?php
@@ -57,7 +61,7 @@
             dataFields: [
                 { name: 'id', type: 'int' },
                 { name: 'name', type: 'string' },
-                { name: 'receive_account_no', type: 'string' }
+                { name: 'ordering', type: 'string' }
             ],
             id: 'id',
             url: url
@@ -82,7 +86,7 @@
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'50',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_NAME'); ?>', dataField: 'name'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ACCOUNT_NO'); ?>', dataField: 'receive_account_no'}
+                    { text: '<?php echo $CI->lang->line('LABEL_ORDER'); ?>', dataField: 'ordering',width:'100',cellsalign: 'right'}
                 ]
             });
     });
