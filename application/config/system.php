@@ -51,4 +51,7 @@ $config['system_host_type_customer']='customer';
 $config['system_host_type_other_customer']='other_customer';
 $config['system_host_type_special']='special';
 
+$config['system_bank_type_receive']='Receive';
+$config['system_bank_type_expense']='Expense';
+
 

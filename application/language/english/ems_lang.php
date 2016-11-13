@@ -232,3 +232,4 @@ $lang['LABEL_FEEDBACK_NOT_GIVEN'] = 'Pending';
 $lang['LABEL_DAY'] = 'Day';
 $lang['LABEL_SHIFT'] = 'Shift';
 $lang['LABEL_LOCATIONS'] = 'Locations';
+$lang['LABEL_ACCOUNT_TYPE'] = 'Account Type';

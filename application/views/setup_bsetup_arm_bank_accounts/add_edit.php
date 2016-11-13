@@ -17,6 +17,18 @@
             </div>
             <div class="clearfix"></div>
         </div>
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ACCOUNT_TYPE');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select id="bank_id" name="account[type]" class="form-control">
+                    <option value="<?php echo $CI->config->item('system_bank_type_receive');?>" <?php if($CI->config->item('system_bank_type_receive')==$account['type']){ echo "selected";}?>><?php echo $CI->config->item('system_bank_type_receive');?></option>
+                    <option value="<?php echo $CI->config->item('system_bank_type_expense');?>" <?php if($CI->config->item('system_bank_type_expense')==$account['type']){ echo "selected";}?>><?php echo $CI->config->item('system_bank_type_expense');?></option>
+
+                </select>
+            </div>
+        </div>
 
         <div style="" class="row show-grid">
             <div class="col-xs-4">
