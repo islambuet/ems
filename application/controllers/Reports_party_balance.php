@@ -1147,7 +1147,7 @@ class Reports_party_balance extends Root_Controller
     private function get_customer_statement_printing_row($opening_balance_tp,$opening_balance_net,$sale,$payment,$adjustment,$sale_return,$banks,$arm_banks)
     {
         $info=array();
-        if($opening_balance_tp>0)
+        if($opening_balance_tp !=0)
         {
             $info['opening_balance_tp']=number_format($opening_balance_tp,2);
         }
@@ -1155,7 +1155,7 @@ class Reports_party_balance extends Root_Controller
         {
             $info['opening_balance_tp']='';
         }
-        if($opening_balance_net>0)
+        if($opening_balance_net !=0)
         {
             $info['opening_balance_net']=number_format($opening_balance_net,2);
         }
