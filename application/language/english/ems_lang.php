@@ -233,3 +233,4 @@ $lang['LABEL_DAY'] = 'Day';
 $lang['LABEL_SHIFT'] = 'Shift';
 $lang['LABEL_LOCATIONS'] = 'Locations';
 $lang['LABEL_ACCOUNT_TYPE'] = 'Account Type';
+$lang['LABEL_BAR_CODE'] = 'Bar Code';

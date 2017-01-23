@@ -31,6 +31,7 @@
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="pack_size_name"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="bar_code"><?php echo $CI->lang->line('LABEL_BAR_CODE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price"><?php echo $CI->lang->line('LABEL_PRICE_TRADE'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="price_net"><?php echo $CI->lang->line('LABEL_PRICE_NET'); ?></label>
             </div>
@@ -47,7 +48,7 @@
     $(document).ready(function ()
     {
         turn_off_triggers();
-        var url = "<?php echo base_url($CI->controller_url.'/get_items');?>";
+        var url = "<?php echo base_url($CI->controller_url.'/index/get_items');?>";
 
         // prepare the data
         var source =
@@ -59,6 +60,7 @@
                 { name: 'crop_type_name', type: 'string' },
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size_name', type: 'string' },
+                { name: 'bar_code', type: 'string' },
                 { name: 'price', type: 'string' },
                 { name: 'price_net', type: 'string' }
             ],
@@ -87,6 +89,7 @@
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_BAR_CODE'); ?>', dataField: 'bar_code',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_PRICE_TRADE'); ?>', dataField: 'price',width:'100',cellsalign: 'right'},
                     { text: '<?php echo $CI->lang->line('LABEL_PRICE_NET'); ?>', dataField: 'price_net',width:'100',cellsalign: 'right'}
                 ]

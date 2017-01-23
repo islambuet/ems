@@ -19,6 +19,10 @@ class Setup_cclassification_vpricing extends Root_Controller
         {
             $this->system_list($id);
         }
+        elseif($action=="get_items")
+        {
+            $this->system_get_items();
+        }
         elseif($action=="add")
         {
             $this->system_add();
@@ -43,7 +47,7 @@ class Setup_cclassification_vpricing extends Root_Controller
         {
             $data['title']="Varieties Price";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_cclassification_vpricing/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -57,6 +61,31 @@ class Setup_cclassification_vpricing extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
+
+    }
+    private function system_get_items()
+    {
+        $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
+        $this->db->select('vp.id,vp.price,vp.price_net');
+        $this->db->select('v.name variety_name');
+        $this->db->select('crop.name crop_name');
+        $this->db->select('type.name crop_type_name,type.id type_id');
+        $this->db->select('pack.name pack_size_name,pack.id pack_id');
+
+        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = vp.variety_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
+        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = vp.pack_size_id','INNER');
+        $this->db->where('vp.revision',1);
+        //$this->db->order_by('vp.id DESC');
+
+        $items=$this->db->get()->result_array();
+        foreach($items as &$item)
+        {
+            //str_pad($item['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
+            $item['bar_code']=str_pad($item['type_id'],3,0,STR_PAD_LEFT).str_pad($item['id'],3,0,STR_PAD_LEFT).str_pad($item['pack_id'],2,0,STR_PAD_LEFT);
+        }
+        $this->jsonReturn($items);
 
     }
 
@@ -77,7 +106,7 @@ class Setup_cclassification_vpricing extends Root_Controller
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_cclassification_vpricing/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -129,7 +158,7 @@ class Setup_cclassification_vpricing extends Root_Controller
 
             $data['title']='Edit Pricing';
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("setup_cclassification_vpricing/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -224,27 +253,4 @@ class Setup_cclassification_vpricing extends Root_Controller
         }
         return true;
     }
-    public function get_items()
-    {
-        $user = User_helper::get_user();
-
-        $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
-        $this->db->select('vp.id,vp.price,vp.price_net');
-        $this->db->select('v.name variety_name');
-        $this->db->select('crop.name crop_name');
-        $this->db->select('type.name crop_type_name');
-        $this->db->select('pack.name pack_size_name');
-
-        $this->db->join($this->config->item('table_setup_classification_varieties').' v','v.id = vp.variety_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crop_types').' type','type.id = v.crop_type_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id = type.crop_id','INNER');
-        $this->db->join($this->config->item('table_setup_classification_vpack_size').' pack','pack.id = vp.pack_size_id','INNER');
-        $this->db->where('vp.revision',1);
-        //$this->db->order_by('vp.id DESC');
-
-        $items=$this->db->get()->result_array();
-        $this->jsonReturn($items);
-
-    }
-
 }
