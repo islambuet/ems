@@ -68,7 +68,7 @@ class Setup_cclassification_vpricing extends Root_Controller
         $this->db->from($this->config->item('table_setup_classification_variety_price').' vp');
         $this->db->select('vp.id,vp.price,vp.price_net');
         $this->db->select('v.id variety_id,v.name variety_name');
-        $this->db->select('crop.name crop_name');
+        $this->db->select('crop.name crop_name,crop.id crop_id');
         $this->db->select('type.name crop_type_name,type.id type_id');
         $this->db->select('pack.name pack_size_name,pack.id pack_id');
 
@@ -83,7 +83,7 @@ class Setup_cclassification_vpricing extends Root_Controller
         foreach($items as &$item)
         {
             //str_pad($item['id'],$this->config->item('system_po_no_length'),'0',STR_PAD_LEFT);
-            $item['bar_code']=str_pad($item['type_id'],3,0,STR_PAD_LEFT).str_pad($item['variety_id'],3,0,STR_PAD_LEFT).str_pad($item['pack_id'],2,0,STR_PAD_LEFT);
+            $item['bar_code']=str_pad($item['crop_id'],2,0,STR_PAD_LEFT).str_pad($item['variety_id'],4,0,STR_PAD_LEFT).str_pad($item['pack_id'],2,0,STR_PAD_LEFT);
         }
         $this->jsonReturn($items);
 
