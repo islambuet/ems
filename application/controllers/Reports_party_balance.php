@@ -897,8 +897,8 @@ class Reports_party_balance extends Root_Controller
 
         //sales return
         $this->db->from($this->config->item('table_sales_po_details').' pod');
-        $this->db->select('(quantity_return*variety_price) total_sales_tp');
-        $this->db->select('(quantity_return*variety_price_net) total_sales_net');
+        $this->db->select('SUM(quantity_return*variety_price) total_sales_tp');
+        $this->db->select('SUM(quantity_return*variety_price_net) total_sales_net');
         $this->db->select('po.id,po.date_po,pod.date_return');
 
 
