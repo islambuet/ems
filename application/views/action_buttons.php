@@ -16,6 +16,16 @@
     }
     ?>
     <?php
+    if(isset($action_new_multiple))
+    {
+        ?>
+        <div class="action_button">
+            <a class="btn" href="<?php echo $action_new_multiple; ?>"><?php echo $CI->lang->line("ACTION_NEW_MULTIPLE"); ?></a>
+        </div>
+    <?php
+    }
+    ?>
+    <?php
     if(isset($action_edit))
     {
         ?>

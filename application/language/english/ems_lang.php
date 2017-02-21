@@ -13,6 +13,7 @@ $lang['MSG_PRICE_NOT_SET'] = 'Variety Price Not set.Please contact with admin(09
 //Action buttons
 $lang['ACTION_DASHBOARD'] = 'Dashboard';
 $lang['ACTION_NEW'] = 'New';
+$lang['ACTION_NEW_MULTIPLE'] = 'Multiple New';
 $lang['ACTION_EDIT'] = 'Edit';
 $lang['ACTION_LOGOUT'] = 'Logout';
 $lang['ACTION_BACK'] = 'Back';

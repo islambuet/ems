@@ -25,6 +25,10 @@ class Stockout extends Root_Controller
         {
             $this->system_add();
         }
+        elseif($action=="add_multiple")
+        {
+            $this->system_add_multiple();
+        }
         elseif($action=="edit")
         {
             $this->system_edit($id);
@@ -41,6 +45,11 @@ class Stockout extends Root_Controller
         {
             $this->system_save();
         }
+
+        elseif($action=="save_multiple")
+        {
+            $this->system_save_multiple();
+        }
         else
         {
             $this->system_list($id);
@@ -53,7 +62,7 @@ class Stockout extends Root_Controller
         {
             $data['title']="Stock Out List";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/list",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -92,7 +101,47 @@ class Stockout extends Root_Controller
             $ajax['system_page_url']=site_url($this->controller_url."/index/add");
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+    }
+    private function system_add_multiple()
+    {
+        if(isset($this->permissions['add'])&&($this->permissions['add']==1))
+        {
+
+            $data['title']="New Multiple Stock Out";
+            $data["stock_out"] = Array(
+                'id' => 0,
+                'warehouse_id' => 1,
+                'remarks' => '',
+                'date_stock_out' => time()
+            );
+            $data['stock_current']='';
+            $data['warehouses']=Query_helper::get_info($this->config->item('table_basic_setup_warehouse'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $this->db->from($this->config->item('table_basic_setup_warehouse_crops').' wc');
+            $this->db->select('wc.crop_id value,c.name text');
+            $this->db->join($this->config->item('table_setup_classification_crops').' c','c.id =wc.crop_id','INNER');
+            $this->db->where('wc.warehouse_id',1);//head office
+            $this->db->where('wc.revision',1);
+            $this->db->order_by('c.ordering');
+            $data['crops']=$this->db->get()->result_array();
+
+            $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $ajax['system_page_url']=site_url($this->controller_url."/index/add_multiple");
+
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_multiple",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -147,7 +196,7 @@ class Stockout extends Root_Controller
             $data['stock_current']=$stock_info[$data['stock_out']['variety_id']][$data['stock_out']['pack_size_id']]['current_stock'];
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/add_edit",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -200,7 +249,7 @@ class Stockout extends Root_Controller
             $data['pack_sizes']=Query_helper::get_info($this->config->item('table_setup_classification_vpack_size'),array('id value','name text'),array());
 
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("stockout/details",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -323,6 +372,61 @@ class Stockout extends Root_Controller
             }
         }
     }
+    private function system_save_multiple()
+    {
+
+        $user = User_helper::get_user();
+        if(!(isset($this->permissions['add'])&&($this->permissions['add']==1)))
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+            die();
+
+        }
+        if(!$this->check_validation_multiple())
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->message;
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $data=$this->input->post('stock_out');
+            $data['date_stock_out']=System_helper::get_time($data['date_stock_out']);
+            $this->db->trans_start();  //DB Transaction Handle START
+            $items=$this->input->post('items');
+            foreach($items as $item)
+            {
+                $data['variety_id']=$item['variety_id'];
+                $data['pack_size_id']=$item['pack_size_id'];
+                $data['quantity']=$item['quantity'];
+                $data['user_created'] = $user->user_id;
+                $data['date_created'] = time();
+                Query_helper::add($this->config->item('table_stockout'),$data);
+            }
+            $this->db->trans_complete();   //DB Transaction Handle END
+            if ($this->db->trans_status() === TRUE)
+            {
+                $save_and_new=$this->input->post('system_save_new_status');
+                $this->message=$this->lang->line("MSG_SAVED_SUCCESS");
+                if($save_and_new==1)
+                {
+                    $this->system_add_multiple();
+                }
+                else
+                {
+                    $this->system_list();
+                }
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+    }
     private function check_validation()
     {
         $id=$this->input->post('id');
@@ -359,6 +463,52 @@ class Stockout extends Root_Controller
             return false;
         }
 
+
+        return true;
+    }
+    private function check_validation_multiple()
+    {
+        $this->load->library('form_validation');
+        $this->form_validation->set_rules('stock_out[purpose]',$this->lang->line('LABEL_STOCK_OUT_PURPOSE'),'required');
+        $this->form_validation->set_rules('stock_out[date_stock_out]',$this->lang->line('LABEL_DATE_STOCK_OUT'),'required');
+        if($this->form_validation->run() == FALSE)
+        {
+            $this->message=validation_errors();
+            return false;
+        }
+        $items=$this->input->post('items');
+        if(!(sizeof($items)>0))
+        {
+            $this->message='No Variety Added';
+            return false;
+        }
+        else
+        {
+            foreach($items as $item)
+            {
+                if(!(($item['variety_id']>0)))
+                {
+                    $this->message="Variety was not selected";
+                    return false;
+                }
+                if(!(($item['pack_size_id']>0)))
+                {
+                    $this->message="Pack Size was not Selected";
+                    return false;
+                }
+                if(!(($item['quantity']>0)))
+                {
+                    $this->message="Invalid Quantity";
+                    return false;
+                }
+                $stock_info=$this->sales_model->get_stocks(array(array('variety_id'=>$item['variety_id'],'pack_size_id'=>$item['pack_size_id'])));
+                if($stock_info[$item['variety_id']][$item['pack_size_id']]['current_stock']<$item['quantity'])
+                {
+                    $this->message="Excess Stock Out";
+                    return false;
+                }
+            }
+        }
 
         return true;
     }
