@@ -144,6 +144,21 @@
                     <label class="control-label"><?php echo $users[$po['user_approved']]['name'];?></label>
                 </div>
             </div>
+            <?php
+            if(strlen($po['remarks_approved'])>0)
+            {
+                ?>
+                <div style="" class="row show-grid">
+                    <div class="col-xs-4">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
+                    </div>
+                    <div class="col-sm-4 col-xs-8">
+                        <label class="control-label"><?php echo $po['remarks_approved'];?></label>
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
         <?php
         }
         ?>
