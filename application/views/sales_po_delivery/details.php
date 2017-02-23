@@ -146,7 +146,7 @@
             if(strlen($po['remarks_approved'])>0)
             {
                 ?>
-                <div style="" class="row show-grid">
+                <div style="" class="row show-grid hidden-print">
                     <div class="col-xs-4">
                         <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_REMARKS');?></label>
                     </div>
