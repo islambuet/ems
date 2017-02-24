@@ -451,9 +451,8 @@ function load_style(content)
 }
 function animate_message(message)
 {
-    $("#system_message").hide();
     $("#system_message").html(message);
-    $('#system_message').slideToggle("slow").delay(3000).slideToggle("slow");
+    $("#system_message").animate({right:"100px"}).animate({right:"30px"}).delay(3000).animate({right:"100px"}).animate({right:"-5000px"});
 }
 
 function turn_off_triggers()
