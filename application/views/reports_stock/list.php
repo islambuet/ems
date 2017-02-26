@@ -44,6 +44,7 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="short">Short</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="rnd">Rnd Sample</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="sample">Sample</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="demonstration">Demonstration</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current">Current Stock</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_price">Current unit Price</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_total_price">Current Stock Price</label>
@@ -85,6 +86,7 @@
                 { name: 'short', type: 'string' },
                 { name: 'rnd', type: 'string' },
                 { name: 'sample', type: 'string' },
+                { name: 'demonstration', type: 'string' },
                 { name: 'current', type: 'string' },
                 { name: 'current_price', type: 'string' },
                 { name: 'current_total_price', type: 'string' }
@@ -181,6 +183,7 @@
                     { text: 'Short',hidden:true, dataField: 'short',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Rnd Sample',hidden:true, dataField: 'rnd',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Sample',hidden:true, dataField: 'sample',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Demonstration',hidden:true, dataField: 'demonstration',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Current Stock', dataField: 'current',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Current unit Price', dataField: 'current_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Current Stock Price', dataField: 'current_total_price',width:'150',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}

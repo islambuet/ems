@@ -184,6 +184,10 @@ class Reports_stock extends Root_Controller
             $crop_sample=0;
             $grand_sample=0;
 
+            $type_demonstration=0;
+            $crop_demonstration=0;
+            $grand_demonstration=0;
+
             $type_current=0;
             $crop_current=0;
             $grand_current=0;
@@ -207,6 +211,7 @@ class Reports_stock extends Root_Controller
                     $initial['short']=0;
                     $initial['rnd']=0;
                     $initial['sample']=0;
+                    $initial['demonstration']=0;
                     if(isset($initial_items[$vid][$pack_id]))
                     {
                         $initial=$initial_items[$vid][$pack_id];
@@ -217,8 +222,8 @@ class Reports_stock extends Root_Controller
                         if($prev_crop_name!=$pack['crop_name'])
                         {
 
-                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
-                            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current,$crop_total_price);
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_demonstration,$type_current,$type_total_price);
+                            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_demonstration,$crop_current,$crop_total_price);
 
                             $type_starting_stock=0;
                             $type_stock_in=0;
@@ -230,6 +235,7 @@ class Reports_stock extends Root_Controller
                             $type_short=0;
                             $type_rnd=0;
                             $type_sample=0;
+                            $type_demonstration=0;
                             $type_current=0;
                             $type_total_price=0;
 
@@ -243,6 +249,7 @@ class Reports_stock extends Root_Controller
                             $crop_short=0;
                             $crop_rnd=0;
                             $crop_sample=0;
+                            $crop_demonstration=0;
                             $crop_current=0;
                             $crop_total_price=0;
                             $info['crop_name']=$pack['crop_name'];
@@ -253,7 +260,7 @@ class Reports_stock extends Root_Controller
                         }
                         elseif($prev_crop_type_name!=$pack['crop_type_name'])
                         {
-                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
+                            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_demonstration,$type_current,$type_total_price);
                             $type_starting_stock=0;
                             $type_stock_in=0;
                             $type_excess=0;
@@ -262,6 +269,7 @@ class Reports_stock extends Root_Controller
                             $type_short=0;
                             $type_rnd=0;
                             $type_sample=0;
+                            $type_demonstration=0;
                             $type_current=0;
                             $type_total_price=0;
                             $info['crop_name']='';
@@ -287,10 +295,10 @@ class Reports_stock extends Root_Controller
                     $info['variety_name']=$pack['variety_name'];
                     $info['stock_id']=$pack['stock_id'];
                     $info['pack_size_name']=$pack['pack_size_name'];
-                    $info['starting_stock']=$initial['stock_in']+$initial['excess']-$initial['sales']+$initial['sales_return']-$initial['sales_bonus']+$initial['sales_return_bonus']-$initial['short']-$initial['rnd']-$initial['sample'];
+                    $info['starting_stock']=$initial['stock_in']+$initial['excess']-$initial['sales']+$initial['sales_return']-$initial['sales_bonus']+$initial['sales_return_bonus']-$initial['short']-$initial['rnd']-$initial['sample']-$initial['demonstration'];
 
 
-                    $info['current']=$pack['stock_in']+$pack['excess']-$pack['sales']+$pack['sales_return']-$pack['sales_bonus']+$pack['sales_return_bonus']-$pack['short']-$pack['rnd']-$pack['sample'];
+                    $info['current']=$pack['stock_in']+$pack['excess']-$pack['sales']+$pack['sales_return']-$pack['sales_bonus']+$pack['sales_return_bonus']-$pack['short']-$pack['rnd']-$pack['sample']-$pack['demonstration'];
 
                     $info['stock_in']=$pack['stock_in']-$initial['stock_in'];
                     $info['excess']=$pack['excess']-$initial['excess'];
@@ -301,6 +309,7 @@ class Reports_stock extends Root_Controller
                     $info['short']=$pack['short']-$initial['short'];
                     $info['rnd']=$pack['rnd']-$initial['rnd'];
                     $info['sample']=$pack['sample']-$initial['sample'];
+                    $info['demonstration']=$pack['demonstration']-$initial['demonstration'];
 
                     $info['current_price']='Not Set';
                     $info['current_total_price']='N/A';
@@ -351,6 +360,11 @@ class Reports_stock extends Root_Controller
                         $type_sample+=$info['sample']*$info['pack_size_name'];
                         $crop_sample+=$info['sample']*$info['pack_size_name'];
                         $grand_sample+=$info['sample']*$info['pack_size_name'];
+
+                        $type_demonstration+=$info['demonstration']*$info['pack_size_name'];
+                        $crop_demonstration+=$info['demonstration']*$info['pack_size_name'];
+                        $grand_demonstration+=$info['demonstration']*$info['pack_size_name'];
+
                         $type_current+=$info['current']*$info['pack_size_name'];
                         $crop_current+=$info['current']*$info['pack_size_name'];
                         $grand_current+=$info['current']*$info['pack_size_name'];
@@ -365,6 +379,7 @@ class Reports_stock extends Root_Controller
                         $info['short']=number_format($info['short']*$info['pack_size_name']/1000,3,'.','');
                         $info['rnd']=number_format($info['rnd']*$info['pack_size_name']/1000,3,'.','');
                         $info['sample']=number_format($info['sample']*$info['pack_size_name']/1000,3,'.','');
+                        $info['demonstration']=number_format($info['demonstration']*$info['pack_size_name']/1000,3,'.','');
                         $info['current']=number_format($info['current']*$info['pack_size_name']/1000,3,'.','');
                     }
                     else
@@ -400,6 +415,9 @@ class Reports_stock extends Root_Controller
                         $type_sample+=$info['sample'];
                         $crop_sample+=$info['sample'];
                         $grand_sample+=$info['sample'];
+                        $type_demonstration+=$info['demonstration'];
+                        $crop_demonstration+=$info['demonstration'];
+                        $grand_demonstration+=$info['demonstration'];
                         $type_current+=$info['current'];
                         $crop_current+=$info['current'];
                         $grand_current+=$info['current'];
@@ -409,9 +427,9 @@ class Reports_stock extends Root_Controller
                     $items[]=$info;
                 }
             }
-            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_current,$type_total_price);
-            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_current,$crop_total_price);
-            $items[]=$this->get_grand_total_row($report_type,$grand_starting_stock,$grand_stock_in,$grand_excess,$grand_sales,$grand_sales_return,$grand_sales_bonus,$grand_sales_return_bonus,$grand_short,$grand_rnd,$grand_sample,$grand_current,$grand_total_price);
+            $items[]=$this->get_type_total_row($report_type,$type_starting_stock,$type_stock_in,$type_excess,$type_sales,$type_sales_return,$type_sales_bonus,$type_sales_return_bonus,$type_short,$type_rnd,$type_sample,$type_demonstration,$type_current,$type_total_price);
+            $items[]=$this->get_crop_total_row($report_type,$crop_starting_stock,$crop_stock_in,$crop_excess,$crop_sales,$crop_sales_return,$crop_sales_bonus,$crop_sales_return_bonus,$crop_short,$crop_rnd,$crop_sample,$crop_demonstration,$crop_current,$crop_total_price);
+            $items[]=$this->get_grand_total_row($report_type,$grand_starting_stock,$grand_stock_in,$grand_excess,$grand_sales,$grand_sales_return,$grand_sales_bonus,$grand_sales_return_bonus,$grand_short,$grand_rnd,$grand_sample,$grand_demonstration,$grand_current,$grand_total_price);
         }
 
         $this->jsonReturn($items);
@@ -481,6 +499,7 @@ class Reports_stock extends Root_Controller
             $stocks[$result['variety_id']][$result['pack_size_id']]['short']=0;
             $stocks[$result['variety_id']][$result['pack_size_id']]['rnd']=0;
             $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=0;
+            $stocks[$result['variety_id']][$result['pack_size_id']]['demonstration']=0;
 
             $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size_name']=$result['pack_size_name'];
             $stocks[$result['variety_id']][$result['pack_size_id']]['stock_id']=$result['stock_id'];
@@ -573,6 +592,10 @@ class Reports_stock extends Root_Controller
                 elseif($result['purpose']==$this->config->item('system_purpose_customer'))
                 {
                     $stocks[$result['variety_id']][$result['pack_size_id']]['sample']=$result['stockout'];
+                }
+                elseif($result['purpose']==$this->config->item('system_purpose_demonstration'))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['demonstration']=$result['stockout'];
                 }
             }
 
@@ -792,7 +815,7 @@ class Reports_stock extends Root_Controller
         }
         return $prices;
     }
-    private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
+    private function get_type_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$demonstration,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='';
@@ -812,6 +835,7 @@ class Reports_stock extends Root_Controller
             $row['short']=number_format($short/1000,3,'.','');
             $row['rnd']=number_format($rnd/1000,3,'.','');
             $row['sample']=number_format($sample/1000,3,'.','');
+            $row['demonstration']=number_format($demonstration/1000,3,'.','');
             $row['current']=number_format($current/1000,3,'.','');
         }
         else
@@ -826,6 +850,7 @@ class Reports_stock extends Root_Controller
             $row['short']=$short;
             $row['rnd']=$rnd;
             $row['sample']=$sample;
+            $row['demonstration']=$demonstration;
             $row['current']=$current;
 
         }
@@ -833,7 +858,7 @@ class Reports_stock extends Root_Controller
 
         return $row;
     }
-    private function get_crop_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
+    private function get_crop_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$demonstration,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='';
@@ -853,6 +878,7 @@ class Reports_stock extends Root_Controller
             $row['short']=number_format($short/1000,3,'.','');
             $row['rnd']=number_format($rnd/1000,3,'.','');
             $row['sample']=number_format($sample/1000,3,'.','');
+            $row['demonstration']=number_format($demonstration/1000,3,'.','');
             $row['current']=number_format($current/1000,3,'.','');
         }
         else
@@ -867,12 +893,13 @@ class Reports_stock extends Root_Controller
             $row['short']=$short;
             $row['rnd']=$rnd;
             $row['sample']=$sample;
+            $row['demonstration']=$demonstration;
             $row['current']=$current;
         }
         $row['current_total_price']=number_format($current_total_price,2);
         return $row;
     }
-    private function get_grand_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$current,$current_total_price)
+    private function get_grand_total_row($report_type,$starting_stock,$stock_in,$excess,$sales,$sales_return,$sales_bonus,$sales_return_bonus,$short,$rnd,$sample,$demonstration,$current,$current_total_price)
     {
         $row=array();
         $row['crop_name']='Grand Total';
@@ -894,6 +921,7 @@ class Reports_stock extends Root_Controller
             $row['short']=number_format($short/1000,3,'.','');
             $row['rnd']=number_format($rnd/1000,3,'.','');
             $row['sample']=number_format($sample/1000,3,'.','');
+            $row['demonstration']=number_format($demonstration/1000,3,'.','');
             $row['current']=number_format($current/1000,3,'.','');
         }
         else
@@ -908,6 +936,7 @@ class Reports_stock extends Root_Controller
             $row['short']=$short;
             $row['rnd']=$rnd;
             $row['sample']=$sample;
+            $row['demonstration']=$demonstration;
             $row['current']=$current;
         }
         $row['current_total_price']=number_format($current_total_price,2);
