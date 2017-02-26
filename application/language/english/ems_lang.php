@@ -194,6 +194,7 @@ $lang['LABEL_DATE_STOCK_OUT'] = 'Stock Out date';
 $lang['LABEL_STOCK_OUT_PURPOSE_SHORT'] = 'Short Inventory';
 $lang['LABEL_STOCK_OUT_PURPOSE_RND'] = 'R&D Purpose';
 $lang['LABEL_STOCK_OUT_PURPOSE_CUSTOMER'] = 'Sample Purpose';
+$lang['LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION'] = 'Demonstration';
 $lang['LABEL_STOCK_OUT_PURPOSE'] = 'Stock Out Purpose';
 //po delivery
 $lang['LABEL_DATE_DELIVERY'] = 'Delivery Date';

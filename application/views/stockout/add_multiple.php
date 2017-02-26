@@ -36,6 +36,7 @@ $CI->load->view("action_buttons",$action_data);
                     <option value="<?php echo $CI->config->item('system_purpose_short'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_SHORT');?></option>
                     <option value="<?php echo $CI->config->item('system_purpose_rnd'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_RND');?></option>
                     <option value="<?php echo $CI->config->item('system_purpose_customer'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_CUSTOMER');?></option>
+                    <option value="<?php echo $CI->config->item('system_purpose_demonstration'); ?>"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE_DEMONSTRATION');?></option>
                 </select>
             </div>
         </div>

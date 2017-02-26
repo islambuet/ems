@@ -44,6 +44,7 @@ $config['system_status_po_received_pending']='Pending';
 $config['system_purpose_short']='Short';
 $config['system_purpose_rnd']='RND';
 $config['system_purpose_customer']='Customer';
+$config['system_purpose_demonstration']='Demonstration';
 //market survey
 $config['system_msurvey_customers_num']=2;
 
