@@ -236,3 +236,5 @@ $lang['LABEL_SHIFT'] = 'Shift';
 $lang['LABEL_LOCATIONS'] = 'Locations';
 $lang['LABEL_ACCOUNT_TYPE'] = 'Account Type';
 $lang['LABEL_BAR_CODE'] = 'Bar Code';
+$lang['LABEL_CUSTOMER_TYPE'] = 'Customer Type';
+$lang['LABEL_SHORT_NAME'] = 'Short Name';

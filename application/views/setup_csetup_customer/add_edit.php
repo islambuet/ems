@@ -18,7 +18,29 @@
             <div class="clearfix"></div>
         </div>
 
-
+        <div style="" class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_TYPE');?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select name="customer[type]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <option value="Customer"
+                        <?php
+                        if ($customer['type'] == 'Customer') {
+                            echo "selected='selected'";
+                        }
+                        ?> >Customer
+                    </option>
+                    <option value="Outlet"
+                        <?php
+                        if ($customer['type'] == 'Outlet') {
+                            echo "selected='selected'";
+                        }
+                        ?> >Outlet</option>
+                </select>
+            </div>
+        </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DIVISION_NAME');?><span style="color:#FF0000">*</span></label>
@@ -149,6 +171,14 @@
             </div>
             <div class="col-sm-4 col-xs-8">
                 <input type="text" name="customer[name]" id="name" class="form-control" value="<?php echo $customer['name'];?>"/>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SHORT_NAME');?></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <input type="text" name="customer[name_short]" class="form-control" value="<?php echo $customer['name_short'];?>"/>
             </div>
         </div>
         <div class="row show-grid">

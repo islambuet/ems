@@ -86,6 +86,8 @@ class Setup_csetup_customer extends Root_Controller
             $data['title']="Create New Customer";
             $data["customer"] = Array(
                 'id' => 0,
+                'type' => 'Customer',
+                'name_short' => '',
                 'division_id'=>$this->locations['division_id'],
                 'zone_id'=>$this->locations['zone_id'],
                 'territory_id'=>$this->locations['territory_id'],
@@ -295,6 +297,7 @@ class Setup_csetup_customer extends Root_Controller
     private function check_validation()
     {
         $this->load->library('form_validation');
+        $this->form_validation->set_rules('customer[type]',$this->lang->line('LABEL_CUSTOMER_TYPE'),'required');
         $this->form_validation->set_rules('customer[name]',$this->lang->line('LABEL_NAME'),'required');
         $this->form_validation->set_rules('customer[district_id]',$this->lang->line('LABEL_DISTRICT_NAME'),'required');
         $this->form_validation->set_rules('customer[credit_limit]',$this->lang->line('LABEL_CUSTOMER_CREDIT_LIMIT'),'required|numeric');
@@ -353,7 +356,7 @@ class Setup_csetup_customer extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_csetup_customers').' cus');
-        $this->db->select('cus.id,cus.name,cus.customer_code,cus.phone,cus.status,cus.ordering');
+        $this->db->select('cus.id,cus.name,cus.type,cus.name_short,cus.customer_code,cus.phone,cus.status,cus.ordering');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
@@ -378,6 +381,10 @@ class Setup_csetup_customer extends Root_Controller
                 }
             }
         }
+        $this->db->order_by('division.ordering','ASC');
+        $this->db->order_by('zone.ordering','ASC');
+        $this->db->order_by('t.ordering','ASC');
+        $this->db->order_by('d.ordering','ASC');
         $this->db->order_by('cus.ordering','ASC');
         $this->db->where('cus.status !=',$this->config->item('system_status_delete'));
         $items=$this->db->get()->result_array();
