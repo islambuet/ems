@@ -491,6 +491,20 @@ class Payment_customer extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_payment_payment').' payment');
         $this->db->select('payment.id,payment.amount,payment.amount_customer,payment.payment_way,payment.date_payment_customer,payment.date_payment_receive,payment.cheque_no');
         $this->db->select('CONCAT(cus.customer_code," - ",cus.name) customer_name');
@@ -521,6 +535,7 @@ class Payment_customer extends Root_Controller
         }
         $this->db->where('payment.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('payment.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

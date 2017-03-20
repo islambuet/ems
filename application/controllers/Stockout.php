@@ -514,6 +514,20 @@ class Stockout extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_stockout').' sout');
         $this->db->select('sout.*');
         $this->db->select('v.name variety_name');
@@ -532,6 +546,7 @@ class Stockout extends Root_Controller
         $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= sout.date_stock_out and fy.date_end >= sout.date_stock_out','LEFT');
         $this->db->where('sout.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('sout.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

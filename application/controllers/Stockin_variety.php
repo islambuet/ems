@@ -368,6 +368,20 @@ class Stockin_variety extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_stockin_varieties').' stv');
         $this->db->select('stv.id,stv.quantity,stv.date_stock_in');
         $this->db->select('v.name variety_name');
@@ -386,6 +400,7 @@ class Stockin_variety extends Root_Controller
         $this->db->join($this->config->item('table_basic_setup_fiscal_year').' fy','fy.date_start <= stv.date_stock_in and fy.date_end >= stv.date_stock_in','LEFT');
         $this->db->where('stv.status !=',$this->config->item('system_status_delete'));
         $this->db->order_by('stv.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         //echo $this->db->last_query();
         foreach($items as &$item)
