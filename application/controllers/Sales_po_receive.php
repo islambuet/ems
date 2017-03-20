@@ -480,6 +480,20 @@ class Sales_po_receive extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_sales_po_details').' pod');
 
         $this->db->select('SUM(pod.quantity) quantity_total');
@@ -520,6 +534,7 @@ class Sales_po_receive extends Root_Controller
         $this->db->where('po.status_delivered',$this->config->item('system_status_po_delivery_delivered'));
         $this->db->group_by('po.id');
         $this->db->order_by('po.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

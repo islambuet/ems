@@ -457,13 +457,24 @@ class Sales_po_delivery extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_sales_po_details').' pod');
 
         $this->db->select('SUM(pod.quantity) quantity_total');
         $this->db->select('SUM(pod.quantity*pod.pack_size) quantity_weight');
-        //$this->db->select('SUM(pod.quantity*pod.variety_price) price_total');
-
-
 
         $this->db->select('po.*');
         $this->db->select('cus.name,cus.customer_code');
@@ -485,6 +496,7 @@ class Sales_po_delivery extends Root_Controller
         $this->db->group_by('po.id');
         $this->db->order_by('po.date_approved','DESC');
         $this->db->order_by('po.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
