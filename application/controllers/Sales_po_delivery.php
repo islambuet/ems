@@ -11,6 +11,23 @@ class Sales_po_delivery extends Root_Controller
         parent::__construct();
         $this->message="";
         $this->permissions=User_helper::get_permission('Sales_po_delivery');
+        $this->locations=User_helper::get_locations();
+        if(!is_array($this->locations))
+        {
+            if($this->locations=='wrong')
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_INVALID');
+                $this->jsonReturn($ajax);
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line('MSG_LOCATION_NOT_ASSIGNED');
+                $this->jsonReturn($ajax);
+            }
+
+        }
         $this->controller_url='sales_po_delivery';
         $this->load->model("sales_model");
     }
@@ -490,7 +507,22 @@ class Sales_po_delivery extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = zone.division_id','INNER');
         $this->db->join($this->config->item('table_basic_setup_warehouse').' wh','wh.id = po.warehouse_id','INNER');
-
+        if($this->locations['division_id']>0)
+        {
+            $this->db->where('division.id',$this->locations['division_id']);
+            if($this->locations['zone_id']>0)
+            {
+                $this->db->where('zone.id',$this->locations['zone_id']);
+                if($this->locations['territory_id']>0)
+                {
+                    $this->db->where('t.id',$this->locations['territory_id']);
+                    if($this->locations['district_id']>0)
+                    {
+                        $this->db->where('d.id',$this->locations['district_id']);
+                    }
+                }
+            }
+        }
         $this->db->where('pod.revision',1);
         $this->db->where('po.status_approved',$this->config->item('system_status_po_approval_approved'));
         $this->db->group_by('po.id');
