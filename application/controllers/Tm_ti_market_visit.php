@@ -626,7 +626,20 @@ class Tm_ti_market_visit extends Root_Controller
         {
             $other_customers[$result['value']]=$result;
         }
-
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_tm_market_visit_ti').' mvt');
 
         $this->db->select('mvt.*');
@@ -662,6 +675,7 @@ class Tm_ti_market_visit extends Root_Controller
             }
         }
         $this->db->order_by('mvt.id DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

@@ -79,6 +79,20 @@ class Tm_zi_market_visit_solution extends Root_Controller
     }
     public function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_tm_market_visit_zi').' mvzi');
         $this->db->select('mvzi.setup_details_id id,mvzi.title');
         $this->db->select('mvszid.date,mvszid.host_type');
@@ -111,7 +125,7 @@ class Tm_zi_market_visit_solution extends Root_Controller
         }
         $this->db->group_by('mvzi.setup_details_id');
         $this->db->order_by('mvzi.id DESC');
-
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {

@@ -84,6 +84,20 @@ class Tm_ict_monitoring_zi extends Root_Controller
     }
     private function get_items()
     {
+        $current_records = $this->input->post('total_records');
+        if(!$current_records)
+        {
+            $current_records=0;
+        }
+        $pagesize = $this->input->post('pagesize');
+        if(!$pagesize)
+        {
+            $pagesize=40;
+        }
+        else
+        {
+            $pagesize=$pagesize*2;
+        }
         $this->db->from($this->config->item('table_tm_ict_monitoring_zi').' ictm');
         $this->db->select('ictm.*');
         $this->db->select('zone.name zone_name');
@@ -99,6 +113,7 @@ class Tm_ict_monitoring_zi extends Root_Controller
             }
         }
         $this->db->order_by('ictm.id','DESC');
+        $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         foreach($items as &$item)
         {
