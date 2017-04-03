@@ -281,7 +281,7 @@ class Tm_ti_market_visit_solution extends Root_Controller
         $pagesize = $this->input->post('pagesize');
         if(!$pagesize)
         {
-            $pagesize=40;
+            $pagesize=20;
         }
         else
         {
@@ -300,7 +300,7 @@ class Tm_ti_market_visit_solution extends Root_Controller
         $this->db->select('cus.name customer_name,cus.status cus_status');
         $this->db->select('ocus.name ocustomer_name,ocus.status ocus_status');
 
-        $this->db->select('count(mvst.id) total_solution',false);
+        //$this->db->select('count(mvst.id) total_solution',false);
 
         $this->db->join($this->config->item('table_setup_tm_market_visit').' stmv','stmv.id = mvt.setup_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = stmv.district_id','INNER');
@@ -314,7 +314,7 @@ class Tm_ti_market_visit_solution extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_districts').' dd','dd.id = mvt.special_district_id','LEFT');
         $this->db->join($this->config->item('table_csetup_customers').' cus','cus.id = stmv.host_id','LEFT');
         $this->db->join($this->config->item('table_csetup_other_customers').' ocus','cus.id = stmv.host_id','LEFT');
-        $this->db->join($this->config->item('table_tm_market_visit_solution_ti').' mvst','mvt.id = mvst.visit_id','LEFT');
+        //$this->db->join($this->config->item('table_tm_market_visit_solution_ti').' mvst','mvt.id = mvst.visit_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -331,6 +331,26 @@ class Tm_ti_market_visit_solution extends Root_Controller
         $this->db->order_by('mvt.id DESC');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
+        $visit_ids=array();
+        foreach($items as $item)
+        {
+            $visit_ids[$item['id']]=$item['id'];
+        }
+        $visit_counts=array();
+        if((sizeof($visit_ids))>0)
+        {
+            $this->db->from($this->config->item('table_tm_market_visit_solution_ti').' mvst');
+            $this->db->select('count(mvst.id) total_solution',false);
+            $this->db->select('mvst.visit_id');
+            $this->db->where_in('mvst.visit_id',$visit_ids);
+            $this->db->group_by('mvst.visit_id');
+            $results=$this->db->get()->result_array();
+
+            foreach($results as $result)
+            {
+                $visit_counts[$result['visit_id']]=$result['total_solution'];
+            }
+        }
         foreach($items as &$item)
         {
             $item['day']=date('l',$item['date']);
@@ -355,6 +375,14 @@ class Tm_ti_market_visit_solution extends Root_Controller
             {
                 $item['customer_name']=$item['title'];
                 $item['district_name']=$item['special_district_name'];
+            }
+            if(isset($visit_counts[$item['id']]))
+            {
+                $item['total_solution']=$visit_counts[$item['id']];
+            }
+            else
+            {
+                $item['total_solution']=0;
             }
         }
         //$items=$this->db->get()->result_array();
