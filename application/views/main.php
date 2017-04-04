@@ -135,6 +135,6 @@ foreach($results as $result)
             <div id="popup_content" style="overflow: auto;">
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url(); ?>js/system_common.js"></script>
+        <script type="text/javascript" src="<?php echo base_url(); ?>js/system_common.js?version=<?php echo time(); ?>"></script>
     </body>
 </html>
