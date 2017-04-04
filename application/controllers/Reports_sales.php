@@ -218,7 +218,7 @@ class Reports_sales extends Root_Controller
         $customer_id=$this->input->post('customer_id');
 
         $report_type=$this->input->post('report_type');//means kg/pkt
-
+        $customer_type=$this->input->post('customer_type');
         $warehouse_id=$this->input->post('warehouse_id');
         $crop_id=$this->input->post('crop_id');
         $crop_type_id=$this->input->post('crop_type_id');
@@ -318,6 +318,10 @@ class Reports_sales extends Root_Controller
                         }
                     }
                 }
+            }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
             }
         }
         $this->db->order_by('cus.ordering','ASC');
@@ -770,6 +774,7 @@ class Reports_sales extends Root_Controller
         $customer_id=$this->input->post('customer_id');
 
         $report_type=$this->input->post('report_type');//means kg/pkt
+        $customer_type=$this->input->post('customer_type');
 
         $warehouse_id=$this->input->post('warehouse_id');
         $crop_id=$this->input->post('crop_id');
@@ -870,6 +875,10 @@ class Reports_sales extends Root_Controller
                         }
                     }
                 }
+            }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
             }
         }
         $this->db->order_by('po.id','ASC');
@@ -1097,6 +1106,7 @@ class Reports_sales extends Root_Controller
         $customer_id=$this->input->post('customer_id');
 
         $report_type=$this->input->post('report_type');//means kg/pkt
+        $customer_type=$this->input->post('customer_type');
 
         $warehouse_id=$this->input->post('warehouse_id');
         $crop_id=$this->input->post('crop_id');
@@ -1198,6 +1208,10 @@ class Reports_sales extends Root_Controller
                         }
                     }
                 }
+            }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
             }
         }
         $this->db->order_by('po.id','ASC');
@@ -1416,6 +1430,7 @@ class Reports_sales extends Root_Controller
         $customer_id=$this->input->post('customer_id');
 
         $report_type=$this->input->post('report_type');//means kg/pkt
+        $customer_type=$this->input->post('customer_type');
 
         $warehouse_id=$this->input->post('warehouse_id');
         $crop_id=$this->input->post('crop_id');
@@ -1548,6 +1563,10 @@ class Reports_sales extends Root_Controller
                         }
                     }
                 }
+            }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
             }
         }
         $group_array=array('variety_id','pack_size_id');
@@ -1899,6 +1918,7 @@ class Reports_sales extends Root_Controller
         $customer_id=$this->input->post('customer_id');
 
         $report_type=$this->input->post('report_type');//means kg/pkt
+        $customer_type=$this->input->post('customer_type');
 
         $warehouse_id=$this->input->post('warehouse_id');
         $crop_id=$this->input->post('crop_id');
@@ -1994,6 +2014,10 @@ class Reports_sales extends Root_Controller
                         }
                     }
                 }
+            }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
             }
         }
         $this->db->order_by('crop.ordering,crop.id,crop_type.ordering,crop_type.id,v.ordering,v.id');

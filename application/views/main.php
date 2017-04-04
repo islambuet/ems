@@ -1,6 +1,33 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 $CI = & get_instance();
+$system_crops=Query_helper::get_info($CI->config->item('table_setup_classification_crops'),array('id value,name text'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering'));
+$results=Query_helper::get_info($CI->config->item('table_setup_classification_crop_types'),array('id value,name text,crop_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering'));
+$system_types=array();
+foreach($results as $result)
+{
+    $system_types[$result['crop_id']][]=$result;
+}
+$system_divisions=Query_helper::get_info($CI->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$CI->config->item('system_status_active').'"'));
+
+$results=Query_helper::get_info($CI->config->item('table_setup_location_zones'),array('id value','name text,division_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+$system_zones=array();
+foreach($results as $result)
+{
+    $system_zones[$result['division_id']][]=$result;
+}
+$results=Query_helper::get_info($CI->config->item('table_setup_location_territories'),array('id value','name text,zone_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+$system_territories=array();
+foreach($results as $result)
+{
+    $system_territories[$result['zone_id']][]=$result;
+}
+$results=Query_helper::get_info($CI->config->item('table_setup_location_districts'),array('id value','name text,territory_id'),array('status ="'.$CI->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+$system_districts=array();
+foreach($results as $result)
+{
+    $system_districts[$result['territory_id']][]=$result;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,6 +35,14 @@ $CI = & get_instance();
         <title>EMS</title>
         <link rel="shortcut icon"  type="image/x-icon" href="<?php echo base_url(); ?>images/logo.png">
         <meta charset="utf-8">
+
+        <meta http-equiv="cache-control" content="max-age=0" />
+        <meta http-equiv="cache-control" content="no-cache" />
+        <meta http-equiv="expires" content="0" />
+        <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
+        <meta http-equiv="pragma" content="no-cache" />
+
+
         <link rel="stylesheet" href="<?php echo base_url();?>css/bootstrap.min.css">
         <link rel="stylesheet" href="<?php echo base_url();?>css/style.css">
         <link rel="stylesheet" href="<?php echo base_url(); ?>css/jquery-ui/jquery-ui.min.css">
@@ -59,6 +94,12 @@ $CI = & get_instance();
             var display_date_format = "dd-M-yy";
             var SELCET_ONE_ITEM = "<?php echo $CI->lang->line('SELECT_ONE_ITEM'); ?>";
             var DELETE_CONFIRM = "<?php echo $CI->lang->line('DELETE_CONFIRM'); ?>";
+            var system_crops=JSON.parse('<?php echo json_encode($system_crops);?>');
+            var system_types=JSON.parse('<?php echo json_encode($system_types);?>');
+            var system_divisions=JSON.parse('<?php echo json_encode($system_divisions);?>');
+            var system_zones=JSON.parse('<?php echo json_encode($system_zones);?>');
+            var system_territories=JSON.parse('<?php echo json_encode($system_territories);?>');
+            var system_districts=JSON.parse('<?php echo json_encode($system_districts);?>');
         </script>
         <header class="hidden-print">
 

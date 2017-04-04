@@ -540,3 +540,17 @@ function turn_off_triggers()
     
 
 }
+function get_dropdown_with_select(items,selected_value = '')
+{
+    var dropdown_html='<option value="">Select</option>';
+    for(var i=0;i<items.length;++i)
+    {
+        dropdown_html+='<option value="'+items[i].value+'"';
+        if(items[i].value==selected_value)
+        {
+            dropdown_html+=' selected';
+        }
+        dropdown_html+='>'+items[i].text+'</option>';
+    }
+    return dropdown_html;
+}

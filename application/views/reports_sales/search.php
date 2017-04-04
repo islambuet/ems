@@ -102,6 +102,19 @@
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CUSTOMER_TYPE');?></label>
+                    </div>
+                    <div class="col-xs-6">
+                        <select name="report[customer_type]" class="form-control">
+                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                            <option value="Customer">Customer</option>
+                            <option value="Outlet">Outlet</option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row show-grid">
+                    <div class="col-xs-6">
                         <label class="control-label pull-right">PO NO</label>
                     </div>
                     <div class="col-xs-6">
@@ -404,7 +417,7 @@
                 $('#crop_type_id_container').show();
                 $('#variety_id_container').hide();
 
-                $.ajax({
+                /*$.ajax({
                     url: base_url+"common_controller/get_dropdown_croptypes_by_cropid/",
                     type: 'POST',
                     datatype: "JSON",
@@ -418,7 +431,11 @@
                         console.log("error");
 
                     }
-                });
+                });*/
+                if(system_types[crop_id]!==undefined)
+                {
+                    $("#crop_type_id").html(get_dropdown_with_select(system_types[crop_id]));
+                }
             }
             else
             {
@@ -509,35 +526,19 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var division_id=$('#division_id').val();
+            $('#zone_id_container').hide();
+            $('#territory_id_container').hide();
+            $('#district_id_container').hide();
+            $('#customer_id_container').hide();
             if(division_id>0)
             {
                 $('#zone_id_container').show();
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#customer_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_zones_by_divisionid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{division_id:division_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
+                if(system_zones[division_id]!==undefined)
+                {
+                    $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
+                }
             }
-            else
-            {
-                $('#zone_id_container').hide();
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#customer_id_container').hide();
-            }
+
         });
         $(document).on("change","#zone_id",function()
         {
@@ -545,63 +546,33 @@
             $("#district_id").val("");
             $("#customer_id").val("");
             var zone_id=$('#zone_id').val();
+            $('#territory_id_container').hide();
+            $('#district_id_container').hide();
+            $('#customer_id_container').hide();
             if(zone_id>0)
             {
                 $('#territory_id_container').show();
-                $('#district_id_container').hide();
-                $('#customer_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_territories_by_zoneid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{zone_id:zone_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#customer_id_container').hide();
+                if(system_territories[zone_id]!==undefined)
+                {
+                    $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
+                }
             }
         });
         $(document).on("change","#territory_id",function()
         {
             $("#district_id").val("");
             $("#customer_id").val("");
+            $('#customer_id_container').hide();
+            $('#district_id_container').hide();
             var territory_id=$('#territory_id').val();
             if(territory_id>0)
             {
                 $('#district_id_container').show();
-                $('#customer_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_districts_by_territoryid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{territory_id:territory_id},
-                    success: function (data, status)
-                    {
+                if(system_districts[territory_id]!==undefined)
+                {
+                    $("#district_id").html(get_dropdown_with_select(system_districts[territory_id]));
+                }
 
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#customer_id_container').hide();
-                $('#district_id_container').hide();
             }
         });
         $(document).on("change","#district_id",function()
