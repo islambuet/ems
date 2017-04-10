@@ -71,14 +71,19 @@ class Reports_stock extends Root_Controller
         {
             $reports=$this->input->post('report');
             $reports['date_end']=System_helper::get_time($reports['date_end']);
+            $reports['date_end']=$reports['date_end']+3600*24-1;
             $reports['date_start']=System_helper::get_time($reports['date_start']);
+            if($reports['date_start'])
+            {
+                $reports['date_start']-=1;
+            }
             if($reports['date_start']>=$reports['date_end'])
             {
                 $ajax['status']=false;
                 $ajax['system_message']='Starting Date should be less than End date';
                 $this->jsonReturn($ajax);
             }
-            $reports['date_end']=$reports['date_end']+3600*24-1;
+
             $keys=',';
 
             foreach($reports as $elem=>$value)
