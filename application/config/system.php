@@ -2,6 +2,10 @@
 $config['system_site_short_name']='ems';
 $config['offline_controllers']=array('home','sys_site_offline');
 
+//dbs
+$config['system_db_ems']='arm_ems';
+$config['system_db_pos']='arm_pos';
+
 $config['system_status_yes']='Yes';
 $config['system_status_no']='No';
 $config['system_status_active']='Active';
