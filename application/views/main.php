@@ -33,7 +33,8 @@ foreach($results as $result)
 <html lang="en">
     <head>
         <title>EMS</title>
-        <link rel="shortcut icon"  type="image/x-icon" href="<?php echo base_url(); ?>images/logo.png">
+        <link rel="shortcut icon" href="http://malikseeds.com/favicon.ico" type="image/x-icon">
+        <link rel="icon" href="http://malikseeds.com/favicon.ico" type="image/x-icon">
         <meta charset="utf-8">
 
         <meta http-equiv="cache-control" content="max-age=0" />
@@ -43,56 +44,56 @@ foreach($results as $result)
         <meta http-equiv="pragma" content="no-cache" />
 
 
-        <link rel="stylesheet" href="<?php echo base_url();?>css/bootstrap.min.css">
-        <link rel="stylesheet" href="<?php echo base_url();?>css/style.css">
-        <link rel="stylesheet" href="<?php echo base_url(); ?>css/jquery-ui/jquery-ui.min.css">
-        <link rel="stylesheet" href="<?php echo base_url(); ?>css/jquery-ui/jquery-ui.theme.css">
+        <link rel="stylesheet" href="<?php echo base_url('css/bootstrap.min.css');?>">
+        <link rel="stylesheet" href="<?php echo base_url('css/style.css');?>">
+        <link rel="stylesheet" href="<?php echo base_url('css/jquery-ui/jquery-ui.min.css'); ?>">
+        <link rel="stylesheet" href="<?php echo base_url('css/jquery-ui/jquery-ui.theme.css'); ?>">
 
-        <link rel="stylesheet" href="<?php echo base_url(); ?>/css/jqx/jqx.base.css">
+        <link rel="stylesheet" href="<?php echo base_url('css/jqx/jqx.base.css'); ?>">
 
     </head>
     <body>
-        <script src="<?php echo base_url(); ?>js/jquery-2.1.1.js"></script>
-        <script src="<?php echo base_url(); ?>js/bootstrap.min.js"></script>
-        <script src="<?php echo base_url(); ?>js/bootstrap-filestyle.min.js"></script>
-        <script src="<?php echo base_url(); ?>js/jquery-ui.min.js"></script>
+        <script src="<?php echo base_url('js/jquery-2.1.1.js'); ?>"></script>
+        <script src="<?php echo base_url('js/bootstrap.min.js'); ?>"></script>
+        <script src="<?php echo base_url('js/bootstrap-filestyle.min.js'); ?>"></script>
+        <script src="<?php echo base_url('js/jquery-ui.min.js'); ?>"></script>
 
         <!--    for jqx grid finish-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxcore.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxscrollbar.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.edit.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.sort.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.pager.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxbuttons.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxcheckbox.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxlistbox.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdropdownlist.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxmenu.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.filter.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.selection.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.columnsresize.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdata.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdatatable.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxcore.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxscrollbar.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.edit.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.sort.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.pager.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxbuttons.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxcheckbox.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxlistbox.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxdropdownlist.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxmenu.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.filter.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.selection.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.columnsresize.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxdata.js'); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxdatatable.js'); ?>"></script>
         <!--    only for color picker-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxcolorpicker.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxcolorpicker.js'); ?>"></script>
         <!--    For column reorder-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.columnsreorder.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.columnsreorder.js');?>"></script>
         <!--    For print-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxdata.export.js"></script>
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.export.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxdata.export.js');?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.export.js');?>"></script>
         <!--        for footer sum-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxgrid.aggregates.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxgrid.aggregates.js');?>"></script>
         <!-- for header tool tip-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxtooltip.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxtooltip.js');?>"></script>
         <!-- popup-->
-        <script type="text/javascript" src="<?php echo base_url();?>js/jqx/jqxwindow.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/jqx/jqxwindow.js');?>"></script>
 
         <!--    for jqx grid end-->
         <script type="text/javascript">
             var base_url = "<?php echo base_url(); ?>";
             var display_date_format = "dd-M-yy";
-            var SELCET_ONE_ITEM = "<?php echo $CI->lang->line('SELECT_ONE_ITEM'); ?>";
+            var SELECT_ONE_ITEM = "<?php echo $CI->lang->line('SELECT_ONE_ITEM'); ?>";
             var DELETE_CONFIRM = "<?php echo $CI->lang->line('DELETE_CONFIRM'); ?>";
             var system_crops=JSON.parse('<?php echo json_encode($system_crops);?>');
             var system_types=JSON.parse('<?php echo json_encode($system_types);?>');
@@ -128,13 +129,13 @@ foreach($results as $result)
             </div>
             <div class="clearfix"></div>
         </footer>
-        <div id="system_loading"><img src="<?php echo base_url(); ?>images/spinner.gif"></div>
-        <div id="system_message"></div>
+        <div id="system_loading" class="hidden-print"><img src="<?php echo base_url('images/spinner.gif'); ?>"></div>
+        <div id="system_message" class="hidden-print"></div>
         <div id="popup_window">
             <div id="popup_window_title">Details</div>
             <div id="popup_content" style="overflow: auto;">
             </div>
         </div>
-        <script type="text/javascript" src="<?php echo base_url(); ?>js/system_common.js?version=<?php echo time(); ?>"></script>
+        <script type="text/javascript" src="<?php echo base_url('js/system_common.js?version='.time()); ?>"></script>
     </body>
 </html>

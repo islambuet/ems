@@ -87,7 +87,7 @@ class System_helper
         $config=array();
         $config['upload_path'] = FCPATH.$save_dir;
         $config['allowed_types'] = 'gif|jpg|png';
-        $config['max_size'] = $CI->config->item("max_file_size");
+        $config['max_size']=10*1024;
         $config['overwrite'] = false;
         $config['remove_spaces'] = true;
 

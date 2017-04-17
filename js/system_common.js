@@ -237,7 +237,7 @@ $(document).ready(function()
         }
         else
         {
-            alert(SELCET_ONE_ITEM);
+            alert(SELECT_ONE_ITEM);
         }
 
     });
@@ -278,7 +278,7 @@ $(document).ready(function()
         }
         else
         {
-            alert(SELCET_ONE_ITEM);
+            alert(SELECT_ONE_ITEM);
         }
 
     });
