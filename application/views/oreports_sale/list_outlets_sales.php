@@ -100,7 +100,7 @@ if(sizeof($action_data)>0)
         };
         var aggregates=function (total, column, element, record)
         {
-            if(record.area=="Grand Total")
+            if(record.outlet_name=="Grand Total")
             {
                 //console.log(element);
                 return record[element];

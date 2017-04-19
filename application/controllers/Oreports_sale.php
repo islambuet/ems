@@ -464,7 +464,7 @@ class Oreports_sale extends Root_Controller
         $this->db->where('cus.type','Outlet');
         $this->db->order_by('cus.ordering','ASC');
         $this->db->order_by('cus.id','ASC');
-        $this->db->where('cus.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('cus.status',$this->config->item('system_status_active'));
         $results=$this->db->get()->result_array();
         $outlets=array();
         $outlet_ids=array();
