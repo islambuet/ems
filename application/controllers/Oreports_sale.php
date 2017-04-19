@@ -44,6 +44,10 @@ class Oreports_sale extends Root_Controller
         {
             $this->system_get_items_area_sales();
         }
+        elseif($action=="get_items_outlets_sales")
+        {
+            $this->system_get_items_outlets_sales();
+        }
         else
         {
             $this->system_search();
@@ -145,6 +149,11 @@ class Oreports_sale extends Root_Controller
                 }
                 $data['title']="Area Wise Sales Report";
                 $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_area_sales",$data,true));
+            }
+            elseif($reports['report_name']=='outlets_sales')
+            {
+                $data['title']="Outlet Wise Sales Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_outlets_sales",$data,true));
             }
             else
             {
@@ -341,6 +350,200 @@ class Oreports_sale extends Root_Controller
         $row=array();
         $row['id']=$info['id'];
         $row['area']=$info['area'];
+        if($info['sale_total']!=0)
+        {
+            $row['sale_total']=number_format($info['sale_total'],2);
+        }
+        else
+        {
+            $row['sale_total']='';
+        }
+        if($info['payable_total']!=0)
+        {
+            $row['payable_total']=number_format($info['payable_total'],2);
+        }
+        else
+        {
+            $row['payable_total']='';
+        }
+        if(($info['sale_total']-$info['payable_total'])!=0)
+        {
+            $row['discount_total']=number_format(($info['sale_total']-$info['payable_total']),2);
+        }
+        else
+        {
+            $row['discount_total']='';
+        }
+        if($info['sale_canceled']!=0)
+        {
+            $row['sale_canceled']=number_format($info['sale_canceled'],2);
+        }
+        else
+        {
+            $row['sale_canceled']='';
+        }
+        if($info['payable_canceled']!=0)
+        {
+            $row['payable_canceled']=number_format($info['payable_canceled'],2);
+        }
+        else
+        {
+            $row['payable_canceled']='';
+        }
+        if(($info['sale_canceled']-$info['payable_canceled'])!=0)
+        {
+            $row['discount_canceled']=number_format(($info['sale_canceled']-$info['payable_canceled']),2);
+        }
+        else
+        {
+            $row['discount_canceled']='';
+        }
+        if(($info['sale_total']-$info['sale_canceled'])!=0)
+        {
+            $row['sale_actual']=number_format(($info['sale_total']-$info['sale_canceled']),2);
+        }
+        else
+        {
+            $row['sale_actual']='';
+        }
+        if(($info['payable_total']-$info['payable_canceled'])!=0)
+        {
+            $row['payable_actual']=number_format(($info['payable_total']-$info['payable_canceled']),2);
+        }
+        else
+        {
+            $row['payable_actual']='';
+        }
+        if(($info['sale_total']-$info['sale_canceled']-$info['payable_total']+$info['payable_canceled'])!=0)
+        {
+            $row['discount_actual']=number_format(($info['sale_total']-$info['sale_canceled']-$info['payable_total']+$info['payable_canceled']),2);
+        }
+        else
+        {
+            $row['discount_actual']='';
+        }
+        return $row;
+
+    }
+    private function system_get_items_outlets_sales()
+    {
+        $items=array();
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $customer_id=$this->input->post('customer_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        $this->db->from($this->config->item('table_csetup_customers').' cus');
+        $this->db->select('cus.id,cus.name outlet_name');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        if($division_id>0)
+        {
+            $this->db->where('zone_id.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('d.id',$district_id);
+                        if($customer_id>0)
+                        {
+                            $this->db->where('cus.id',$customer_id);
+                        }
+                    }
+                }
+            }
+        }
+        $this->db->where('cus.type','Outlet');
+        $this->db->order_by('cus.ordering','ASC');
+        $this->db->order_by('cus.id','ASC');
+        $this->db->where('cus.status !=',$this->config->item('system_status_delete'));
+        $results=$this->db->get()->result_array();
+        $outlets=array();
+        $outlet_ids=array();
+        foreach($results as $result)
+        {
+            $outlets[$result['id']]['id']=$result['id'];
+            $outlets[$result['id']]['outlet_name']=$result['outlet_name'];
+            $outlets[$result['id']]['sale_total']=0;
+            $outlets[$result['id']]['payable_total']=0;
+            $outlets[$result['id']]['sale_canceled']=0;
+            $outlets[$result['id']]['payable_canceled']=0;
+            $outlet_ids[$result['id']]=$result['id'];
+        }
+        if(sizeof($outlet_ids)>0)
+        {
+            //total sales
+            $this->db->from($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale').' sale');
+            $this->db->select('sale.customer_id');
+            $this->db->select('SUM(sale.amount_total) sale_total');
+            $this->db->select('SUM(sale.amount_payable) payable_total');
+            $this->db->where_in('sale.customer_id',$outlet_ids);
+            $this->db->where('sale.date_sale >=',$date_start);
+            $this->db->where('sale.date_sale <=',$date_end);
+            $this->db->group_by('sale.customer_id');
+            $results=$this->db->get()->result_array();
+            if($results)
+            {
+                foreach($results as $result)
+                {
+
+                    $outlets[$result['customer_id']]['sale_total']=$result['sale_total'];
+                    $outlets[$result['customer_id']]['payable_total']=$result['payable_total'];
+                }
+            }
+            //total canceled
+            $this->db->from($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale').' sale');
+            $this->db->select('sale.customer_id customer_id');
+            $this->db->select('SUM(sale.amount_total) sale_canceled');
+            $this->db->select('SUM(sale.amount_payable) payable_canceled');
+            $this->db->where_in('sale.customer_id',$outlet_ids);
+            $this->db->where('sale.status',$this->config->item('system_status_inactive'));
+            $this->db->where('sale.date_canceled >=',$date_start);
+            $this->db->where('sale.date_canceled <=',$date_end);
+            $this->db->group_by('sale.customer_id');
+            $results=$this->db->get()->result_array();
+            if($results)
+            {
+                foreach($results as $result)
+                {
+
+                    $outlets[$result['customer_id']]['sale_canceled']=$result['sale_canceled'];
+                    $outlets[$result['customer_id']]['payable_canceled']=$result['payable_canceled'];
+                }
+            }
+
+        }
+        $grand_total=array();
+        $grand_total['id']=0;
+        $grand_total['outlet_name']='Grand Total';
+        $grand_total['sale_total']=0;
+        $grand_total['payable_total']=0;
+        $grand_total['sale_canceled']=0;
+        $grand_total['payable_canceled']=0;
+        foreach($outlets as $item)
+        {
+            $grand_total['sale_total']+=$item['sale_total'];
+            $grand_total['payable_total']+=$item['payable_total'];
+            $grand_total['sale_canceled']+=$item['sale_canceled'];
+            $grand_total['payable_canceled']+=$item['payable_canceled'];
+            $items[]=$this->get_outlet_sales_row($item);
+        }
+        $items[]=$this->get_outlet_sales_row($grand_total);
+        $this->jsonReturn($items);
+    }
+    private function get_outlet_sales_row($info)
+    {
+        $row=array();
+        $row['id']=$info['id'];
+        $row['outlet_name']=$info['outlet_name'];
         if($info['sale_total']!=0)
         {
             $row['sale_total']=number_format($info['sale_total'],2);
