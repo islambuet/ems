@@ -443,7 +443,7 @@ class Oreports_sale extends Root_Controller
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
         if($division_id>0)
         {
-            $this->db->where('zone_id.division_id',$division_id);
+            $this->db->where('zone.division_id',$division_id);
             if($zone_id>0)
             {
                 $this->db->where('zone.id',$zone_id);
