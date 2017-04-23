@@ -74,7 +74,7 @@ $(document).ready(function()
         {
             if(xhr.responseJSON.system_redirect_url)
             {
-                resized_image_files=[];
+                system_resized_image_files=[];
                 window.location.replace(xhr.responseJSON.system_redirect_url);
 
                 //window.history.pushState(null, "Search Results",xhr.responseJSON.page_url);
@@ -82,7 +82,7 @@ $(document).ready(function()
             }
             if(xhr.responseJSON.system_page_url)
             {
-                resized_image_files=[];
+                system_resized_image_files=[];
                 window.history.pushState(null, "Search Results",xhr.responseJSON.system_page_url);
                 //window.history.replaceState(null, "Search Results",xhr.responseJSON.system_page_url);
             }
@@ -124,15 +124,15 @@ $(document).ready(function()
         }
         var form_data=new FormData(this);
         var file;
-        for(var i=0;i<resized_image_files.length;i++)
+        for(var i=0;i<system_resized_image_files.length;i++)
         {
-            file=resized_image_files[i];
+            file=system_resized_image_files[i];
             if(form_data.has(file.key))
             {
                 form_data.set(file.key,file.value,file.name);
             }
         }
-        resized_image_files=[];
+        system_resized_image_files=[];
         event.preventDefault();
         $.ajax({
             url: $(this).attr("action"),
@@ -354,7 +354,7 @@ $(document).ready(function()
                         context.drawImage(img, 0, 0, width, height);
                         canvas.toBlob(function(blob)
                         {
-                            resized_image_files[resized_image_files.length]={
+                            system_resized_image_files[system_resized_image_files.length]={
                                 key:key,
                                 value:blob,
                                 name:file_name+'.png'
