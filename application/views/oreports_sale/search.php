@@ -20,6 +20,7 @@ $CI = & get_instance();
                             <select id="report_name" name="report[report_name]" class="form-control">
                                 <option value="area_sales">Area wise Sales</option>
                                 <option value="outlets_sales">Outlet wise Sales</option>
+                                <option value="variety_sale">Product wise</option>
                             </select>
                         </div>
                     </div>
@@ -57,6 +58,38 @@ $CI = & get_instance();
                             <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time()); ?>">
                         </div>
 
+                    </div>
+                    <div id="container_product" style="display: none;">
+                        <div style="" class="row show-grid" id="crop_id_container">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
+                            </div>
+                            <div class="col-xs-6">
+                                <select id="crop_id" name="report[crop_id]" class="form-control">
+                                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: none;" class="row show-grid" id="crop_type_id_container">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?></label>
+                            </div>
+                            <div class="col-xs-6">
+                                <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
+                                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: none;" class="row show-grid" id="variety_id_container">
+                            <div class="col-xs-6">
+                                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_VARIETY_NAME');?></label>
+                            </div>
+                            <div class="col-xs-6">
+                                <select id="variety_id" name="report[variety_id]" class="form-control">
+                                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="col-xs-6">
@@ -231,6 +264,64 @@ $CI = & get_instance();
     jQuery(document).ready(function()
     {
         $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "2015:+0"});
+        $("#crop_id").html(get_dropdown_with_select(system_crops));
+        $(document).off("change", "#crop_id");
+        $(document).on("change","#crop_id",function()
+        {
+            $("#system_report_container").html("");
+            $("#crop_type_id").val("");
+            $("#variety_id").val("");
+
+            var crop_id=$('#crop_id').val();
+            if(crop_id>0)
+            {
+                $('#crop_type_id_container').show();
+                $('#variety_id_container').hide();
+                if(system_types[crop_id]!==undefined)
+                {
+                    $("#crop_type_id").html(get_dropdown_with_select(system_types[crop_id]));
+                }
+            }
+            else
+            {
+                $('#crop_type_id_container').hide();
+                $('#variety_id_container').hide();
+
+            }
+        });
+        $(document).off("change", "#crop_type_id");
+        $(document).on("change","#crop_type_id",function()
+        {
+            $("#system_report_container").html("");
+            $("#variety_id").val("");
+            var crop_type_id=$('#crop_type_id').val();
+            if(crop_type_id>0)
+            {
+                $('#variety_id_container').show();
+
+                $.ajax({
+                    url: base_url+"common_controller/get_dropdown_armvarieties_by_croptypeid/",
+                    type: 'POST',
+                    datatype: "JSON",
+                    data:{crop_type_id:crop_type_id},
+                    success: function (data, status)
+                    {
+
+                    },
+                    error: function (xhr, desc, err)
+                    {
+                        console.log("error");
+
+                    }
+                });
+            }
+            else
+            {
+                $('#variety_id_container').hide();
+
+            }
+        });
+        $(document).off("change", "#variety_id");
         $(document).off("change", "#division_id");
         $(document).on("change","#division_id",function()
         {
@@ -331,6 +422,21 @@ $CI = & get_instance();
                 $("#date_end").val(dates[1]);
 
             }
+        });
+        $(document).off("change", "#report_name");
+        $(document).on("change","#report_name",function()
+        {
+            $("#system_report_container").html("");
+            var report_name=$('#report_name').val();
+            if(report_name=='variety_sale')
+            {
+                $('#container_product').show();
+            }
+            else
+            {
+                $('#container_product').hide();
+            }
+
         });
     });
 </script>
