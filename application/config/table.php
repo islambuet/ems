@@ -109,3 +109,24 @@ $config['table_tm_rnd_demo_disease_picture'] = 'ems_tm_rnd_demo_disease_picture'
 
 $config['table_tm_ict_monitoring_ti'] = 'ems_tm_ict_monitoring_ti';
 $config['table_tm_ict_monitoring_zi'] = 'ems_tm_ict_monitoring_zi';
+
+//imtiaz
+//filed day setup
+$config['table_setup_fd_bud_expense_items'] = 'ems_setup_fd_bud_expense_items';
+$config['table_setup_fd_bud_picture_category'] = 'ems_setup_fd_bud_picture_category';
+
+//task management -> field day budget
+$config['table_tm_fd_bud_budget'] = 'ems_tm_fd_bud_budget';
+$config['table_tm_fd_bud_reporting'] = 'ems_tm_fd_bud_reporting';
+$config['table_tm_fd_bud_info_details'] = 'ems_tm_fd_bud_info_details';
+$config['table_tm_fd_rep_details_info'] = 'ems_tm_fd_rep_details_info';
+$config['table_tm_fd_bud_details_participant'] = 'ems_tm_fd_bud_details_participant';
+$config['table_tm_fd_bud_details_expense'] = 'ems_tm_fd_bud_details_expense';
+$config['table_tm_fd_rep_details_participant'] = 'ems_tm_fd_rep_details_participant';
+$config['table_tm_fd_rep_details_expense'] = 'ems_tm_fd_rep_details_expense';
+$config['table_tm_fd_rep_expense_picture'] = 'ems_tm_fd_rep_expense_picture';
+$config['table_tm_fd_bud_details_picture'] = 'ems_tm_fd_bud_details_picture';
+$config['table_tm_fd_rep_details_picture'] = 'ems_tm_fd_rep_details_picture';
+
+//farmer setup
+$config['table_setup_fsetup_leading_farmer'] = 'ems_setup_fsetup_leading_farmer';

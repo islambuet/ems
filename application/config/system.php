@@ -1,6 +1,7 @@
 <?php
 $config['system_site_short_name']='ems';
 $config['offline_controllers']=array('home','sys_site_offline');
+$config['system_image_base_url']='http://50.116.76.180/ems/';
 
 //dbs
 $config['system_db_ems']='arm_ems';
@@ -36,6 +37,7 @@ $config['system_payment_way_online_payment']='Online Payment';
 //po
 $config['system_po_no_length']=6;
 $config['system_status_po_request_pending']='Pending';
+$config['system_status_po_request_approved']='Approved';
 $config['system_status_po_request_requested']='Requested';
 $config['system_status_po_approval_pending']='Pending';
 $config['system_status_po_approval_approved']='Approved';
@@ -58,5 +60,15 @@ $config['system_host_type_special']='special';
 
 $config['system_bank_type_receive']='Receive';
 $config['system_bank_type_expense']='Expense';
+
+//Field Day
+
+$config['LABEL_FDR_FORWARDED'] = 'Forwarded';
+$config['system_status_fdb_request']='Request for Approval';
+
+
+//Meeting minutes
+$config['system_status_forward']='Forwarded';
+$config['system_status_complete']='Completed';
 
 
