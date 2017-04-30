@@ -159,6 +159,7 @@ class Reports_payment extends Root_Controller
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
         $customer_id=$this->input->post('customer_id');
+        $customer_type=$this->input->post('customer_type');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
@@ -201,6 +202,10 @@ class Reports_payment extends Root_Controller
                 }
             }
         }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
+        }
         $this->db->where('payment.status !=',$this->config->item('system_status_delete'));
         $this->db->where('payment.date_payment_receive >0');
         if($date_end>0)
@@ -217,7 +222,7 @@ class Reports_payment extends Root_Controller
         $this->db->order_by('t.ordering','ASC');
         $this->db->order_by('d.ordering','ASC');
         $this->db->order_by('cus.ordering','ASC');
-        $this->db->order_by('payment.date_payment_receive','ASC');
+        $this->db->order_by('payment.date_payment_receive','DESC');
         $results=$this->db->get()->result_array();
         $total_amount=0;
         $division_name='';

@@ -159,6 +159,7 @@ class Reports_po_delivery extends Root_Controller
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
         $customer_id=$this->input->post('customer_id');
+        $customer_type=$this->input->post('customer_type');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
 
@@ -207,6 +208,10 @@ class Reports_po_delivery extends Root_Controller
                     }
                 }
             }
+        }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
         }
         $this->db->where('delivery.revision',1);
         if($date_end>0)

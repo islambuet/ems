@@ -186,6 +186,7 @@ class Reports_party_balance extends Root_Controller
         $zone_id=$this->input->post('zone_id');
         $territory_id=$this->input->post('territory_id');
         $district_id=$this->input->post('district_id');
+        $customer_type=$this->input->post('customer_type');
         $date_end=$this->input->post('date_end');
         $date_start=$this->input->post('date_start');
         if($district_id>0)
@@ -267,6 +268,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
+            }
             $this->db->where('ba.date_adjust <',$date_start);
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
@@ -311,6 +316,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+        }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
         }
         $this->db->where('ba.date_adjust >=',$date_start);
         $this->db->where('ba.date_adjust <=',$date_end);
@@ -362,6 +371,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
+            }
 
             $this->db->where('po.date_approved <',$date_start);
 
@@ -408,6 +421,10 @@ class Reports_party_balance extends Root_Controller
                 }
             }
         }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
+        }
 
         $this->db->where('po.date_approved >=',$date_start);
         $this->db->where('po.date_approved <=',$date_end);
@@ -451,6 +468,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
+            }
             $this->db->where('p.date_payment_receive <',$date_start);
             $group_array[]=$location_type;
             $this->db->group_by($group_array);
@@ -492,6 +513,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+        }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
         }
 
         $this->db->where('p.date_payment_receive >=',$date_start);
@@ -542,6 +567,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+            if($customer_type)
+            {
+                $this->db->where('cus.type',$customer_type);
+            }
             $this->db->where('pod.date_return >',0);
             $this->db->where('pod.date_return <',$date_start);
             $group_array[]=$location_type;
@@ -587,6 +616,10 @@ class Reports_party_balance extends Root_Controller
                     }
                 }
             }
+        }
+        if($customer_type)
+        {
+            $this->db->where('cus.type',$customer_type);
         }
         $this->db->where('pod.date_return >',0);
         $this->db->where('pod.date_return >=',$date_start);
