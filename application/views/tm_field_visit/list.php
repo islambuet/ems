@@ -68,6 +68,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         ?>
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <div class="col-xs-12" style="margin-bottom: 20px;">
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="id">ID</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="name">Farmer Name</label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="year"><?php echo $CI->lang->line('LABEL_YEAR'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="season_name"><?php echo $CI->lang->line('LABEL_SEASON'); ?></label>
@@ -104,7 +105,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         {
             dataType: "json",
             dataFields: [
-                { name: 'id', type: 'int' },
+                { name: 'id', type: 'string' },
                 { name: 'name', type: 'string' },
                 { name: 'year', type: 'string' },
                 { name: 'season_name', type: 'string' },
@@ -147,6 +148,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 altrows: true,
                 autoheight: true,
                 columns: [
+                    { text: 'ID', dataField: 'id',width:'50',pinned:true},
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'80',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'80',filtertype: 'list'},
