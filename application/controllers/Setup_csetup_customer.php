@@ -87,6 +87,7 @@ class Setup_csetup_customer extends Root_Controller
             $data["customer"] = Array(
                 'id' => 0,
                 'type' => 'Customer',
+                'incharge' => 'Arm',
                 'name_short' => '',
                 'division_id'=>$this->locations['division_id'],
                 'zone_id'=>$this->locations['zone_id'],
@@ -233,7 +234,6 @@ class Setup_csetup_customer extends Root_Controller
         {
             $time=time();
             $data=$this->input->post('customer');
-            $payment=$this->input->post('payment');
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -356,7 +356,7 @@ class Setup_csetup_customer extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_csetup_customers').' cus');
-        $this->db->select('cus.id,cus.name,cus.type,cus.name_short,cus.customer_code,cus.phone,cus.status,cus.ordering');
+        $this->db->select('cus.id,cus.name,cus.type,cus.name_short,cus.customer_code,cus.incharge,cus.phone,cus.status,cus.ordering');
         $this->db->select('d.name district_name');
         $this->db->select('t.name territory_name');
         $this->db->select('zone.name zone_name');
