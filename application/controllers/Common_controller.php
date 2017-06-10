@@ -172,6 +172,36 @@ class Common_controller extends Root_Controller
 
         $this->jsonReturn($ajax);
     }
+	public function get_dropdown_arm_and_upcoming_varieties_by_croptypeid()
+    {
+        $crop_type_id = $this->input->post('crop_type_id');
+        $html_container_id='#variety_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','CONCAT(name," - ",whose) text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"','whose != "Competitor"'),0,0,array('ordering ASC'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
+
+
+    public function get_dropdown_competitor_varieties_by_croptypeid()
+    {
+        $crop_type_id = $this->input->post('crop_type_id');
+        $html_container_id='#competitor_variety_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_classification_varieties'),array('id value','name text'),array('crop_type_id ='.$crop_type_id,'status ="'.$this->config->item('system_status_active').'"','whose ="Competitor"'),0,0,array('ordering ASC'));
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
+    }
     //stock in
     public function get_dropdown_crops_by_warehouseid()
     {
