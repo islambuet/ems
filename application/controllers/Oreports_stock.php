@@ -40,9 +40,13 @@ class Oreports_stock extends Root_Controller
         {
             $this->system_list();
         }
-        elseif($action=="get_items_area_stock")
+        elseif($action=="get_items_area_details")
         {
-            $this->system_get_items_area_stock();
+            $this->system_get_items_area_details();
+        }
+        elseif($action=="get_items_area_current")
+        {
+            $this->system_get_items_area_current();
         }
         else
         {
@@ -116,8 +120,52 @@ class Oreports_stock extends Root_Controller
             }
             $data['options']=$reports;
             $ajax['status']=true;
-            $data['title']="Stock Report";
-            $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_area_stock",$data,true));
+            if($reports['report_name']=='area_details')
+            {
+                $data['title']="Details Stock Report";
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_area_details_stock",$data,true));
+            }
+            elseif($reports['report_name']=='area_current')
+            {
+
+                if($reports['customer_id']>0)
+                {
+                    $data['areas']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('id ='.$reports['customer_id']));
+                    $data['title']='Outlet Stock Report';
+                }
+                elseif($reports['district_id']>0)
+                {
+
+                    $data['areas']=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$reports['district_id']));
+                    $data['title']='Outlets Stock Report';
+                }
+                elseif($reports['territory_id']>0)
+                {
+                    $data['areas']=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$reports['territory_id']));
+                    $data['title']='Districts Stock Report';
+                }
+                elseif($reports['zone_id']>0)
+                {
+                    $data['areas']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$reports['zone_id']));
+                    $data['title']='Territories Stock Report';
+                }
+                elseif($reports['division_id']>0)
+                {
+                    $data['areas']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$reports['division_id']));
+                    $data['title']='Zones Stock Report';
+                }
+                else
+                {
+                    $data['areas']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+                    $data['title']='Divisions Stock Report';
+                }
+                $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list_area_current_stock",$data,true));
+            }
+            else
+            {
+                $this->message='Invalid Report type';
+            }
+
 
             if($this->message)
             {
@@ -134,7 +182,7 @@ class Oreports_stock extends Root_Controller
         }
 
     }
-    private function system_get_items_area_stock()
+    private function system_get_items_area_details()
     {
         $items=array();
         $report_unit=$this->input->post('unit');
@@ -299,7 +347,8 @@ class Oreports_stock extends Root_Controller
                             $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['starting_stock']-=($result['quantity_bonus_return']);
                         }
                     }
-                    else//if date_return greater than date_end should not calculate.Ignored
+                    //previous version bellow was only else condition
+                    elseif(($date_end>=$result['date_return']))
                     {
                         $stocks[$result['variety_id']][$result['pack_size_id']]['stock_return']+=($result['quantity_return']);
                         if($result['bonus_pack_size_id']>0)
@@ -451,8 +500,8 @@ class Oreports_stock extends Root_Controller
                         {
                             if($prev_crop_name!=$info['crop_name'])
                             {
-                                $items[]=$this->get_area_stock_row($type_total,$report_unit);
-                                $items[]=$this->get_area_stock_row($crop_total,$report_unit);
+                                $items[]=$this->get_area_details_row($type_total,$report_unit);
+                                $items[]=$this->get_area_details_row($crop_total,$report_unit);
                                 $crop_total['starting_stock']=$type_total['starting_stock']=0;
                                 $crop_total['stock_in']=$type_total['stock_in']=0;
                                 $crop_total['stock_return']=$type_total['stock_return']=0;
@@ -466,7 +515,7 @@ class Oreports_stock extends Root_Controller
                             }
                             elseif($prev_type_name!=$info['type_name'])
                             {
-                                $items[]=$this->get_area_stock_row($type_total,$report_unit);
+                                $items[]=$this->get_area_details_row($type_total,$report_unit);
                                 $type_total['starting_stock']=0;
                                 $type_total['stock_in']=0;
                                 $type_total['stock_return']=0;
@@ -527,18 +576,18 @@ class Oreports_stock extends Root_Controller
                         $grand_total['current_total_price']+=$info['current_total_price'];
                         $crop_total['current_total_price']+=$info['current_total_price'];
                         $type_total['current_total_price']+=$info['current_total_price'];
-                        $items[]=$this->get_area_stock_row($info,$report_unit);
+                        $items[]=$this->get_area_details_row($info,$report_unit);
                     }
                 }
-                $items[]=$this->get_area_stock_row($type_total,$report_unit);
-                $items[]=$this->get_area_stock_row($crop_total,$report_unit);
-                $items[]=$this->get_area_stock_row($grand_total,$report_unit);
+                $items[]=$this->get_area_details_row($type_total,$report_unit);
+                $items[]=$this->get_area_details_row($crop_total,$report_unit);
+                $items[]=$this->get_area_details_row($grand_total,$report_unit);
 
             }
         }
         $this->jsonReturn($items);
     }
-    private function get_area_stock_row($info,$report_type)
+    private function get_area_details_row($info,$report_type)
     {
         $row=array();
         $row['crop_name']=$info['crop_name'];
@@ -610,6 +659,389 @@ class Oreports_stock extends Root_Controller
         }
 
         $row['current_total_price']=number_format($info['current_total_price'],2);
+        return $row;
+
+    }
+    private function system_get_items_area_current()
+    {
+        $items=array();
+        $report_unit=$this->input->post('unit');
+        $division_id=$this->input->post('division_id');
+        $zone_id=$this->input->post('zone_id');
+        $territory_id=$this->input->post('territory_id');
+        $district_id=$this->input->post('district_id');
+        $customer_id=$this->input->post('customer_id');
+        $crop_id=$this->input->post('crop_id');
+        $crop_type_id=$this->input->post('crop_type_id');
+        $variety_id=$this->input->post('variety_id');
+        $date_end=$this->input->post('date_end');
+        $date_start=$this->input->post('date_start');
+
+        if($customer_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('id ='.$customer_id));
+            $location_type='customer_id';
+        }
+        elseif($district_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_csetup_customers'),array('id value','name text'),array('district_id ='.$district_id));
+            $location_type='customer_id';
+        }
+        elseif($territory_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_setup_location_districts'),array('id value','name text'),array('territory_id ='.$territory_id));
+            $location_type='district_id';
+        }
+        elseif($zone_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$zone_id));
+            $location_type='territory_id';
+        }
+        elseif($division_id>0)
+        {
+            $areas=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$division_id));
+            $location_type='zone_id';
+        }
+        else
+        {
+            $areas=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $location_type='division_id';
+        }
+        //get outlet ids and its area
+        $this->db->from($this->config->item('table_csetup_customers').' cus');
+        $this->db->select('cus.id');
+        $this->db->select('d.id district_id');
+        $this->db->select('t.id territory_id');
+        $this->db->select('zone.id zone_id');
+        $this->db->select('zone.division_id division_id');
+
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = cus.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = t.zone_id','INNER');
+        if($division_id>0)
+        {
+            $this->db->where('zone.division_id',$division_id);
+            if($zone_id>0)
+            {
+                $this->db->where('zone.id',$zone_id);
+                if($territory_id>0)
+                {
+                    $this->db->where('t.id',$territory_id);
+                    if($district_id>0)
+                    {
+                        $this->db->where('d.id',$district_id);
+                        if($customer_id>0)
+                        {
+                            $this->db->where('cus.id',$customer_id);
+                        }
+                    }
+                }
+            }
+        }
+        $this->db->where('cus.type','Outlet');
+        $this->db->where('cus.status',$this->config->item('system_status_active'));
+        $results=$this->db->get()->result_array();
+        $outlet_ids=array();
+        $outlet_areas=array();
+        foreach($results as $result)
+        {
+            $outlet_ids[$result['id']]=$result['id'];
+            $outlet_areas[$result['id']]=$result[$location_type];
+        }
+        if(sizeof($outlet_ids)>0)
+        {
+            //get stock in and out from ems
+            //sale receive and return quantity till end date
+            $this->db->from($this->config->item('system_db_ems').'.'.$this->config->item('table_sales_po_receives').' por');
+            $this->db->select('por.quantity_receive,por.quantity_bonus_receive,por.date_receive');
+            $this->db->select('po.customer_id customer_id');
+            $this->db->select('pod.pack_size_id,pod.pack_size');
+            $this->db->select('pod.bonus_pack_size_id,pod.bonus_pack_size');
+            $this->db->select('pod.quantity_return,pod.quantity_bonus_return,pod.date_return');
+            $this->db->select('v.id variety_id,v.name variety_name');
+            $this->db->select('type.id type_id,type.name type_name');
+            $this->db->select('crop.id crop_id,crop.name crop_name');
+
+
+            $this->db->join($this->config->item('system_db_ems').'.'.$this->config->item('table_sales_po_details').' pod','pod.id =por.sales_po_detail_id','INNER');
+            $this->db->join($this->config->item('system_db_ems').'.'.$this->config->item('table_sales_po').' po','po.id =pod.sales_po_id','INNER');
+            $this->db->join($this->config->item('system_db_ems').'.'.$this->config->item('table_setup_classification_varieties').' v','v.id =pod.variety_id','INNER');
+            $this->db->join($this->config->item('system_db_ems').'.'.$this->config->item('table_setup_classification_crop_types').' type','type.id =v.crop_type_id','INNER');
+            $this->db->join($this->config->item('system_db_ems').'.'.$this->config->item('table_setup_classification_crops').' crop','crop.id =type.crop_id','INNER');
+
+            $this->db->where('po.status_received',$this->config->item('system_status_po_received_received'));
+            $this->db->where_in('po.customer_id',$outlet_ids);
+            $this->db->where('por.revision',1);
+            $this->db->where('pod.revision',1);
+            $this->db->where('por.date_receive <=',$date_end);
+            if($crop_id>0)
+            {
+                $this->db->where('crop.id',$crop_id);
+                if($crop_type_id>0)
+                {
+                    $this->db->where('type.id',$crop_type_id);
+                    if($variety_id>0)
+                    {
+                        $this->db->where('v.id',$variety_id);
+                    }
+                }
+            }
+            $this->db->order_by('crop.ordering ASC');
+            $this->db->order_by('type.ordering ASC');
+            $this->db->order_by('v.ordering ASC');
+            $results=$this->db->get()->result_array();
+            $stocks=array();
+            $variety_ids=array();
+            foreach($results as $result)
+            {
+                if(!(isset($stocks[$result['variety_id']][$result['pack_size_id']])))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['crop_id']=$result['crop_id'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['crop_name']=$result['crop_name'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['type_id']=$result['type_id'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['type_name']=$result['type_name'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['variety_id']=$result['variety_id'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['variety_name']=$result['variety_name'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size_id']=$result['pack_size_id'];
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['pack_size']=$result['pack_size'];
+                    foreach($areas as $area)
+                    {
+                        $stocks[$result['variety_id']][$result['pack_size_id']]['area'][$area['value']]['current_stock']=0;
+                    }
+                    $variety_ids[$result['variety_id']]=$result['variety_id'];
+                }
+                if($result['bonus_pack_size_id']>0)
+                {
+                    if(!(isset($stocks[$result['variety_id']][$result['bonus_pack_size_id']])))
+                    {
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['crop_id']=$result['crop_id'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['crop_name']=$result['crop_name'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['type_id']=$result['type_id'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['type_name']=$result['type_name'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['variety_id']=$result['variety_id'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['variety_name']=$result['variety_name'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['pack_size_id']=$result['bonus_pack_size_id'];
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['pack_size']=$result['bonus_pack_size'];
+                        foreach($areas as $area)
+                        {
+                            $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['area'][$area['value']]['current_stock']=0;
+                        }
+                        $variety_ids[$result['variety_id']]=$result['variety_id'];
+                    }
+                }
+
+                $stocks[$result['variety_id']][$result['pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']+=($result['quantity_receive']);
+                if($result['bonus_pack_size_id']>0)
+                {
+                    $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']+=($result['quantity_receive']);
+
+                }
+                if(($result['date_return']>0)&&($result['date_return']<=$date_end))
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']-=($result['quantity_return']);
+                    if($result['bonus_pack_size_id']>0)
+                    {
+                        $stocks[$result['variety_id']][$result['bonus_pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']-=($result['quantity_bonus_return']);
+                    }
+                }
+            }
+            if(sizeof($variety_ids)>0)
+            {
+                //sales from pos upto end date
+                $this->db->from($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale_details').' pod');
+                $this->db->select('sale.customer_id');
+                $this->db->select('pod.variety_id,pod.pack_size_id,pod.pack_size');
+                $this->db->select('SUM(pod.quantity_sale) quantity');
+                $this->db->join($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale').' sale','sale.id =pod.sale_id','INNER');
+                $this->db->where('pod.revision',1);
+                $this->db->where('sale.date_sale <',$date_end);
+                $this->db->where_in('sale.customer_id',$outlet_ids);
+                $this->db->where_in('pod.variety_id',$variety_ids);
+
+                $this->db->group_by(array('pod.variety_id','pod.pack_size_id','customer_id'));
+                $results=$this->db->get()->result_array();
+                foreach($results as $result)
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']-=$result['quantity'];
+                }
+                //sale cancel
+                $this->db->from($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale_details').' pod');
+                $this->db->select('sale.customer_id');
+                $this->db->select('pod.variety_id,pod.pack_size_id,pod.pack_size');
+                $this->db->select('SUM(pod.quantity_sale) quantity');
+                $this->db->join($this->config->item('system_db_pos').'.'.$this->config->item('table_pos_sale').' sale','sale.id =pod.sale_id','INNER');
+
+                $this->db->where('sale.status',$this->config->item('system_status_inactive'));
+                $this->db->where('pod.revision',1);
+                $this->db->where('sale.date_canceled <',$date_end);
+                $this->db->where_in('sale.customer_id',$outlet_ids);
+                $this->db->where_in('pod.variety_id',$variety_ids);
+                $this->db->group_by(array('pod.variety_id','pod.pack_size_id','customer_id'));
+                $results=$this->db->get()->result_array();
+                foreach($results as $result)
+                {
+                    $stocks[$result['variety_id']][$result['pack_size_id']]['area'][$outlet_areas[$result['customer_id']]]['current_stock']+=$result['quantity'];
+                }
+                //unit price
+                $this->db->from($this->config->item('system_db_ems').'.'.$this->config->item('table_setup_classification_variety_price').' vp');
+                $this->db->select('vp.variety_id,vp.pack_size_id,vp.price');
+                $this->db->where('vp.revision',1);
+                $this->db->where_in('vp.variety_id',$variety_ids);
+                $prices=array();
+
+                $results=$this->db->get()->result_array();
+
+                foreach($results as $result)
+                {
+                    $prices[$result['variety_id']][$result['pack_size_id']]=$result['price'];
+                }
+                $type_total=array();
+                $crop_total=array();
+                $grand_total=array();
+
+                $type_total['crop_name']='';
+                $type_total['type_name']='';
+                $type_total['variety_name']='Total Type';
+
+                $crop_total['crop_name']='';
+                $crop_total['type_name']='Total Crop';
+                $crop_total['variety_name']='';
+
+                $grand_total['crop_name']='Grand Total';
+                $grand_total['type_name']='';
+                $grand_total['variety_name']='';
+                $grand_total['pack_size']=$crop_total['pack_size']=$type_total['pack_size']=0;
+                $grand_total['current_unit_price']=$crop_total['current_unit_price']=$type_total['current_unit_price']=0;
+                foreach($areas as $area)
+                {
+                    $grand_total['current_stock_pkt_'.$area['value']]=$crop_total['current_stock_pkt_'.$area['value']]=$type_total['current_stock_pkt_'.$area['value']]=0;
+                    $grand_total['current_stock_kg_'.$area['value']]=$crop_total['current_stock_kg_'.$area['value']]=$type_total['current_stock_kg_'.$area['value']]=0;
+                    $grand_total['current_stock_price_'.$area['value']]=$crop_total['current_stock_price_'.$area['value']]=$type_total['current_stock_price_'.$area['value']]=0;
+                }
+                $grand_total['total_price']=$crop_total['total_price']=$type_total['total_price']=0;
+
+                $prev_crop_name='';
+                $prev_type_name='';
+                $first_row=true;
+                foreach($stocks as $variety_id=>$varieties)
+                {
+                    foreach($varieties as $pack_size_id=>$info)
+                    {
+                        if(!$first_row)
+                        {
+                            if($prev_crop_name!=$info['crop_name'])
+                            {
+                                $items[]=$this->get_area_current_row($type_total,$areas);
+                                $items[]=$this->get_area_current_row($crop_total,$areas);
+                                foreach($areas as $area)
+                                {
+                                    $crop_total['current_stock_pkt_'.$area['value']]=$type_total['current_stock_pkt_'.$area['value']]=0;
+                                    $crop_total['current_stock_kg_'.$area['value']]=$type_total['current_stock_kg_'.$area['value']]=0;
+                                    $crop_total['current_stock_price_'.$area['value']]=$type_total['current_stock_price_'.$area['value']]=0;
+                                }
+                                $prev_crop_name=$info['crop_name'];
+                                $prev_type_name=$info['type_name'];
+                                //sum and reset type total
+                                //sum and reset crop total
+                            }
+                            elseif($prev_type_name!=$info['type_name'])
+                            {
+                                $items[]=$this->get_area_current_row($type_total,$areas);
+                                foreach($areas as $area)
+                                {
+                                    $type_total['current_stock_pkt_'.$area['value']]=0;
+                                    $type_total['current_stock_kg_'.$area['value']]=0;
+                                    $type_total['current_stock_price_'.$area['value']]=0;
+                                }
+                                $info['crop_name']='';
+                                $prev_type_name=$info['type_name'];
+                                //sum and reset type total
+                            }
+                            else
+                            {
+                                $info['crop_name']='';
+                                $info['type_name']='';
+                            }
+                        }
+                        else
+                        {
+                            $prev_crop_name=$info['crop_name'];
+                            $prev_type_name=$info['type_name'];
+                            $first_row=false;
+                        }
+                        if(isset($prices[$variety_id][$pack_size_id]))
+                        {
+
+                            $info['current_unit_price']=$prices[$variety_id][$pack_size_id];
+                        }
+                        else
+                        {
+                            $info['current_unit_price']=0;
+                        }
+                        $info['total_price']=0;
+                        foreach($info['area'] as $area_id=>$area_stock)
+                        {
+                            $info['current_stock_pkt_'.$area_id]=$area_stock['current_stock'];
+                            $info['current_stock_kg_'.$area_id]=$area_stock['current_stock']*$info['pack_size'];
+                            $info['current_stock_price_'.$area_id]=$area_stock['current_stock']*$info['current_unit_price'];
+                            $info['total_price']+=$info['current_stock_price_'.$area_id];
+                            $type_total['current_stock_pkt_'.$area_id]+=$info['current_stock_pkt_'.$area_id];
+                            $type_total['current_stock_kg_'.$area_id]+=$info['current_stock_kg_'.$area_id];
+                            $type_total['current_stock_price_'.$area_id]+=$info['current_stock_price_'.$area_id];
+                            $crop_total['current_stock_pkt_'.$area_id]+=$info['current_stock_pkt_'.$area_id];
+                            $crop_total['current_stock_kg_'.$area_id]+=$info['current_stock_kg_'.$area_id];
+                            $crop_total['current_stock_price_'.$area_id]+=$info['current_stock_price_'.$area_id];
+                            $grand_total['current_stock_pkt_'.$area_id]+=$info['current_stock_pkt_'.$area_id];
+                            $grand_total['current_stock_kg_'.$area_id]+=$info['current_stock_kg_'.$area_id];
+                            $grand_total['current_stock_price_'.$area_id]+=$info['current_stock_price_'.$area_id];
+
+
+                        }
+                        $type_total['total_price']+=$info['total_price'];
+                        $crop_total['total_price']+=$info['total_price'];
+                        $grand_total['total_price']+=$info['total_price'];
+
+                        $items[]=$this->get_area_current_row($info,$areas);
+                    }
+                }
+                $items[]=$this->get_area_current_row($type_total,$areas);
+                $items[]=$this->get_area_current_row($crop_total,$areas);
+                $items[]=$this->get_area_current_row($grand_total,$areas);
+
+            }
+        }
+        $this->jsonReturn($items);
+    }
+    private function get_area_current_row($info,$areas)
+    {
+        $row=array();
+        $row['crop_name']=$info['crop_name'];
+        $row['type_name']=$info['type_name'];
+        $row['variety_name']=$info['variety_name'];
+
+        if($info['pack_size']!=0)
+        {
+            $row['pack_size']=$info['pack_size'];
+        }
+        else
+        {
+            $row['pack_size']='';
+        }
+        if($info['current_unit_price']!=0)
+        {
+            $row['current_unit_price']=number_format($info['current_unit_price'],2);
+        }
+        else
+        {
+            $row['current_unit_price']='';
+        }
+        foreach($areas as $area)
+        {
+            $row['current_stock_pkt_'.$area['value']]=$info['current_stock_pkt_'.$area['value']];
+            $row['current_stock_kg_'.$area['value']]=number_format($info['current_stock_kg_'.$area['value']]/1000,3,'.','');
+            $row['current_stock_price_'.$area['value']]=number_format($info['current_stock_price_'.$area['value']],2);
+        }
+        $row['total_price']=number_format($info['total_price'],2);
         return $row;
 
     }

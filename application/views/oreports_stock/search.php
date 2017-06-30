@@ -14,6 +14,17 @@ $CI = & get_instance();
                 <div class="col-xs-6">
                     <div class="row show-grid">
                         <div class="col-xs-6">
+                            <label class="control-label pull-right">Report Type<span style="color:#FF0000">*</span></label>
+                        </div>
+                        <div class="col-xs-6">
+                            <select id="report_name" name="report[report_name]" class="form-control">
+                                <option value="area_details">Area Details Report</option>
+                                <option value="area_current">Area Current Stock Report</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row show-grid">
+                        <div class="col-xs-6">
                             <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_FISCAL_YEAR');?></label>
                         </div>
                         <div class="col-xs-6">
