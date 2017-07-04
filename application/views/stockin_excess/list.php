@@ -53,6 +53,7 @@
                 { name: 'variety_name', type: 'string' },
                 { name: 'pack_size_name', type: 'string' },
                 { name: 'quantity', type: 'number' },
+                { name: 'remarks', type: 'string' },
                 { name: 'quantity_weight', type: 'string' }
             ],
             id: 'id',
@@ -84,7 +85,8 @@
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name'},
                     { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',width:'150',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?>', dataField: 'quantity',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'150',cellsalign: 'right'}
+                    { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'150',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks',width:'200'}
                 ]
             });
     });

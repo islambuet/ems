@@ -342,7 +342,7 @@ class Stockin_excess extends Root_Controller
     public function get_items()
     {
         $this->db->from($this->config->item('table_stockin_excess_inventory').' stei');
-        $this->db->select('stei.id,stei.quantity,stei.date_stock_in');
+        $this->db->select('stei.id,stei.quantity,stei.date_stock_in,stei.remarks');
         $this->db->select('v.name variety_name');
         $this->db->select('crop.name crop_name');
         $this->db->select('type.name crop_type_name');
