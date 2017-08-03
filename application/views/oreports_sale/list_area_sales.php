@@ -30,12 +30,12 @@ if(sizeof($action_data)>0)
         ?>
         <div class="col-xs-12" style="margin-bottom: 20px;">
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="area"><?php echo $areas; ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sale_total">Total Sale</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="discount_total">Total Discount</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payable_total">Total Payable</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sale_canceled">Canceled Sale</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="discount_canceled">Canceled Discount</label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payable_canceled">Canceled Payable</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="sale_total">Total Sale</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="discount_total">Total Discount</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="payable_total">Total Payable</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="sale_canceled">Canceled Sale</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="discount_canceled">Canceled Discount</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"   value="payable_canceled">Canceled Payable</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="sale_actual">Actual Sale</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="discount_actual">Actual Discount</label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="payable_actual">Actual Payable</label>
@@ -131,12 +131,12 @@ if(sizeof($action_data)>0)
                 rowsheight: 40,
                 columns: [
                     { text: '<?php echo $areas; ?>', dataField: 'area',width:'200',cellsrenderer: cellsrenderer},
-                    { text: 'Total Sale', dataField: 'sale_total',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Total Discount', dataField: 'discount_total',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Total Payable', dataField: 'payable_total',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Canceled Sale', dataField: 'sale_canceled',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Canceled Discount', dataField: 'discount_canceled',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
-                    { text: 'Canceled Payable', dataField: 'payable_canceled',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Total Sale', dataField: 'sale_total',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Total Discount', dataField: 'discount_total',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Total Payable', dataField: 'payable_total',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Canceled Sale', dataField: 'sale_canceled',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Canceled Discount', dataField: 'discount_canceled',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                    { text: 'Canceled Payable', dataField: 'payable_canceled',hidden:true,width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Actual Sale', dataField: 'sale_actual',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Actual Discount', dataField: 'discount_actual',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { text: 'Actual Payable', dataField: 'payable_actual',width:'120',cellsAlign:'right',cellsrenderer: cellsrenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer}
