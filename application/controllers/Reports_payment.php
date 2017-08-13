@@ -301,6 +301,7 @@ class Reports_payment extends Root_Controller
             $items[]=$item;
         }
         $total_row=array();
+        $total_row['id']=0;
         $total_row['division_name']='';
         $total_row['zone_name']='';
         $total_row['territory_name']='';
@@ -309,8 +310,10 @@ class Reports_payment extends Root_Controller
         $total_row['payment_no']='';
         $total_row['payment_date']='';
         $total_row['payment_amount']='';
+        $total_row['payment_bank']='';
         $total_row['receive_date']='';
         $total_row['receive_amount']=number_format($total_amount,2);
+        $total_row['receive_bank']='';
         $items[]=$total_row;
 
         $this->jsonReturn($items);
