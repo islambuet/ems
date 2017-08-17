@@ -58,7 +58,7 @@ $CI = & get_instance();
                         </div>
 
                     </div>
-                    <div id="container_product" style="display: none;">
+                    <div id="container_product">
                         <div style="" class="row show-grid" id="crop_id_container">
                             <div class="col-xs-6">
                                 <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
@@ -436,19 +436,5 @@ $CI = & get_instance();
             }
         });
         $(document).off("change", "#report_name");
-        $(document).on("change","#report_name",function()
-        {
-            $("#system_report_container").html("");
-            var report_name=$('#report_name').val();
-            if(report_name=='variety_sale')
-            {
-                $('#container_product').show();
-            }
-            else
-            {
-                $('#container_product').hide();
-            }
-
-        });
     });
 </script>
