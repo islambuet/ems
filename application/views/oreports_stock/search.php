@@ -96,8 +96,8 @@ $CI = & get_instance();
                         </div>
                         <div class="col-xs-6">
                             <select name="report[unit]" class="form-control">
-                                <option value="quantity">Pkt</option>
                                 <option value="weight">Kg</option>
+                                <option value="quantity">Pkt</option>
                             </select>
 
                         </div>

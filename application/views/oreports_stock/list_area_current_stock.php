@@ -33,12 +33,12 @@ if(sizeof($action_data)>0)
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="pack_size"><?php echo $CI->lang->line('LABEL_PACK_NAME'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_unit_price">Current unit Price</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="current_unit_price">Current unit Price</label>
             <?php
             foreach($areas as $area)
             {
                 ?>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_stock_pkt_<?php echo $area['value'];?>"><?php echo $area['text'].' CS(pkt)'; ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="current_stock_pkt_<?php echo $area['value'];?>"><?php echo $area['text'].' CS(pkt)'; ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_stock_kg_<?php echo $area['value'];?>"><?php echo $area['text'].' CS(kg)'; ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="current_stock_price_<?php echo $area['value'];?>"><?php echo $area['text'].' CS Price'; ?></label>
             <?php
@@ -164,10 +164,10 @@ if(sizeof($action_data)>0)
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'type_name',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
                     { text: 'Pack Size(gm)', dataField: 'pack_size',cellsalign: 'right',width: '100',cellsrenderer: cellsrenderer,pinned:true,rendered: tooltiprenderer},
-                    { text: 'Current unit Price', dataField: 'current_unit_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
+                    { text: 'Current unit Price',hidden:true, dataField: 'current_unit_price',width:'100',cellsalign: 'right',cellsrenderer: cellsrenderer,rendered: tooltiprenderer},
                         <?php
                             foreach($areas as $area)
-                            {?>{ columngroup: '<?php echo $area['text']; ?>',text: 'CS(pkt)', dataField: '<?php echo 'current_stock_pkt_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
+                            {?>{ columngroup: '<?php echo $area['text']; ?>',text: 'CS(pkt)',hidden:true, dataField: '<?php echo 'current_stock_pkt_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'100',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { columngroup: '<?php echo $area['text']; ?>',text: 'CS(kg)', dataField: '<?php echo 'current_stock_kg_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     { columngroup: '<?php echo $area['text']; ?>',text: 'CS Price', dataField: '<?php echo 'current_stock_price_'.$area['value'];?>',align:'center',cellsalign: 'right',width:'150',cellsrenderer: cellsrenderer,rendered: tooltiprenderer,aggregates: [{ 'total':aggregates}],aggregatesrenderer:aggregatesrenderer},
                     <?php
