@@ -88,7 +88,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="fiscal_year_name"><?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_stock_out"><?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="purpose"><?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE'); ?></label>
-            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="warehouse_name"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  value="warehouse_name"><?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_name"><?php echo $CI->lang->line('LABEL_CROP_NAME'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="crop_type_name"><?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="variety_name"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></label>
@@ -96,6 +96,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity"><?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="quantity_weight"><?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="customer_name"><?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?></label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="remarks"><?php echo $CI->lang->line('LABEL_REMARKS'); ?></label>
         </div>
     <?php
     }
@@ -153,17 +154,18 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autorowheight: true,
                 columnsreorder: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>', dataField: 'fiscal_year_name',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_FISCAL_YEAR'); ?>',width:'70', dataField: 'fiscal_year_name',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_STOCK_OUT'); ?>', dataField: 'date_stock_out',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?>', dataField: 'warehouse_name',filtertype: 'list',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_STOCK_OUT_PURPOSE'); ?>', dataField: 'purpose',filtertype: 'list',width:'120'},
+                    { text: '<?php echo $CI->lang->line('LABEL_WAREHOUSE_NAME'); ?>',hidden:true, dataField: 'warehouse_name',filtertype: 'list',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_NAME'); ?>', dataField: 'crop_name',filtertype: 'list',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_CROP_TYPE'); ?>', dataField: 'crop_type_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name'},
-                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',width:'150',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?>', dataField: 'quantity',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>', dataField: 'customer_name',width:'150'}
+                    { text: '<?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?>', dataField: 'variety_name',width:'150'},
+                    { text: '<?php echo $CI->lang->line('LABEL_PACK_NAME'); ?>', dataField: 'pack_size_name',width:'50',filtertype: 'list',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_QUANTITY_PIECES'); ?>', dataField: 'quantity',width:'70',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_WEIGHT_KG'); ?>', dataField: 'quantity_weight',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_CUSTOMER_NAME'); ?>', dataField: 'customer_name',width:'250'},
+                    { text: '<?php echo $CI->lang->line('LABEL_REMARKS'); ?>', dataField: 'remarks'}
                 ]
             });
     });
