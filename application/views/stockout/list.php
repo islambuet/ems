@@ -128,7 +128,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'pack_size_name', type: 'string' },
                 { name: 'quantity', type: 'number' },
                 { name: 'quantity_weight', type: 'string' },
-                { name: 'customer_name', type: 'string' }
+                { name: 'customer_name', type: 'string' },
+                { name: 'remarks', type: 'string' }
             ],
             id: 'id',
             type: 'POST',
