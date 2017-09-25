@@ -1,28 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 $CI = & get_instance();
-$action_buttons=array();
-if(isset($CI->permissions['print']) && ($CI->permissions['print']==1))
+$action_data=array();
+if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
 {
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_PRINT"),
-        'class'=>'button_action_download',
-        'data-title'=>"Print",
-        'data-print'=>true
-    );
+    $action_data["action_print"]='print';
 }
-if(isset($CI->permissions['download']) && ($CI->permissions['download']==1))
+if(isset($CI->permissions['download'])&&($CI->permissions['download']==1))
 {
-    $action_buttons[]=array(
-        'type'=>'button',
-        'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
-        'class'=>'button_action_download',
-        'data-title'=>"Download"
-    );
+    $action_data["action_csv"]='csv';
 }
-if(sizeof($action_buttons)>0)
+if(sizeof($action_data)>0)
 {
-    $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
+    $CI->load->view("action_buttons",$action_data);
 }
 
 ?>
