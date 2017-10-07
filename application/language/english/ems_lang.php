@@ -300,3 +300,13 @@ $lang['MSG_FDB_EDIT_UNABLE_FOR_REJECT'] = 'This Field Day Budget rejected alread
 $lang['MSG_FDB_REQUESTED_UNABLE'] = 'This Field Day Budget already requested for approval.';
 $lang['LABEL_RECOMMENDATION'] = 'Recommendation';
 $lang['LABEL_BUDGET_PROPOSAL_DATE']="Budget Proposal Date";
+
+// Daily activities TI
+$lang['LABEL_STARTING_TIME']="Starting Time";
+$lang['LABEL_REMARKS_STARTING']="Task List";
+$lang['LABEL_REPORTING_TIME']="Last Reporting Time";
+$lang['LABEL_REMARKS_REPORTING']="Work Done";
+$lang['LABEL_ATTENDANCE_STATUS']="Attendance";
+$lang['ACTION_REPORTING'] = 'Reporting';
+$lang['ACTION_ATTENDANCE'] = 'Attendance';
+$lang['LABEL_ZSC_COMMENT'] = 'ZSC Comment';

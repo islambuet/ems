@@ -130,3 +130,7 @@ $config['table_tm_fd_rep_details_picture'] = 'ems_tm_fd_rep_details_picture';
 
 //farmer setup
 $config['table_setup_fsetup_leading_farmer'] = 'ems_setup_fsetup_leading_farmer';
+
+//Daily Activity Setup
+$config['table_tm_daily_activities_ti'] = 'ems_tm_daily_activities_ti';
+$config['table_tm_daily_activities_ti_details'] = 'ems_tm_daily_activities_ti_details';
