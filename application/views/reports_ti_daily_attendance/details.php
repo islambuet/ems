@@ -75,6 +75,14 @@ $CI->load->view("action_buttons",$action_data);
                     </tbody>
                 </table>
             </div>
+            <div class="row show-grid">
+                <div class="col-xs-4">
+                    <label for="description" class="control-label pull-right"><?php echo $CI->lang->line('LABEL_ZSC_COMMENT');?></label>
+                </div>
+                <div class="col-sm-4 col-xs-8">
+                    <?php if(isset($item['zsc_comment'])){echo $item['zsc_comment'];} ?>
+                </div>
+            </div>
         </div>
     </div>
     <div class="clearfix"></div>

@@ -86,20 +86,14 @@ class Tm_ti_daily_activities extends Root_Controller
 
     private function system_get_items()
     {
+        $user=User_helper::get_user();
         $this->db->from($this->config->item('table_tm_daily_activities_ti').' daily_activities');
         $this->db->select('daily_activities.*');
         $this->db->join($this->config->item('table_system_assigned_area').' aa','aa.user_id = daily_activities.user_started','INNER');
-        if($this->locations['division_id']>0)
+        if($user->user_group!=1 && $user->user_group!=2)
         {
-            $this->db->where('aa.division_id',$this->locations['division_id']);
-            if($this->locations['zone_id']>0)
-            {
-                $this->db->where('aa.zone_id',$this->locations['zone_id']);
-                if($this->locations['territory_id']>0)
-                {
-                    $this->db->where('aa.territory_id',$this->locations['territory_id']);
-                }
-            }
+            $this->db->where('user_started',$user->user_id);
+
         }
         $this->db->where('status!=',$this->config->item('system_status_delete'));
         $this->db->order_by('daily_activities.id DESC');
@@ -194,6 +188,25 @@ class Tm_ti_daily_activities extends Root_Controller
     }
     private function system_add()
     {
+        $user=User_helper::get_user();
+        $user_id=$user->user_id;
+        $time=time();
+        $today_date=System_helper::display_date($time);
+        if($user->user_group!=1 && $user->user_group!=2)
+        {
+            $items=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('user_started ='.$user_id));
+            $old_items=array();
+            foreach($items as $item)
+            {
+                $old_items[]=System_helper::display_date($item['date_started']);
+            }
+            if (in_array($today_date, $old_items))
+            {
+                $ajax['status']=false;
+                $ajax['system_message']='You have already added todays task. Please edit previous task.';
+                $this->jsonReturn($ajax);
+            }
+        }
         if(isset($this->permissions['add'])&&($this->permissions['add']==1))
         {
             $data['title']="Daily Task";
@@ -231,7 +244,6 @@ class Tm_ti_daily_activities extends Root_Controller
             {
                 $item_id=$id;
             }
-
             $data['item']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('id ='.$item_id),1);
             if($data['item']['attendance']!==null)
             {
@@ -402,6 +414,7 @@ class Tm_ti_daily_activities extends Root_Controller
     }
     private function system_reporting($id)
     {
+        $user=User_helper::get_user();
         if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
             if(($this->input->post('id')))
@@ -457,15 +470,6 @@ class Tm_ti_daily_activities extends Root_Controller
             }
 
             $data['item']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('id ='.$item_id),1);
-            if($data['item']['attendance']!==null)
-            {
-                if(!(isset($this->permissions['delete'])&&($this->permissions['delete']==1)))
-                {
-                    $ajax['status']=false;
-                    $ajax['system_message']='Attendance Taken. You can not edit it';
-                    $this->jsonReturn($ajax);
-                }
-            }
             $data['item_details']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti_details'),'*',array('activities_id ='.$item_id,'status!="'.$this->config->item('system_status_delete').'"'));
 
             $data['title']="Daily Task Reporting";
