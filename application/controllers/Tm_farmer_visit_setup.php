@@ -57,6 +57,14 @@ class Tm_farmer_visit_setup extends Root_Controller
         {
             $this->system_details($id);
         }
+        elseif($action=="edit_status")
+        {
+            $this->system_edit_status();
+        }
+        elseif($action=="edit_status_complete")
+        {
+            $this->system_edit_status_complete();
+        }
         elseif($action=="delete")
         {
             $this->system_delete();
@@ -81,7 +89,7 @@ class Tm_farmer_visit_setup extends Root_Controller
         {
             $data['title']="Farmer and Field Visit Setup List";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view("tm_farmer_visit_setup/list",$data,true));
+            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url.'/list',$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
@@ -273,7 +281,7 @@ class Tm_farmer_visit_setup extends Root_Controller
             $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
             if(!$results)
             {
-                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$setup_id);
+                System_helper::invalid_try('results not found',$setup_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
@@ -309,12 +317,12 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->where('tmf.id',$setup_id);
-            $this->db->where('tmf.status','Active');
+            $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
             $data['fsetup']=$this->db->get()->row_array();
 
             if(!$data['fsetup'])
             {
-                System_helper::invalid_try($this->config->item('system_edit_not_exists'),$setup_id);
+                System_helper::invalid_try('Id not found',$setup_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
@@ -378,7 +386,7 @@ class Tm_farmer_visit_setup extends Root_Controller
                 $setup_id=$id;
             }
             $data['previous_varieties']=array();//active and inactive
-            $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$setup_id,'status ="'.$this->config->item('system_status_active').'"'));
+            $results=Query_helper::get_info($this->config->item('table_tm_farmer_varieties'),'*',array('setup_id ='.$setup_id,'status !="'.$this->config->item('system_status_delete').'"'));
             if(!$results)
             {
                 System_helper::invalid_try('details not exists',$setup_id);
@@ -417,7 +425,7 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->db->join($this->config->item('table_setup_classification_crops').' crop','crop.id =crop_type.crop_id','INNER');
             $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
             $this->db->where('tmf.id',$setup_id);
-            $this->db->where('tmf.status','Active');
+            $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
             $data['fsetup']=$this->db->get()->row_array();
             if(!$data['fsetup'])
             {
@@ -452,15 +460,87 @@ class Tm_farmer_visit_setup extends Root_Controller
             $this->jsonReturn($ajax);
         }
     }
+    private function system_edit_status()
+    {
+        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        {
+            $user = User_helper::get_user();
+            $time=time();
+            $id=$this->input->post('id');
+            $result=Query_helper::get_info($this->config->item('table_tm_farmers'),'*',array('id ='.$id),1);
+            $status=$this->config->item('system_status_active');
+            if($result['status']==$this->config->item('system_status_active'))
+            {
+                $status=$this->config->item('system_status_inactive');
+            }
+            $this->db->trans_start();  //DB Transaction Handle START
+            Query_helper::update($this->config->item('table_tm_farmers'),array('status'=>$status,'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));            $this->db->trans_complete();   //DB Transaction Handle END
+
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message='Status Changed to '.$status;
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+
+    }
+    private function system_edit_status_complete()
+    {
+        if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
+        {
+            $user = User_helper::get_user();
+            $time=time();
+            $id=$this->input->post('id');
+            $result=Query_helper::get_info($this->config->item('table_tm_farmers'),'*',array('id ='.$id),1);
+            $status=$this->config->item('system_status_no');
+            if($result['status_complete']==$this->config->item('system_status_no'))
+            {
+                $status=$this->config->item('system_status_yes');
+            }
+            $this->db->trans_start();  //DB Transaction Handle START
+            Query_helper::update($this->config->item('table_tm_farmers'),array('status_complete'=>$status,'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));            $this->db->trans_complete();   //DB Transaction Handle END
+
+            if ($this->db->trans_status() === TRUE)
+            {
+                $this->message='Status Changed to '.$status;
+                $this->system_list();
+            }
+            else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("MSG_SAVED_FAIL");
+                $this->jsonReturn($ajax);
+            }
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+
+    }
     private function system_delete()
     {
         if(isset($this->permissions['delete'])&&($this->permissions['delete']==1))
         {
-            $ids = $this->input->post("ids");
+            $id=$this->input->post('id');
+
             $user = User_helper::get_user();
             $this->db->trans_start();  //DB Transaction Handle START
             $time=time();
-            foreach($ids as $id)
             {
                 Query_helper::update($this->config->item('table_tm_farmers'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("id = ".$id));
                 Query_helper::update($this->config->item('table_tm_farmer_varieties'),array('status'=>$this->config->item('system_status_delete'),'user_updated'=>$user->user_id,'date_updated'=>$time),array("setup_id = ".$id));
@@ -487,6 +567,7 @@ class Tm_farmer_visit_setup extends Root_Controller
         }
 
     }
+
 
 
     private function system_save()
@@ -696,9 +777,9 @@ class Tm_farmer_visit_setup extends Root_Controller
         }
         $variety_ids=$this->input->post('variety_ids');
 
-        if(!((sizeof($variety_ids)>1)))
+        if(!((sizeof($variety_ids)>0)))
         {
-            $this->message="Minimum 2 variety must be selected";
+            $this->message="Minimum 1 variety must be selected";
             return false;
         }
 

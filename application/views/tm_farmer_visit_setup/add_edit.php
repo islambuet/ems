@@ -338,32 +338,18 @@ jQuery(document).ready(function()
         $("#territory_id").val("");
         $("#district_id").val("");
         $("#upazilla_id").val("");
+        $('#zone_id_container').hide();
         $('#territory_id_container').hide();
         $('#district_id_container').hide();
         $('#upazilla_id_container').hide();
         var division_id=$('#division_id').val();
         if(division_id>0)
         {
-            $('#zone_id_container').show();
-            $.ajax({
-                url: base_url+"common_controller/get_dropdown_zones_by_divisionid/",
-                type: 'POST',
-                datatype: "JSON",
-                data:{division_id:division_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
-        }
-        else
-        {
-            $('#zone_id_container').hide();
+            if(system_zones[division_id]!==undefined)
+            {
+                $('#zone_id_container').show();
+                $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
+            }
         }
     });
     $(document).on("change","#zone_id",function()
@@ -372,63 +358,35 @@ jQuery(document).ready(function()
         $("#territory_id").val("");
         $("#district_id").val("");
         $("#upazilla_id").val("");
+        $('#territory_id_container').hide();
         $('#district_id_container').hide();
         $('#upazilla_id_container').hide();
         var zone_id=$('#zone_id').val();
         if(zone_id>0)
         {
-            $('#territory_id_container').show();
-            $.ajax({
-                url: base_url+"common_controller/get_dropdown_territories_by_zoneid/",
-                type: 'POST',
-                datatype: "JSON",
-                data:{zone_id:zone_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
-        }
-        else
-        {
-            $('#territory_id_container').hide();
-
+            if(system_territories[zone_id]!==undefined)
+            {
+                $('#territory_id_container').show();
+                $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
+            }
         }
     });
     $(document).on("change","#territory_id",function()
     {
         $("#district_id").val("");
         $("#upazilla_id").val("");
+        $('#district_id_container').hide();
         $('#upazilla_id_container').hide();
         var territory_id=$('#territory_id').val();
-        if(territory_id>0)            {
-            $('#district_id_container').show();
-
-            $.ajax({
-                url: base_url+"common_controller/get_dropdown_districts_by_territoryid/",
-                type: 'POST',
-                datatype: "JSON",
-                data:{territory_id:territory_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
-        }
-        else
+        if(territory_id>0)
         {
-            $('#district_id_container').hide();
+            if(system_districts[territory_id]!==undefined)
+            {
+                $('#district_id_container').show();
+                $("#district_id").html(get_dropdown_with_select(system_districts[territory_id]));
+            }
         }
+
     });
     $(document).on("change","#district_id",function()
     {
@@ -465,34 +423,21 @@ jQuery(document).ready(function()
         $("#crop_type_id").val("");
         $('#variety_list_container').html('');
         var crop_id=$('#crop_id').val();
+        $('#crop_type_id_container').hide();
         $('#variety_id_container').hide();
         if(crop_id>0)
         {
-            $('#crop_type_id_container').show();
-            $.ajax({
-                url: base_url+"common_controller/get_dropdown_croptypes_by_cropid/",
-                type: 'POST',
-                datatype: "JSON",
-                data:{crop_id:crop_id},
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-                    console.log("error");
-
-                }
-            });
-        }
-        else
-        {
-            $('#crop_type_id_container').hide();
+            if(system_types[crop_id]!==undefined)
+            {
+                $('#crop_type_id_container').show();
+                $("#crop_type_id").html(get_dropdown_with_select(system_types[crop_id]));
+            }
         }
     });
     $(document).on("change","#crop_type_id",function()
     {
         $('#variety_list_container').html('');
+        $('#variety_id_container').hide();
         var crop_type_id=$('#crop_type_id').val();
         if(crop_type_id>0)
         {
@@ -512,10 +457,6 @@ jQuery(document).ready(function()
 
                 }
             });
-        }
-        else
-        {
-            $('#variety_id_container').hide();
         }
     });
 

@@ -14,18 +14,30 @@ $action_buttons=array();
         $action_buttons[]=array(
             'type'=>'button',
             'label'=>$CI->lang->line("ACTION_EDIT"),
-            'class'=>'button_action_batch',
-            'id'=>'button_action_edit',
+            'class'=>'button_jqx_action',
             'data-action-link'=>site_url($CI->controller_url.'/index/edit')
+        );
+        $action_buttons[]=array(
+            'type'=>'button',
+            'label'=>'Change status',
+            'data-message-confirm'=>'Are you sure to Change Status?',
+            'class'=>'button_jqx_action',
+            'data-action-link'=>site_url($CI->controller_url.'/index/edit_status')
+        );
+        $action_buttons[]=array(
+            'type'=>'button',
+            'label'=>'Change Complete status',
+            'data-message-confirm'=>'Are you sure to Change Complete Status?',
+            'class'=>'button_jqx_action',
+            'data-action-link'=>site_url($CI->controller_url.'/index/edit_status_complete')
         );
     }
     if(isset($CI->permissions['view'])&&($CI->permissions['view']==1))
     {
         $action_buttons[]=array(
             'type'=>'button',
-            'label'=>$CI->lang->line("ACTION_DETAILS"),
-            'class'=>'button_action_batch',
-            'id'=>'button_action_details',
+            'label'=>$CI->lang->line('ACTION_DETAILS'),
+            'class'=>'button_jqx_action',
             'data-action-link'=>site_url($CI->controller_url.'/index/details')
         );
     }
@@ -34,8 +46,8 @@ $action_buttons=array();
         $action_buttons[]=array(
             'type'=>'button',
             'label'=>$CI->lang->line("ACTION_DELETE"),
-            'class'=>'button_action_batch',
-            'id'=>'button_action_delete',
+            'data-message-confirm'=>'Are you sure to Delete?',
+            'class'=>'button_jqx_action',
             'data-action-link'=>site_url($CI->controller_url.'/index/delete')
         );
     }
@@ -97,6 +109,8 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="date_sowing"><?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status"><?php echo $CI->lang->line('STATUS'); ?></label>
+                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="status_complete"><?php echo $CI->lang->line('LABEL_STATUS_COMPLETE'); ?></label>
             </div>
         </div>
     <?php
@@ -130,7 +144,9 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'contact_no', type: 'string' },
                 { name: 'date_sowing', type: 'string' },
                 { name: 'num_visits', type: 'string' },
-                { name: 'interval', type: 'string' }
+                { name: 'interval', type: 'string' },
+                { name: 'status', type: 'string' },
+                { name: 'status_complete', type: 'string' }
 
             ],
             id: 'id',
@@ -154,7 +170,10 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 selectionmode: 'singlerow',
                 altrows: true,
                 autoheight: true,
+                enablebrowserselection:true,
+                columnsreorder: true,
                 columns: [
+                    { text: '<?php echo $CI->lang->line('ID'); ?>', dataField: 'id',width:'40',pinned:true,cellsalign: 'right'},
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
                     { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'100',filtertype: 'list'},
                     { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'100',filtertype: 'list'},
@@ -163,10 +182,12 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                     { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100'},
                     { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100'},
-                    { text: 'Contact No', dataField: 'contact_no',width:'150'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'150',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'100',cellsalign: 'right'},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'100',cellsalign: 'right'}
+                    { text: 'Contact No', dataField: 'contact_no',width:'100'},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'100',cellsalign: 'right'},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('STATUS'); ?>', dataField: 'status',width:'50',filtertype: 'list'},
+                    { text: '<?php echo $CI->lang->line('LABEL_STATUS_COMPLETE'); ?>', dataField: 'status_complete',width:'50',filtertype: 'list'}
                 ]
             });
     });

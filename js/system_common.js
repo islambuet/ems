@@ -383,6 +383,44 @@ $(document).ready(function()
             console.log('no file attached');
         }
     });
+    $(document).on("click", ".button_jqx_action", function(event)
+    {
+
+        var jqx_grid_id='#system_jqx_container';
+        var selected_row_indexes = $(jqx_grid_id).jqxGrid('getselectedrowindexes');
+        if (selected_row_indexes.length > 0)
+        {
+            if($(this).is('[data-message-confirm]'))
+            {
+                var sure = confirm($(this).attr('data-message-confirm'));
+                if(!sure)
+                {
+                    return;
+                }
+            }
+            var selectedRowData = $(jqx_grid_id).jqxGrid('getrowdata', selected_row_indexes[selected_row_indexes.length-1]);//only last selected
+            $.ajax({
+                url: $(this).attr('data-action-link'),
+                type: 'POST',
+                dataType: "JSON",
+                data:{'id':selectedRowData.id},
+                success: function (data, status)
+                {
+
+                },
+                error: function (xhr, desc, err)
+                {
+                    console.log("error");
+
+                }
+            });
+        }
+        else
+        {
+            alert(SELECT_ONE_ITEM);
+        }
+
+    });
     $(document).on("click", "#button_jqx_load_more", function(event)
     {
         var jqx_grid_id='#system_jqx_container';
