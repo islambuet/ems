@@ -166,7 +166,7 @@
                     ?>
                     <div class="row show-grid">
                         <div class="col-xs-4">
-                            <label class="control-label pull-right"><?php echo 'Picture - '.$i.' - '. $this->lang->line('LABEL_DATE');?></label>
+                            <label class="control-label pull-right"><?php echo 'Day - '.$i.' - '. $this->lang->line('LABEL_DATE');?></label>
                         </div>
                         <div class="col-xs-4">
                             <label class="form-control" style="background-color: #F5F5F5;"><?php echo System_helper::display_date($fsetup['date_sowing']+24*3600*$i*$fsetup['interval']); ?></label>
@@ -181,9 +181,9 @@
                                     <thead>
                                     <tr>
                                         <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                                        <th style="min-width: 250px;">Picture</th>
+                                        <th style="min-width: 250px;">Plot Picture</th>
+                                        <th style="min-width: 250px;">Plant Picture</th>
                                         <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
-                                        <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_FEEDBACK');?></th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -196,9 +196,20 @@
                                             <td>
                                                 <?php
                                                 $image=base_url().'images/no_image.jpg';
-                                                if(isset($visits_picture[$i][$variety['variety_id']]['picture_url'])&&strlen($visits_picture[$i][$variety['variety_id']]['picture_url'])>0)
+                                                if(isset($visits_picture[$i][$variety['variety_id']]['image_plot_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plot_location'])>0)
                                                 {
-                                                    $image=$visits_picture[$i][$variety['variety_id']]['picture_url'];
+                                                    $image=$CI->config->item('system_base_url_field_visit').$visits_picture[$i][$variety['variety_id']]['image_plot_location'];
+
+                                                }
+                                                ?>
+                                                <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                            </td>
+                                            <td>
+                                                <?php
+                                                $image=base_url().'images/no_image.jpg';
+                                                if(isset($visits_picture[$i][$variety['variety_id']]['image_plant_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plot_location'])>0)
+                                                {
+                                                    $image=$CI->config->item('system_base_url_field_visit').$visits_picture[$i][$variety['variety_id']]['image_plant_location'];
 
                                                 }
                                                 ?>
@@ -212,22 +223,6 @@
                                                     $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_created']]['name'];
                                                     $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_created']);
                                                     $text.='<br><b>Remarks</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['remarks']);
-                                                }
-                                                echo $text;
-                                                ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $text='';
-                                                if((isset($visits_picture[$i][$variety['variety_id']]['user_feedback']))&&(($visits_picture[$i][$variety['variety_id']]['user_feedback'])>0))
-                                                {
-                                                    $text.='<b>Entry By</b>:'.$users[$visits_picture[$i][$variety['variety_id']]['user_feedback']]['name'];
-                                                    $text.='<br><b>Entry Time</b>:'.System_helper::display_date_time($visits_picture[$i][$variety['variety_id']]['date_feedback']);
-                                                    $text.='<br><b>Feedback</b>:<br>'.nl2br($visits_picture[$i][$variety['variety_id']]['feedback']);
-                                                }
-                                                else
-                                                {
-                                                    $text=$CI->lang->line('LABEL_FEEDBACK_NOT_GIVEN');
                                                 }
                                                 echo $text;
                                                 ?>
