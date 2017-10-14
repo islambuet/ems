@@ -1,7 +1,9 @@
 <?php
 $config['system_site_short_name']='ems';
 $config['offline_controllers']=array('home','sys_site_offline');
+//images url
 $config['system_image_base_url']='http://50.116.76.180/ems/';
+$config['system_base_url_field_visit']='http://localhost/ems/';
 
 //dbs
 $config['system_db_ems']='arm_ems';

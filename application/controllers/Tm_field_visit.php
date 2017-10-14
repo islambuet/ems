@@ -2,7 +2,7 @@
 
 class Tm_field_visit extends Root_Controller
 {
-    private  $message;
+    private $message;
     public $permissions;
     public $controller_url;
     public $locations;
@@ -108,8 +108,8 @@ class Tm_field_visit extends Root_Controller
 
         $this->db->select('season.name season_name');
         $this->db->select('count(distinct vp.day_no) num_visit_done',true);
-        $this->db->select('count(distinct vfp.picture_id) num_fruit_picture',false);
-        $this->db->select('count(distinct case when vdp.status="Active" then vdp.id end) num_disease_picture',false);
+        //$this->db->select('count(distinct vfp.picture_id) num_fruit_picture',false);
+        //$this->db->select('count(distinct case when vdp.status="Active" then vdp.id end) num_disease_picture',false);
         $this->db->join($this->config->item('table_setup_location_upazillas').' upazilla','upazilla.id = tmf.upazilla_id','INNER');
         $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = upazilla.district_id','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
@@ -119,8 +119,8 @@ class Tm_field_visit extends Root_Controller
 
         $this->db->join($this->config->item('table_setup_tm_seasons').' season','season.id =tmf.season_id','INNER');
         $this->db->join($this->config->item('table_tm_visits_picture').' vp','tmf.id =vp.setup_id','LEFT');
-        $this->db->join($this->config->item('table_tm_visits_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
-        $this->db->join($this->config->item('table_tm_visits_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
+        //$this->db->join($this->config->item('table_tm_visits_fruit_picture').' vfp','tmf.id =vfp.setup_id','LEFT');
+        //$this->db->join($this->config->item('table_tm_visits_disease_picture').' vdp','tmf.id =vdp.setup_id','LEFT');
         if($this->locations['division_id']>0)
         {
             $this->db->where('division.id',$this->locations['division_id']);
@@ -141,15 +141,38 @@ class Tm_field_visit extends Root_Controller
                 }
             }
         }
-        $this->db->where('tmf.status !=',$this->config->item('system_status_delete'));
+        $this->db->where('tmf.status',$this->config->item('system_status_active'));
         $this->db->order_by('tmf.id','DESC');
         $this->db->group_by('tmf.id');
         $this->db->limit($pagesize,$current_records);
         $items=$this->db->get()->result_array();
         //echo $this->db->last_query();
+        $time=time();
         foreach($items as &$item)
         {
+            $day=floor(($time-$item['date_sowing'])/(24*3600));
+            $item['day']=$day;
             $item['date_sowing']=System_helper::display_date($item['date_sowing']);
+
+            if(($day%$item['interval'])==0)
+            {
+                $item['color_background']='#E8C5D0';
+            }
+            elseif(($day%$item['interval'])==1)
+            {
+                $item['color_background']='#BAD1DB';
+            }
+            elseif(($item['interval']-($day%$item['interval']))==1)
+            {
+                $item['color_background']='#DAF2DB';
+            }
+            else
+            {
+                $item['color_background']='';
+            }
+
+
+
         }
 
         $this->jsonReturn($items);
@@ -180,7 +203,7 @@ class Tm_field_visit extends Root_Controller
             $results=$this->db->get()->result_array();
             if(!$results)
             {
-                System_helper::invalid_try('details not exists',$setup_id);
+                System_helper::invalid_try('edit not found',$setup_id);
                 $ajax['status']=false;
                 $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
                 $this->jsonReturn($ajax);
@@ -479,11 +502,15 @@ class Tm_field_visit extends Root_Controller
                         $data['remarks']='';
                     }
                 }
-                if(isset($uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]))
+                if(isset($uploaded_files['visit_plot_image_'.$i.'_'.$variety['variety_id']]))
                 {
-                    $data['picture_url']=base_url().$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
-                    $data['picture_file_full']=$file_folder.'/'.$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
-                    $data['picture_file_name']=$uploaded_files['visit_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['image_plot_name']=$uploaded_files['visit_plot_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['image_plot_location']=$file_folder.'/'.$uploaded_files['visit_plot_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                }
+                if(isset($uploaded_files['visit_plant_image_'.$i.'_'.$variety['variety_id']]))
+                {
+                    $data['image_plant_name']=$uploaded_files['visit_plant_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
+                    $data['image_plant_location']=$file_folder.'/'.$uploaded_files['visit_plant_image_'.$i.'_'.$variety['variety_id']]['info']['file_name'];
                 }
                 if($data)
                 {

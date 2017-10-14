@@ -162,7 +162,9 @@
                             <thead>
                             <tr>
                                 <th style="min-width: 150px;"><?php echo $CI->lang->line('LABEL_VARIETY_NAME'); ?></th>
-                                <th style="min-width: 250px;">Picture - <?php echo $i;?></th>
+                                <th style="min-width: 250px;">day - <?php echo $i;?> Plot picture</th>
+                                <th style="min-width: 50px;">UPLOAD</th>
+                                <th style="min-width: 250px;">day - <?php echo $i;?> Plant Picture</th>
                                 <th style="min-width: 50px;">UPLOAD</th>
                                 <th style="min-width: 150px;"><?php echo $this->lang->line('LABEL_REMARKS');?></th>
                             </tr>
@@ -177,10 +179,10 @@
                                     <td>
                                         <?php
                                         $editable=false;
-                                        $image=base_url().'images/no_image.jpg';
-                                        if(isset($visits_picture[$i][$variety['variety_id']]['picture_url'])&&strlen($visits_picture[$i][$variety['variety_id']]['picture_url'])>0)
+                                        $image=$CI->config->item('system_base_url_field_visit').'images/no_image.jpg';
+                                        if(isset($visits_picture[$i][$variety['variety_id']]['image_plot_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plot_location'])>0)
                                         {
-                                            $image=$visits_picture[$i][$variety['variety_id']]['picture_url'];
+                                            $image=$CI->config->item('system_base_url_field_visit').$visits_picture[$i][$variety['variety_id']]['image_plot_location'];
                                             if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
                                             {
                                                 $editable=true;
@@ -195,7 +197,7 @@
                                             $editable=true;
                                         }
                                         ?>
-                                        <div class="col-xs-4" id="visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                        <div class="col-xs-4" id="visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
                                             <img style="max-width: 250px;" src="<?php echo $image;?>">
                                         </div>
                                     </td>
@@ -203,7 +205,41 @@
                                         if($editable)
                                         {
                                             ?>
-                                            <input type="file" class="browse_button" data-preview-container="#visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                            <input type="file" class="browse_button" data-preview-container="#visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plot_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                        <?php
+                                        }
+                                        ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                        $editable=false;
+                                        $image=$CI->config->item('system_base_url_field_visit').'images/no_image.jpg';
+                                        if(isset($visits_picture[$i][$variety['variety_id']]['image_plant_location'])&&strlen($visits_picture[$i][$variety['variety_id']]['image_plant_location'])>0)
+                                        {
+                                            $image=$CI->config->item('system_base_url_field_visit').$visits_picture[$i][$variety['variety_id']]['image_plant_location'];
+                                            if(isset($CI->permissions['edit'])&&($CI->permissions['edit']==1))
+                                            {
+                                                $editable=true;
+                                            }
+                                            else
+                                            {
+                                                $editable=false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            $editable=true;
+                                        }
+                                        ?>
+                                        <div class="col-xs-4" id="visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
+                                            <img style="max-width: 250px;" src="<?php echo $image;?>">
+                                        </div>
+                                    </td>
+                                    <td><?php
+                                        if($editable)
+                                        {
+                                            ?>
+                                            <input type="file" class="browse_button" data-preview-container="#visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>" name="visit_plant_image_<?php echo $i.'_'.$variety['variety_id']; ?>">
                                         <?php
                                         }
                                         ?>

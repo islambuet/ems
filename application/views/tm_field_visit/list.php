@@ -6,9 +6,8 @@ $action_buttons=array();
     {
         $action_buttons[]=array(
             'type'=>'button',
-            'label'=>$CI->lang->line("ACTION_EDIT"),
-            'class'=>'button_action_batch',
-            'id'=>'button_action_edit',
+            'label'=>'Reporting',
+            'class'=>'button_jqx_action',
             'data-action-link'=>site_url($CI->controller_url.'/index/edit')
         );
     }
@@ -16,9 +15,8 @@ $action_buttons=array();
     {
         $action_buttons[]=array(
             'type'=>'button',
-            'label'=>$CI->lang->line("ACTION_DETAILS"),
-            'class'=>'button_action_batch',
-            'id'=>'button_action_details',
+            'label'=>$CI->lang->line('ACTION_DETAILS'),
+            'class'=>'button_jqx_action',
             'data-action-link'=>site_url($CI->controller_url.'/index/details')
         );
     }
@@ -28,7 +26,7 @@ if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_PRINT"),
         'id'=>'button_action_print',
-        'data-title'=>'PO LIST'
+        'data-title'=>'LIST'
     );
 }
 if(isset($CI->permissions['download'])&&($CI->permissions['download']==1))
@@ -37,7 +35,7 @@ if(isset($CI->permissions['download'])&&($CI->permissions['download']==1))
         'type'=>'button',
         'label'=>$CI->lang->line("ACTION_DOWNLOAD"),
         'id'=>'button_action_csv',
-        'data-title'=>'PO LIST'
+        'data-title'=>'LIST'
     );
 }
 
@@ -82,8 +80,6 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
                 <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done">Number of visit done</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_fruit_picture">Number of Fruit Picture</label>
-                <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_disease_picture">Number Of Disease</label>
             </div>
         </div>
     <?php
@@ -119,13 +115,36 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 { name: 'num_visits', type: 'string' },
                 { name: 'interval', type: 'string' },
                 { name: 'num_visit_done', type: 'string' },
-                { name: 'num_fruit_picture', type: 'string' },
+                { name: 'color_background', type: 'string' },
                 { name: 'num_disease_picture', type: 'string' }
 
             ],
             id: 'id',
             type: 'POST',
             url: url
+        };
+        var cellsrenderer = function(row, column, value, defaultHtml, columnSettings, record)
+        {
+            var element = $(defaultHtml);
+            // console.log(defaultHtml);
+            element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            if(record['color_background'])
+            {
+                element.css({ 'background-color': record['color_background']});
+            }
+            //element.css({ 'background-color': '#FF0000'});
+
+            /*if ((record.total_solution==0)&& (column!="date"))
+            {
+                element.css({ 'background-color': '#FF0000','margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }
+            else
+            {
+                element.css({'margin': '0px','width': '100%', 'height': '100%',padding:'5px','line-height':'25px'});
+            }*/
+
+            return element[0].outerHTML;
+
         };
         var tooltiprenderer = function (element) {
             $(element).jqxTooltip({position: 'mouse', content: $(element).text() });
@@ -147,23 +166,24 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 selectionmode: 'singlerow',
                 altrows: true,
                 autoheight: true,
+                enablebrowserselection:true,
+                columnsreorder: true,
+                rowsheight: 35,
                 columns: [
                     { text: 'ID', dataField: 'id',width:'50',pinned:true},
                     { text: 'Farmer Name', dataField: 'name',width:'200',pinned:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'80',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'80',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list'},
-                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100'},
-                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100'},
-                    { text: 'Contact No', dataField: 'contact_no',width:'110'},
-                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110'},
-                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '#visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '#Fruit Picture', dataField: 'num_fruit_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '#Disease', dataField: 'num_disease_picture',width:'50',cellsalign: 'right',rendered: tooltiprenderer}
+                    { text: '<?php echo $CI->lang->line('LABEL_YEAR'); ?>', dataField: 'year',width:'80',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_SEASON'); ?>', dataField: 'season_name',width:'80',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DIVISION_NAME'); ?>', dataField: 'division_name',width:'100',filtertype: 'list',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_ZONE_NAME'); ?>', dataField: 'zone_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_TERRITORY_NAME'); ?>', dataField: 'territory_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DISTRICT_NAME'); ?>', dataField: 'district_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_UPAZILLA_NAME'); ?>', dataField: 'upazilla_name',width:'100',cellsrenderer: cellsrenderer},
+                    { text: 'Contact No', dataField: 'contact_no',width:'110',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110',cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered: tooltiprenderer,cellsrenderer: cellsrenderer},
+                    { text: '#visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer,filtertype: 'list',cellsrenderer: cellsrenderer}
                 ]
             });
     });

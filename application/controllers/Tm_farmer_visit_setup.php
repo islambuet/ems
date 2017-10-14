@@ -812,27 +812,6 @@ class Tm_farmer_visit_setup extends Root_Controller
                 return false;
             }
         }
-        //else
-        {
-            $fsetup=$this->input->post('fsetup');
-            $year=$fsetup['year'];
-            $season_id=$fsetup['season_id'];
-            $upazilla_id=$fsetup['upazilla_id'];
-            $this->db->from($this->config->item('table_tm_farmers').' tmf');
-            $this->db->where('year',$year);
-            $this->db->where('season_id',$season_id);
-            $this->db->where('upazilla_id',$upazilla_id);
-            $this->db->where('name',$fsetup['name']);
-            $this->db->where('status',$this->config->item('system_status_active'));
-
-            $this->db->where('id !=',$id);
-            $result=$this->db->get()->row_array();
-            if($result)
-            {
-                $this->message="This setup already Exits.Please edit that";
-                return false;
-            }
-        }
         return true;
     }
 
