@@ -234,6 +234,7 @@ class Tm_ti_daily_activities extends Root_Controller
     }
     private function system_edit($id)
     {
+        $user=User_helper::get_user();
         if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
             if(($this->input->post('id')))
@@ -245,6 +246,19 @@ class Tm_ti_daily_activities extends Root_Controller
                 $item_id=$id;
             }
             $data['item']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('id ='.$item_id),1);
+
+            //Check my editable
+            if($user->user_group!=1 && $user->user_group!=2)
+            {
+                if($data['item']['user_started']!=$user->user_id)
+                {
+                    System_helper::invalid_try('Invalid try to edit daily activities',$user->user_id);
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                    $this->jsonReturn($ajax);
+                }
+            }
+
             if($data['item']['attendance']!==null)
             {
                 if(!(isset($this->permissions['delete'])&&($this->permissions['delete']==1)))
@@ -412,6 +426,7 @@ class Tm_ti_daily_activities extends Root_Controller
             }
         }
     }
+
     private function system_reporting($id)
     {
         $user=User_helper::get_user();
@@ -427,6 +442,19 @@ class Tm_ti_daily_activities extends Root_Controller
             }
 
             $data['item']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('id ='.$item_id),1);
+
+            //Check my editable
+            if($user->user_group!=1 && $user->user_group!=2)
+            {
+                if($data['item']['user_started']!=$user->user_id)
+                {
+                    System_helper::invalid_try('Invalid try for reporting daily activities',$user->user_id);
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                    $this->jsonReturn($ajax);
+                }
+            }
+
             if($data['item']['attendance']!==null)
             {
                 if(!(isset($this->permissions['delete'])&&($this->permissions['delete']==1)))
@@ -458,6 +486,7 @@ class Tm_ti_daily_activities extends Root_Controller
 
     private function system_details($id)
     {
+        $user=User_helper::get_user();
         if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
             if(($this->input->post('id')))
@@ -470,6 +499,17 @@ class Tm_ti_daily_activities extends Root_Controller
             }
 
             $data['item']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti'),'*',array('id ='.$item_id),1);
+            //Check my editable
+            if($user->user_group!=1 && $user->user_group!=2)
+            {
+                if($data['item']['user_started']!=$user->user_id)
+                {
+                    System_helper::invalid_try('Invalid try to view details of daily activities',$user->user_id);
+                    $ajax['status']=false;
+                    $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                    $this->jsonReturn($ajax);
+                }
+            }
             $data['item_details']=Query_helper::get_info($this->config->item('table_tm_daily_activities_ti_details'),'*',array('activities_id ='.$item_id,'status!="'.$this->config->item('system_status_delete').'"'));
 
             $data['title']="Daily Task Reporting";

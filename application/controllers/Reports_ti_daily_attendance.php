@@ -152,6 +152,22 @@ class Reports_ti_daily_attendance extends Root_Controller
             }
 
             $data['options']=$reports;
+
+            $db_login=$this->load->database('armalik_login',TRUE);
+            $db_login->from($this->config->item('table_setup_user').' user');
+            $db_login->select('user.employee_id');
+            $db_login->select('user_info.name');
+            $db_login->select('designation.name designation_name');
+            $db_login->join($this->config->item('table_setup_user_info').' user_info','user.id = user_info.user_id','INNER');
+            $db_login->join($this->config->item('table_setup_designation').' designation','designation.id = user_info.designation','LEFT');
+            $db_login->where('user_info.revision',1);
+            $db_login->where('user.status!=',$this->config->item('system_status_inactive'));
+            $db_login->where('user.id',$reports['user_id']);
+
+            $results=$db_login->get()->row_array();
+            $results['date_start']=System_helper::display_date($reports['date_start']);
+            $results['date_end']=System_helper::display_date($reports['date_end']);
+            $data['employee_info']=$results;
             $ajax['status']=true;
             $data['title']="Daily Attendance Report";
             $ajax['system_content'][]=array("id"=>"#system_report_container","html"=>$this->load->view($this->controller_url."/list",$data,true));
@@ -167,8 +183,6 @@ class Reports_ti_daily_attendance extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
-
-
     }
 
     private function system_get_items()
@@ -188,6 +202,7 @@ class Reports_ti_daily_attendance extends Root_Controller
         $db_login->where('user.id',$user_id);
         $db_login->order_by('user_info.ordering','ASC');
         $user_name=$db_login->get()->row_array();
+
         $this->db->from($this->config->item('table_tm_daily_activities_ti').' daily_activities');
         $this->db->select('daily_activities.*');
         $this->db->select('aa.user_id');
@@ -238,9 +253,6 @@ class Reports_ti_daily_attendance extends Root_Controller
             if(isset($daily_activities_list[$date_string]))
             {
                 $item['id']=$daily_activities_list[$date_string]['id'];
-                $item['employee_id']=$user_name['employee_id'];
-                $item['employee_name']=$user_name['name'];
-                $item['designation_name']=$user_name['designation_name'];
                 $item['date']=$date_string;
                 $item['date_started']=System_helper::display_date_time($daily_activities_list[$date_string]['date_started']);
                 $item['date_reported']=System_helper::display_date_time($daily_activities_list[$date_string]['date_reported']);
@@ -250,11 +262,7 @@ class Reports_ti_daily_attendance extends Root_Controller
 
             }else
             {
-
                 $item['id']=$date_time;
-                $item['employee_id']=$user_name['employee_id'];
-                $item['employee_name']=$user_name['name'];
-                $item['designation_name']=$user_name['designation_name'];
                 $item['date']=$date_string;
                 $item['date_started']='-';
                 $item['date_reported']='-';
@@ -271,6 +279,7 @@ class Reports_ti_daily_attendance extends Root_Controller
     {
         if(isset($this->permissions['edit'])&&($this->permissions['edit']==1))
         {
+            $html_container_id=$this->input->post('html_container_id');
             if(($this->input->post('id')))
             {
                 $item_id=$this->input->post('id');
@@ -284,12 +293,11 @@ class Reports_ti_daily_attendance extends Root_Controller
 
             $data['title']="Daily Task Reporting";
             $ajax['status']=true;
-            $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/details",$data,true));
+            $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view($this->controller_url."/details",$data,true));
             if($this->message)
             {
                 $ajax['system_message']=$this->message;
             }
-            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
             $this->jsonReturn($ajax);
         }
         else
