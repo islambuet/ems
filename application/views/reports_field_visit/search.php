@@ -2,7 +2,7 @@
     $CI = & get_instance();
 
 ?>
-<form class="form_valid" id="search_form" action="<?php echo site_url($CI->controller_url.'/index/list_variety');?>" method="post">
+<form class="form_valid" id="search_form" action="<?php echo site_url($CI->controller_url.'/index/list');?>" method="post">
     <div class="row widget">
         <div class="widget-header">
             <div class="title">
@@ -15,63 +15,18 @@
             <div class="col-xs-6">
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_YEAR');?></label>
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_START');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <select id="year" name="report[year]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($years as $year)
-                            {?>
-                                <option value="<?php echo $year['year'];?>"><?php echo $year['year'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
+                        <input type="text" id="date_start" name="report[date_start]" class="form-control date_large" value="">
                     </div>
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SEASON');?></label>
+                        <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_DATE_END');?></label>
                     </div>
                     <div class="col-xs-6">
-                        <select id="season_id" name="report[season_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($seasons as $season)
-                            {?>
-                                <option value="<?php echo $season['value'];?>"><?php echo $season['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div style="" class="row show-grid" id="crop_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_NAME');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="crop_id" name="report[crop_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                            <?php
-                            foreach($crops as $crop)
-                            {?>
-                                <option value="<?php echo $crop['value']?>"><?php echo $crop['text'];?></option>
-                            <?php
-                            }
-                            ?>
-                        </select>
-                    </div>
-                </div>
-                <div style="display: none;" class="row show-grid" id="crop_type_id_container">
-                    <div class="col-xs-6">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_CROP_TYPE');?></label>
-                    </div>
-                    <div class="col-xs-6">
-                        <select id="crop_type_id" name="report[crop_type_id]" class="form-control">
-                            <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                        </select>
+                        <input type="text" id="date_end" name="report[date_end]" class="form-control date_large" value="<?php echo System_helper::display_date(time());?>">
                     </div>
                 </div>
             </div>
@@ -171,94 +126,18 @@
                         <label class="control-label"><?php echo $CI->lang->line('LABEL_TERRITORY_NAME');?></label>
                     </div>
                 </div>
-                <div style="<?php if(!(sizeof($districts)>0)){echo 'display:none';} ?>" class="row show-grid" id="district_id_container">
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['district_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['district_name'];?></label>
-                            <input type="hidden" name="report[district_id]" value="<?php echo $CI->locations['district_id'];?>">
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="district_id" class="form-control" name="report[district_id]">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($districts as $district)
-                                {?>
-                                    <option value="<?php echo $district['value']?>"><?php echo $district['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_DISTRICT_NAME');?></label>
-                    </div>
-                </div>
-                <div style="<?php if(!(sizeof($upazillas)>0)){echo 'display:none';} ?>" class="row show-grid" id="upazilla_id_container">
-                    <div class="col-xs-6">
-                        <?php
-                        if($CI->locations['upazilla_id']>0)
-                        {
-                            ?>
-                            <label class="control-label"><?php echo $CI->locations['upazilla_name'];?></label>
-                            <input type="hidden" name="report[upazilla_id]" value="<?php echo $CI->locations['upazilla_id'];?>">
-                        <?php
-                        }
-                        else
-                        {
-                            ?>
-                            <select id="upazilla_id" name="report[upazilla_id]" class="form-control">
-                                <option value=""><?php echo $this->lang->line('SELECT');?></option>
-                                <?php
-                                foreach($upazillas as $upazilla)
-                                {?>
-                                    <option value="<?php echo $upazilla['value']?>"><?php echo $upazilla['text'];?></option>
-                                <?php
-                                }
-                                ?>
-                            </select>
-                        <?php
-                        }
-                        ?>
-                    </div>
-                    <div class="col-xs-6">
-                        <label class="control-label"><?php echo $CI->lang->line('LABEL_UPAZILLA_NAME');?></label>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-5">
                 <div class="action_button pull-right">
-                    <button type="button" class="btn" id="but_load_crop">Load Crop</button>
-                </div>
-            </div>
-            <div class="col-xs-4">
-
-            </div>
-        </div>
-        <div class="row show-grid">
-            <div class="col-xs-4">
-
-            </div>
-            <div class="col-xs-4">
-                <div class="action_button pull-right">
-                    <button type="submit" class="btn" data-form="#search_form"><?php echo $CI->lang->line("LABEL_LOAD_VARIETY"); ?></button>
+                    <button id="button_action_report" type="button" class="btn" data-form="#search_form"><?php echo $CI->lang->line("ACTION_REPORT"); ?></button>
                 </div>
 
             </div>
-            <div class="col-xs-4">
+            <div class="col-xs-3">
 
             </div>
         </div>
@@ -267,10 +146,6 @@
     </div>
     <div class="clearfix"></div>
 </form>
-<div id="variety_list_container">
-
-</div>
-
 <div id="system_report_container">
 
 </div>
@@ -279,7 +154,41 @@
 
     jQuery(document).ready(function()
     {
-        turn_off_triggers();
+        $(".date_large").datepicker({dateFormat : display_date_format,changeMonth: true,changeYear: true,yearRange: "c-1:c+1"});
+        $(document).off('change', '#division_id');
+        $(document).on("change","#division_id",function()
+        {
+            $('#system_report_container').html('');
+            $('#zone_id_container').hide();
+            $('#territory_id_container').hide();
+            $("#zone_id").val("");
+            $("#territory_id").val("");
+            var division_id=$('#division_id').val();
+            if(division_id>0)
+            {
+                if(system_zones[division_id]!==undefined)
+                {
+                    $('#zone_id_container').show();
+                    $("#zone_id").html(get_dropdown_with_select(system_zones[division_id]));
+                }
+            }
+        });
+        $(document).off('change', '#zone_id');
+        $(document).on("change","#zone_id",function()
+        {
+            $('#system_report_container').html('');
+            $("#territory_id").val("");
+            $('#territory_id_container').hide();
+            var zone_id=$('#zone_id').val();
+            if(zone_id>0)
+            {
+                if(system_territories[zone_id]!==undefined)
+                {
+                    $('#territory_id_container').show();
+                    $("#territory_id").html(get_dropdown_with_select(system_territories[zone_id]));
+                }
+            }
+        });
         $(document).off("click", ".pop_up");
 
 
@@ -298,247 +207,6 @@
             $("#popup_window").jqxWindow('open');
 
 
-        });
-
-        $(document).off("change", "#select_all_arm");
-        $(document).off("change", "#select_all_competitor");
-        $(document).off("change", "#select_all_upcoming");
-
-        $(document).on("change","#select_all_arm",function()
-        {
-            if($(this).is(':checked'))
-            {
-                $('.setup_arm').prop('checked', true);
-            }
-            else
-            {
-                $('.setup_arm').prop('checked', false);
-            }
-
-        });
-        $(document).on("change","#select_all_competitor",function()
-        {
-            if($(this).is(':checked'))
-            {
-                $('.setup_competitor').prop('checked', true);
-            }
-            else
-            {
-                $('.setup_competitor').prop('checked', false);
-            }
-
-        });
-        $(document).on("change","#select_all_upcoming",function()
-        {
-            if($(this).is(':checked'))
-            {
-                $('.setup_upcoming').prop('checked', true);
-            }
-            else
-            {
-                $('.setup_upcoming').prop('checked', false);
-            }
-
-        });
-        $(document).off("click", "#but_load_crop");
-        $(document).on("click","#but_load_crop",function()
-        {
-            $.ajax({
-                url: '<?php echo site_url($CI->controller_url.'/index/load_crops');?>',
-                type: 'post',
-                dataType: "JSON",
-                data: new FormData(document.getElementById('search_form')),
-                processData: false,
-                contentType: false,
-                success: function (data, status)
-                {
-
-                },
-                error: function (xhr, desc, err)
-                {
-
-
-                }
-            });
-
-        });
-        $(document).on("change","#year",function()
-        {
-            $('#variety_list_container').html('');
-        });
-        $(document).on("change","#season_id",function()
-        {
-            $('#variety_list_container').html('');
-        });
-        $(document).on("change","#crop_id",function()
-        {
-            $('#variety_list_container').html('');
-            $('#system_report_container').html('');
-            $("#crop_type_id").val("");
-            $("#variety_id").val("");
-
-            var crop_id=$('#crop_id').val();
-            if(crop_id>0)
-            {
-                $('#crop_type_id_container').show();
-                $('#variety_id_container').hide();
-
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_croptypes_by_cropid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{crop_id:crop_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#crop_type_id_container').hide();
-                $('#variety_id_container').hide();
-
-            }
-        });
-        $(document).on("change","#division_id",function()
-        {
-            $('#variety_list_container').html('');
-            $("#zone_id").val("");
-            $("#territory_id").val("");
-            $("#district_id").val("");
-            $("#customer_id").val("");
-            var division_id=$('#division_id').val();
-            if(division_id>0)
-            {
-                $('#zone_id_container').show();
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#upazilla_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_zones_by_divisionid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{division_id:division_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#zone_id_container').hide();
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#upazilla_id_container').hide();
-            }
-        });
-        $(document).on("change","#zone_id",function()
-        {
-            $('#variety_list_container').html('');
-            $("#territory_id").val("");
-            $("#district_id").val("");
-            $("#customer_id").val("");
-            var zone_id=$('#zone_id').val();
-            if(zone_id>0)
-            {
-                $('#territory_id_container').show();
-                $('#district_id_container').hide();
-                $('#upazilla_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_territories_by_zoneid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{zone_id:zone_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#territory_id_container').hide();
-                $('#district_id_container').hide();
-                $('#upazilla_id_container').hide();
-            }
-        });
-        $(document).on("change","#territory_id",function()
-        {
-            $('#variety_list_container').html('');
-            $("#district_id").val("");
-            $("#customer_id").val("");
-            var territory_id=$('#territory_id').val();
-            if(territory_id>0)
-            {
-                $('#district_id_container').show();
-                $('#upazilla_id_container').hide();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_districts_by_territoryid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{territory_id:territory_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#upazilla_id_container').hide();
-                $('#district_id_container').hide();
-            }
-        });
-        $(document).on("change","#district_id",function()
-        {
-            $('#variety_list_container').html('');
-            $("#customer_id").val("");
-            var district_id=$('#district_id').val();
-            if(district_id>0)
-            {
-                $('#upazilla_id_container').show();
-                $.ajax({
-                    url: base_url+"common_controller/get_dropdown_upazillas_by_districtid/",
-                    type: 'POST',
-                    datatype: "JSON",
-                    data:{district_id:district_id},
-                    success: function (data, status)
-                    {
-
-                    },
-                    error: function (xhr, desc, err)
-                    {
-                        console.log("error");
-
-                    }
-                });
-            }
-            else
-            {
-                $('#upazilla_id_container').hide();
-            }
         });
 
     });
