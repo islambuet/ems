@@ -71,6 +71,8 @@ class Reports_ti_daily_attendance extends Root_Controller
             {
                 $all_user[$result['id']]=$result;
             }
+//            print_r($all_user);
+//            exit;
             $this->db->from($this->config->item('table_system_assigned_area').' aa');
             $this->db->select('aa.*');
             if($user->user_group!=1 && $user->user_group!=2)
@@ -94,12 +96,27 @@ class Reports_ti_daily_attendance extends Root_Controller
             {
                 if(isset($all_user[$user['user_id']]))
                 {
+                    $user['value']=$all_user[$user['user_id']]['id'];
                     $user['employee_id']=$all_user[$user['user_id']]['employee_id'];
-                    $user['name']=$all_user[$user['user_id']]['name'];
+                    $user['text']=$all_user[$user['user_id']]['employee_id'].'-'.$all_user[$user['user_id']]['name'].' ('.$all_user[$user['user_id']]['designation_name'].')';
                     $user['designation_name']=$all_user[$user['user_id']]['designation_name'];
                     $assigned_users_info[]=$user;
                 }
             }
+            //division and zone
+            $data['divisions']=Query_helper::get_info($this->config->item('table_setup_location_divisions'),array('id value','name text'),array('status ="'.$this->config->item('system_status_active').'"'));
+            $data['zones']=array();
+            $data['territories']=array();
+            if($this->locations['division_id']>0)
+            {
+                $data['zones']=Query_helper::get_info($this->config->item('table_setup_location_zones'),array('id value','name text'),array('division_id ='.$this->locations['division_id']));
+                if($this->locations['zone_id']>0)
+                {
+                    $data['territories']=Query_helper::get_info($this->config->item('table_setup_location_territories'),array('id value','name text'),array('zone_id ='.$this->locations['zone_id']));
+
+                }
+            }
+
             $data['user_info']=$assigned_users_info;
             $data['user_counter']=count($data['user_info']);
             $data['date_start']=System_helper::display_date(time());
@@ -202,7 +219,6 @@ class Reports_ti_daily_attendance extends Root_Controller
         $db_login->where('user.id',$user_id);
         $db_login->order_by('user_info.ordering','ASC');
         $user_name=$db_login->get()->row_array();
-
         $this->db->from($this->config->item('table_tm_daily_activities_ti').' daily_activities');
         $this->db->select('daily_activities.*');
         $this->db->select('aa.user_id');
@@ -262,12 +278,14 @@ class Reports_ti_daily_attendance extends Root_Controller
 
             }else
             {
+
                 $item['id']=$date_time;
                 $item['date']=$date_string;
                 $item['date_started']='-';
                 $item['date_reported']='-';
                 $item['attendance']='-';
                 $item['attendance_taken_time']='-';
+                //$id_number+=1;
                 $items[]=$item;
             }
             $date_time=$date_time+86400;
@@ -306,5 +324,71 @@ class Reports_ti_daily_attendance extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
+    }
+
+    public function get_employee_info_list()
+    {
+        $html_container_id='#employee_info_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+
+        $user = User_helper::get_user();
+        $db_login=$this->load->database('armalik_login',TRUE);
+        $db_login->from($this->config->item('table_setup_user').' user');
+        $db_login->select('user.id,user.employee_id,user.user_name,user.status');
+        $db_login->select('user_info.name,user_info.ordering');
+        $db_login->select('designation.name designation_name');
+        $db_login->join($this->config->item('table_setup_user_info').' user_info','user.id = user_info.user_id','INNER');
+        $db_login->join($this->config->item('table_setup_designation').' designation','designation.id = user_info.designation','LEFT');
+        $db_login->where('user_info.revision',1);
+        $db_login->where('user.status!=',$this->config->item('system_status_inactive'));
+        $db_login->order_by('user_info.ordering','ASC');
+        if($user->user_group!=1)
+        {
+            $db_login->where('user_info.user_group !=',1);
+        }
+        $results=$db_login->get()->result_array();
+        $all_user=array();
+        foreach($results as $result)
+        {
+            $all_user[$result['id']]=$result;
+        }
+        $this->db->from($this->config->item('table_system_assigned_area').' aa');
+        $this->db->select('aa.*');
+        if($user->user_group!=1 && $user->user_group!=2)
+        {
+            if($this->locations['division_id']>0)
+            {
+                $this->db->where('aa.division_id',$this->locations['division_id']);
+                if($this->locations['zone_id']>0)
+                {
+                    $this->db->where('aa.zone_id',$this->locations['zone_id']);
+                    if($this->locations['territory_id']>0)
+                    {
+                        $this->db->where('aa.territory_id',$this->locations['territory_id']);
+                    }
+                }
+            }
+        }
+        $user_info=$this->db->get()->result_array();
+        $assigned_users_info=array();
+        foreach($user_info as &$user)
+        {
+            if(isset($all_user[$user['user_id']]))
+            {
+                $user['value']=$all_user[$user['user_id']]['id'];
+                $user['employee_id']=$all_user[$user['user_id']]['employee_id'];
+                $user['text']=$all_user[$user['user_id']]['employee_id'].'-'.$all_user[$user['user_id']]['name'].' ('.$all_user[$user['user_id']]['designation_name'].')';
+                $user['designation_name']=$all_user[$user['user_id']]['designation_name'];
+                $assigned_users_info[]=$user;
+            }
+        }
+        $data['items']=$assigned_users_info;
+        $ajax['status']=true;
+        $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("dropdown_with_select",$data,true));
+
+        $this->jsonReturn($ajax);
     }
 }
