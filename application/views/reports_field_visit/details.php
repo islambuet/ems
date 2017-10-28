@@ -1,8 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
     $CI = & get_instance();
-    $action_data=array();
-    $action_data["action_back"]=base_url($CI->controller_url);
-    $CI->load->view("action_buttons",$action_data);
 ?>
     <div class="row widget">
         <div class="widget-header">

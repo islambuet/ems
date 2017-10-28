@@ -42,6 +42,7 @@
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visits"><?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="interval"><?php echo $CI->lang->line('LABEL_INTERVAL'); ?></label>
             <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="num_visit_done">Number of visit done</label>
+            <label class="checkbox-inline"><input type="checkbox" class="system_jqx_column"  checked value="details_button">Details</label>
         </div>
     <?php
     }
@@ -54,7 +55,7 @@
 <script type="text/javascript">
     $(document).ready(function ()
     {
-        /*$(document).off("click", ".pop_up");
+        $(document).off("click", ".pop_up");
 
         $(document).on("click", ".pop_up", function(event)
         {
@@ -84,7 +85,7 @@
                     }
                 });
             $("#popup_window").jqxWindow('open');
-        });*/
+        });
         var url = "<?php echo site_url($CI->controller_url.'/index/get_items');?>";
 
         // prepare the data
@@ -154,8 +155,8 @@
                     { text: '<?php echo $CI->lang->line('LABEL_DATE_SOWING'); ?>', dataField: 'date_sowing',width:'110'},
                     { text: '<?php echo $CI->lang->line('LABEL_NUM_VISITS'); ?>', dataField: 'num_visits',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_INTERVAL'); ?>', dataField: 'interval',width:'50',cellsalign: 'right',rendered: tooltiprenderer},
-                    { text: '#visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer,filtertype: 'list'}/*,
-                    { text: 'Details', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer}*/
+                    { text: '#visit done', dataField: 'num_visit_done',width:'50',cellsalign: 'right',rendered: tooltiprenderer,filtertype: 'list'},
+                    { text: 'Details', dataField: 'details_button',width: '85',cellsrenderer: cellsrenderer}
                 ]
             });
     });
