@@ -313,3 +313,18 @@ $lang['LABEL_ATTENDANCE_STATUS']="Attendance";
 $lang['ACTION_REPORTING'] = 'Reporting';
 $lang['ACTION_ATTENDANCE'] = 'Attendance';
 $lang['LABEL_ZSC_COMMENT'] = 'ZSC Comment';
+
+
+// Monthly Activities TI Area Setup
+$lang['LABEL_AREA_NAME']="Area Name";
+$lang['LABEL_AREA_ADDRESS']="Area Address";
+$lang['LABEL_NUMBER_OF_AREA']="Number of Active Area";
+$lang['LABEL_ARM_VARIETY'] = 'ARM Variety';
+
+// Monthly Activities TI
+$lang['LABEL_PREVIOUS_MONTH_ACHIEVEMENT']="Previous Month Achievement";
+$lang['LABEL_SUCCESSFULLY_WORK_DONE']="Successfully Work Done";
+$lang['LABEL_ITEM']="Next Months Cultivated Item";
+$lang['LABEL_NEXT_MONTHS_CROP_VARIETY']="Next Months Cultivated Crop and Variety";
+$lang['LABEL_SELF_TARGET']="Next Months Self Target";
+$lang['LABEL_SELF_MARKING']="Self Marking (Out of 10)";
