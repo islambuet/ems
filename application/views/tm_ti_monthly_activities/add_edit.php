@@ -71,18 +71,44 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_TARGET');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_TARGET').' (Amount)';?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[self_target]" class="form-control"><?php echo $item['self_target']; ?></textarea>
+                <input type="text" name="item[amount_self_target]" class="form-control float_type_positive" value="<?php echo $item['amount_self_target']; ?>">
             </div>
         </div>
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_MARKING');?><span style="color:#FF0000">*</span></label>
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_TARGET').' (Reason)';?><span style="color:#FF0000">*</span></label>
             </div>
             <div class="col-sm-4 col-xs-8">
-                <textarea name="item[marking]" class="form-control"><?php echo $item['marking']; ?></textarea>
+                <textarea name="item[reason_self_target]" class="form-control"><?php echo $item['reason_self_target']; ?></textarea>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_MARKING').' (Out of 10)';?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <select name="item[value_marking]" class="form-control">
+                    <option value=""><?php echo $this->lang->line('SELECT');?></option>
+                    <?php
+                        for($i=0;$i<11;$i++)
+                        {
+                    ?>
+                            <option value="<?php echo $i;?>" <?php if($item['value_marking']==$i){echo "selected";}?>><?php echo $i;?></option>
+                    <?php
+                        }
+                    ?>
+                </select>
+            </div>
+        </div>
+        <div class="row show-grid">
+            <div class="col-xs-4">
+                <label class="control-label pull-right"><?php echo $this->lang->line('LABEL_SELF_MARKING').' (Reason)';?><span style="color:#FF0000">*</span></label>
+            </div>
+            <div class="col-sm-4 col-xs-8">
+                <textarea name="item[reason_marking]" class="form-control"><?php echo $item['reason_marking']; ?></textarea>
             </div>
         </div>
 
@@ -91,9 +117,3 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
 
     <div class="clearfix"></div>
 </form>
-<!--<script type="text/javascript">-->
-<!--    jQuery(document).ready(function()-->
-<!--    {-->
-<!--        system_preset({controller:'--><?php //echo $CI->router->class; ?><!--'});-->
-<!--    });-->
-<!--</script>-->

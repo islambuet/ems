@@ -65,7 +65,6 @@ class Tm_ti_monthly_activities extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
-
     }
 
     private function system_get_items()
@@ -133,6 +132,7 @@ class Tm_ti_monthly_activities extends Root_Controller
         else
         {
             $data=$this->input->post('item');
+            //print_r($data);exit;
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -233,8 +233,10 @@ class Tm_ti_monthly_activities extends Root_Controller
                     'achievement' => '',
                     'work_done' => '',
                     'next_month_crop_variety' => '',
-                    'self_target' => '',
-                    'marking' => '',
+                    'amount_self_target' => '',
+                    'reason_self_target' => '',
+                    'value_marking' => '',
+                    'reason_marking' => ''
                 );
             }
             $data['title']="Monthly Activities Reporting (".$check_my_editable['area_name'].')';
@@ -256,12 +258,15 @@ class Tm_ti_monthly_activities extends Root_Controller
     }
     private function check_validation()
     {
+        $data=$this->input->post('item');
         $this->load->library('form_validation');
         $this->form_validation->set_rules('item[achievement]',$this->lang->line('LABEL_PREVIOUS_MONTH_ACHIEVEMENT'),'required');
         $this->form_validation->set_rules('item[work_done]',$this->lang->line('LABEL_SUCCESSFULLY_WORK_DONE'),'required');
         $this->form_validation->set_rules('item[next_month_crop_variety]',$this->lang->line('LABEL_NEXT_MONTHS_CROP_VARIETY'),'required');
-        $this->form_validation->set_rules('item[self_target]',$this->lang->line('LABEL_SELF_TARGET'),'required');
-        $this->form_validation->set_rules('item[marking]',$this->lang->line('LABEL_SELF_MARKING'),'required');
+        $this->form_validation->set_rules('item[amount_self_target]',$this->lang->line('LABEL_SELF_TARGET').' (Amount)','required');
+        $this->form_validation->set_rules('item[reason_self_target]',$this->lang->line('LABEL_SELF_TARGET').' (Reason)','required');
+        $this->form_validation->set_rules('item[value_marking]',$this->lang->line('LABEL_SELF_MARKING').' (Out of 10)','required');
+        $this->form_validation->set_rules('item[reason_marking]',$this->lang->line('LABEL_SELF_MARKING').' (Reason)','required');
 
         if($this->form_validation->run() == FALSE)
         {

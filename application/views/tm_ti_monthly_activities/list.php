@@ -110,7 +110,7 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 autorowheight: true,
                 columns: [
                     { text: '<?php echo $CI->lang->line('ID'); ?>',dataField: 'id',width:'75',rendered:tooltiprenderer,hidden:true},
-                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_NAME'); ?>',dataField: 'employee_name',width:'200',rendered:tooltiprenderer,hidden:true},
+                    { text: '<?php echo $CI->lang->line('LABEL_EMPLOYEE_NAME'); ?>',dataField: 'employee_name',filtertype: 'list',width:'200',rendered:tooltiprenderer,hidden:true},
                     { text: '<?php echo $CI->lang->line('LABEL_AREA_NAME'); ?>',dataField: 'area_name',width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_AREA_ADDRESS'); ?>',dataField: 'area_address',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ARM_VARIETY'); ?>',dataField: 'arm_variety',width:'250',rendered:tooltiprenderer},

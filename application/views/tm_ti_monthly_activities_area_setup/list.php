@@ -15,9 +15,9 @@ $action_buttons[]=array
 (
     'type'=>'button',
     'label'=>$CI->lang->line('ACTION_DETAILS'),
-    //'class'=>'button_jqx_action',
-    'onclick'=>"alert('This button is under construction.');",
-    //'data-action-link'=>site_url($CI->controller_url.'/index/details')
+    'class'=>'button_action_batch',
+    'id'=>'button_action_details',
+    'data-action-link'=>site_url($CI->controller_url.'/index/details')
 );
 if(isset($CI->permissions['print'])&&($CI->permissions['print']==1))
 {

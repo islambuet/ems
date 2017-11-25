@@ -311,6 +311,164 @@ class Tm_ti_monthly_activities_area_setup extends Root_Controller
         }
     }
 
+    private function system_details($id)
+    {
+        if(isset($this->permissions['view']) && ($this->permissions['view']==1))
+        {
+            if(($this->input->post('id')))
+            {
+                $item_id=$this->input->post('id');
+            }
+            else
+            {
+                $item_id=$id;
+            }
+            $data['item']['id']=$item_id;
+
+            $this->db->from($this->config->item('table_tm_monthly_activities_area_setup_ti').' ast');
+            $this->db->select('ast.*');
+            $this->db->select('u.name upazilla_name');
+            $this->db->select('d.name district_name');
+            $this->db->join($this->config->item('table_setup_location_upazillas').' u','u.id = ast.upazilla_id','INNER');
+            $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = u.district_id','INNER');
+            $this->db->where('ast.employee_info_id',$data['item']['id']);
+            $this->db->where('ast.status=',$this->config->item('system_status_active'));
+            $results=$this->db->get()->result_array();
+
+            if($results)
+            {
+                if(isset($this->permissions['edit']) && ($this->permissions['edit']==1))
+                {
+                    foreach($results as $result)
+                    {
+                        $data['old_item'][$result['id']]=$result;
+                    }
+                }
+                else
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='You are not permitted to edit this';
+                    $this->jsonReturn($ajax);
+                }
+            }
+            else
+            {
+                if(isset($this->permissions['add']) && ($this->permissions['add']==1))
+                {
+                    $data['old_item']=array();
+                }
+                else
+                {
+                    $ajax['status']=false;
+                    $ajax['system_message']='You have no permission to edit this';
+                    $this->jsonReturn($ajax);
+                }
+            }
+
+            $user_location=Query_helper::get_info($this->config->item('table_system_assigned_area'),'*',array('user_id ='.$item_id,'revision=1'),1);
+
+            if(!$this->check_my_editable($user_location))
+            {
+                System_helper::invalid_try($this->config->item('system_edit_others'),$item_id);
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+                $this->jsonReturn($ajax);
+            }
+
+            $this->db->from($this->config->item('table_system_assigned_area').' aa');
+            $this->db->select('division.name as division_name');
+            $this->db->select('zone.name as zone_name');
+            $this->db->select('territory.name as territory_name');
+            $this->db->select('u.name');
+            $this->db->select('GROUP_CONCAT(district.name) as district_name,GROUP_CONCAT(district.id) as district_id');
+            $this->db->join($this->config->item('table_setup_location_divisions').' division','division.id = aa.division_id','LEFT');
+            $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = aa.zone_id','LEFT');
+            $this->db->join($this->config->item('table_setup_location_territories').' territory','territory.id = aa.territory_id','LEFT');
+            if($user_location['territory_id']>0)
+            {
+                $this->db->join($this->config->item('table_setup_location_districts').' district','district.territory_id = '.$user_location['territory_id'],'INNER');
+                $this->db->where('district.status',$this->config->item('system_status_active'));
+            }
+            else
+            {
+                if($user_location['zone_id']>0)
+                {
+                    $this->db->join($this->config->item('table_setup_location_territories').' t','t.zone_id = '.$user_location['zone_id'],'INNER');
+                    $this->db->join($this->config->item('table_setup_location_districts').' district','district.territory_id = t.id','INNER');
+                    $this->db->where('t.status',$this->config->item('system_status_active'));
+                    $this->db->where('district.status',$this->config->item('system_status_active'));
+                }
+                else
+                {
+                    if($user_location['division_id']>0)
+                    {
+                        $this->db->join($this->config->item('table_setup_location_zones').' z','z.division_id = '.$user_location['division_id'],'INNER');
+                        $this->db->join($this->config->item('table_setup_location_territories').' t','t.zone_id = z.id','INNER');
+                        $this->db->join($this->config->item('table_setup_location_districts').' district','district.territory_id = t.id','INNER');
+                        $this->db->where('z.status',$this->config->item('system_status_active'));
+                        $this->db->where('t.status',$this->config->item('system_status_active'));
+                        $this->db->where('district.status',$this->config->item('system_status_active'));
+                    }
+                    else
+                    {
+                        $this->db->join($this->config->item('table_setup_location_districts').' district','district.status="'.$this->config->item('system_status_active').'"','INNER');
+                        $this->db->where('district.status',$this->config->item('system_status_active'));
+                    }
+                }
+            }
+            $this->db->join('arm_login.'.$this->config->item('table_setup_user_info').' u','u.user_id = '.$item_id.' AND u.revision = 1','INNER');
+            $this->db->where('aa.user_id',$item_id);
+            $this->db->where('aa.revision',1);
+            $result=$this->db->get()->row_array();
+
+            $district_ids=explode(',',$result['district_id']);
+            $district_names=explode(',',$result['district_name']);
+            $data['districts']=array_combine($district_ids,$district_names);
+
+            if(!$result['division_name'])
+            {
+                $data['division_name']='ALL';
+            }
+            else
+            {
+                $data['division_name']=$result['division_name'];
+            }
+            if(!$result['zone_name'])
+            {
+                $data['zone_name']='ALL';
+            }
+            else
+            {
+                $data['zone_name']=$result['zone_name'];
+            }
+            if(!$result['territory_name'])
+            {
+                $data['territory_name']='ALL';
+            }
+            else
+            {
+                $data['territory_name']=$result['territory_name'];
+            }
+            $data['name']=$result['name'];
+
+            $data['title']="Edit Area (".$data['name'].')';
+            $ajax['status']=true;
+            $ajax['system_content'][]=array('id'=>'#system_content','html'=>$this->load->view($this->controller_url.'/details',$data,true));
+            if($this->message)
+            {
+                $ajax['system_message']=$this->message;
+            }
+            $ajax['system_page_url']=site_url($this->controller_url.'/index/details/'.$item_id);
+            $this->jsonReturn($ajax);
+        }
+        else
+        {
+            $ajax['status']=false;
+            $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
+            $this->jsonReturn($ajax);
+        }
+    }
+
     private function system_save()
     {
         $id = $this->input->post("id");
