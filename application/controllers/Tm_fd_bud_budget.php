@@ -467,7 +467,8 @@ class Tm_fd_bud_budget extends Root_Controller
                 $this->jsonReturn($ajax);
             }
             $results=Query_helper::get_info($this->config->item('table_tm_fd_bud_details_picture'),'*',array('budget_id='.$id,'revision=1'),0,0,array('item_id ASC'));
-            foreach($results as $result)
+            //forward without pictures
+            /*foreach($results as $result)
             {
                 if(!$result['arm_file_location'] || !$result['competitor_file_location'])
                 {
@@ -475,7 +476,7 @@ class Tm_fd_bud_budget extends Root_Controller
                     $ajax['system_message']='Please Upload All Images to Forward This Budget';
                     $this->jsonReturn($ajax);
                 }
-            }
+            }*/
             $this->db->where('id',$id);
             $this->db->set('status_budget',$this->config->item('LABEL_FDR_FORWARDED'));
             $this->db->update($this->config->item('table_tm_fd_bud_budget'));
