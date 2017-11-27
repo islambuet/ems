@@ -156,15 +156,15 @@ class Tm_field_visit extends Root_Controller
 
             if(($day%$item['interval'])==0)
             {
-                $item['color_background']='#E8C5D0';
+                $item['color_background']='#2dc937';
             }
             elseif(($day%$item['interval'])==1)
             {
-                $item['color_background']='#BAD1DB';
+                $item['color_background']='#e7b416';
             }
             elseif(($item['interval']-($day%$item['interval']))==1)
             {
-                $item['color_background']='#DAF2DB';
+                $item['color_background']='#cc3232';
             }
             else
             {
