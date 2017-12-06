@@ -142,7 +142,7 @@ foreach($info_details as $revision=>$info)
         </div>
         <div style="" class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_FARMERS_EVALUATION');?> :</label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_DEALERS_EVALUATION');?> :</label>
             </div>
             <div class="col-sm-4 col-xs-8">
                 <label class="control-label"><?php echo $item_info['farmers_evaluation'];?></label>
@@ -169,7 +169,7 @@ foreach($info_details as $revision=>$info)
 
         <div class="row show-grid">
             <div class="col-xs-4">
-                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');?></label>
+                <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER');?></label>
             </div>
         </div>
 
@@ -478,7 +478,7 @@ foreach($info_details as $revision=>$info)
                 </div>
                 <div class="row show-grid">
                     <div class="col-xs-4">
-                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');?></label>
+                        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER');?></label>
                     </div>
                 </div>
                 <?php

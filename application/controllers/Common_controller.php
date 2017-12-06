@@ -342,6 +342,28 @@ class Common_controller extends Root_Controller
         $ajax['system_content'][]=array("id"=>$html_container_id_net,"html"=>number_format($current_credit['net'],2));
         $this->jsonReturn($ajax);
     }
+	public function get_leading_farmers_by_upazillaid()
+    {
+        $upazilla_id = $this->input->post('upazilla_id');
+        $html_container_id='#leading_farmer_id';
+        if($this->input->post('html_container_id'))
+        {
+            $html_container_id=$this->input->post('html_container_id');
+        }
+        $data['items']=Query_helper::get_info($this->config->item('table_setup_fsetup_leading_farmer'),array('id value','name text','phone_no phone_no'),array('upazilla_id ='.$upazilla_id,'status ="'.$this->config->item('system_status_active').'"'),0,0,array('ordering ASC'));
+        if($data['items'])
+        {
+            $ajax['status']=true;
+            $ajax['system_content'][]=array("id"=>$html_container_id,"html"=>$this->load->view("input_fields_with_item",$data,true));
+            $this->jsonReturn($ajax);
+        }
+        else
+            {
+                $ajax['status']=false;
+                $ajax['system_message']=$this->lang->line("SET_LEADING_DEALER");
+                $this->jsonReturn($ajax);
+            }
+    }
 
 
 }
