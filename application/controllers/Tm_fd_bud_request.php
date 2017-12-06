@@ -597,7 +597,7 @@ class Tm_fd_bud_request extends Root_Controller
         }
         if(!$ids)
         {
-            $this->message=$this->lang->line('SET_LEADING_FARMER');
+            $this->message=$this->lang->line('SET_LEADING_DEALER');
             return false;
         }
         if(!$expense_budget)

@@ -134,7 +134,7 @@ if($item_info['com_variety_name']){
 </div>
 <div class="row show-grid">
     <div class="col-sm-4">
-        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_FARMER');?></label>
+        <label class="control-label pull-right"><?php echo $CI->lang->line('LABEL_PARTICIPANT_THROUGH_LEAD_DEALER');?></label>
     </div>
 </div>
 <div class="row show-grid">
@@ -502,6 +502,8 @@ foreach($expense_budget as $key=>$budget)
         turn_off_triggers();
         $(document).off("input",".expense_budget");
         $(document).off("input",".participant_budget");
+        $(document).off("change",".input_type_file");
+        $(document).off("click",".system_button_exp_add_more");
 
         $('.expense_file').filestyle({
             input: false,
@@ -536,9 +538,8 @@ foreach($expense_budget as $key=>$budget)
             $(content_id+' .input_type_file').removeAttr('id');
         });
 
-
-        $(document).on("change", ".file_multi_video", function(evt) {
-
+        $(document).on("change", ".file_multi_video", function(evt)
+        {
             $('.file_multi_video').attr('name','video');
             $('#video_preview_container_id').show();
             var $source = $('#video_here');
@@ -557,7 +558,6 @@ foreach($expense_budget as $key=>$budget)
                 }
             }
         });
-
 
         $(".datepicker").datepicker({dateFormat : display_date_format});
         $(".browse_button").filestyle({input: false,icon: false,buttonText: "Upload",buttonName: "btn-primary"});
