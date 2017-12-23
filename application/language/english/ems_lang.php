@@ -327,4 +327,4 @@ $lang['LABEL_SUCCESSFULLY_WORK_DONE']="Successfully Work Done";
 $lang['LABEL_ITEM']="Next Months Cultivated Item";
 $lang['LABEL_NEXT_MONTHS_CROP_VARIETY']="Next Months Cultivated Crop and Variety";
 $lang['LABEL_SELF_TARGET']="Next Months Self Target";
-$lang['LABEL_SELF_MARKING']="Self Marking (Out of 10)";
+$lang['LABEL_SELF_MARKING']="Self Marking";

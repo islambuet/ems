@@ -138,3 +138,5 @@ $config['table_tm_daily_activities_ti_details'] = 'ems_tm_daily_activities_ti_de
 //Monthly Activity Setup
 $config['table_tm_monthly_activities_area_setup_ti'] = 'ems_tm_monthly_activities_area_setup_ti';
 $config['table_tm_monthly_activities_ti'] = 'ems_tm_monthly_activities_ti';
+$config['table_tm_monthly_activities'] = 'ems_tm_monthly_activities';
+$config['table_tm_monthly_activities_details'] = 'ems_tm_monthly_activities_details';

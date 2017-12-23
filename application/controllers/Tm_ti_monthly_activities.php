@@ -77,7 +77,7 @@ class Tm_ti_monthly_activities extends Root_Controller
         {
             $this->db->where('monthly_activities_as.employee_info_id',$user->user_id);
         }
-        $this->db->join('arm_login.'.$this->config->item('table_setup_user_info').' ui','ui.user_id = monthly_activities_as.employee_info_id AND ui.revision=1','LEFT');
+        $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user_info').' ui','ui.user_id = monthly_activities_as.employee_info_id AND ui.revision=1','LEFT');
         $this->db->where('monthly_activities_as.status=',$this->config->item('system_status_active'));
         $this->db->order_by('monthly_activities_as.id ASC');
         $items=$this->db->get()->result_array();
