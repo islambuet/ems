@@ -65,21 +65,28 @@ class Tm_ti_monthly_activities extends Root_Controller
             $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
             $this->jsonReturn($ajax);
         }
+
     }
 
     private function system_get_items()
     {
         $user=User_helper::get_user();
-        $this->db->from($this->config->item('table_tm_monthly_activities_area_setup_ti').' monthly_activities_as');
-        $this->db->select('monthly_activities_as.*');
-        $this->db->select('ui.name employee_name');
+        $user_location=User_helper::get_locations();
+        $this->db->from($this->config->item('table_tm_monthly_activities_area_setup_ti').' ast');
+        $this->db->select('ast.*');
+        $this->db->select('u.name upazilla_name');
+        $this->db->select('d.name district_name');
+        $this->db->select('t.id territory_id');
+        $this->db->join($this->config->item('table_setup_location_upazillas').' u','u.id = ast.upazilla_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_districts').' d','d.id = u.district_id','INNER');
+        $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = d.territory_id','INNER');
         if($user->user_group!=1 && $user->user_group!=2)
         {
-            $this->db->where('monthly_activities_as.employee_info_id',$user->user_id);
+            $this->db->where('t.id',$user_location['territory_id']);
         }
-        $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user_info').' ui','ui.user_id = monthly_activities_as.employee_info_id AND ui.revision=1','LEFT');
-        $this->db->where('monthly_activities_as.status=',$this->config->item('system_status_active'));
-        $this->db->order_by('monthly_activities_as.id ASC');
+        $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user_info').' ui','ui.user_id = ast.employee_info_id AND ui.revision=1','LEFT');
+        $this->db->where('ast.status=',$this->config->item('system_status_active'));
+        $this->db->order_by('ast.id ASC');
         $items=$this->db->get()->result_array();
         $this->jsonReturn($items);
     }
@@ -132,7 +139,6 @@ class Tm_ti_monthly_activities extends Root_Controller
         else
         {
             $data=$this->input->post('item');
-            //print_r($data);exit;
             $this->db->trans_start();  //DB Transaction Handle START
             if($id>0)
             {
@@ -196,8 +202,7 @@ class Tm_ti_monthly_activities extends Root_Controller
 
 
             $result=Query_helper::get_info($this->config->item('table_tm_monthly_activities_ti'),'*',array('area_id ='.$item_id,'month_id ='.$month_id,'fiscal_year_id ='.$fiscal_year_id),1);
-            $check_my_editable=Query_helper::get_info($this->config->item('table_tm_monthly_activities_area_setup_ti'),'*',array('id ='.$item_id),1);
-            //Check my edit permission
+            $area_set_up_info=Query_helper::get_info($this->config->item('table_tm_monthly_activities_area_setup_ti'),'*',array('id ='.$item_id),1);
             if($user->user_group!=1 && $user->user_group!=2)
             {
                 if($result)
@@ -208,17 +213,6 @@ class Tm_ti_monthly_activities extends Root_Controller
                         $ajax['system_message']='Reporting done of this area.'.$this->lang->line("YOU_DONT_HAVE_ACCESS");
                         $this->jsonReturn($ajax);
                     }
-                }
-            }
-            //Check my editable
-            if($user->user_group!=1 && $user->user_group!=2)
-            {
-                if($check_my_editable['employee_info_id']!=$user->user_id)
-                {
-                    System_helper::invalid_try('Invalid try for reporting monthly activities',$user->user_id);
-                    $ajax['status']=false;
-                    $ajax['system_message']=$this->lang->line("YOU_DONT_HAVE_ACCESS");
-                    $this->jsonReturn($ajax);
                 }
             }
             if($result)
@@ -239,7 +233,7 @@ class Tm_ti_monthly_activities extends Root_Controller
                     'reason_marking' => ''
                 );
             }
-            $data['title']="Monthly Activities Reporting (".$check_my_editable['area_name'].')';
+            $data['title']="Monthly Activities Reporting (".$area_set_up_info['area_name'].')';
             $ajax['system_page_url']=site_url($this->controller_url."/index/reporting/".$item_id);
             $ajax['status']=true;
             $ajax['system_content'][]=array("id"=>"#system_content","html"=>$this->load->view($this->controller_url."/add_edit",$data,true));
