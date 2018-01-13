@@ -79,7 +79,7 @@ class Tm_ti_monthly_activities_area_setup extends Root_Controller
         $this->db->select('zone.name zone_name');
         $this->db->select('division.name division_name');
         $this->db->select('COUNT(ast.employee_info_id) as number_of_area');
-        $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user').' su','su.id = aa.user_id AND su.status="'.$this->config->item('system_status_active').'"','INNER');
+        $this->db->join('arm_login.'.$this->config->item('table_setup_user').' su','su.id = aa.user_id AND su.status="'.$this->config->item('system_status_active').'"','INNER');
         $this->db->join($this->config->item('table_tm_monthly_activities_area_setup_ti').' ast','ast.employee_info_id = aa.user_id AND ast.status="'.$this->config->item('system_status_active').'"','LEFT');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = aa.territory_id','LEFT');
         $this->db->join($this->config->item('table_setup_location_zones').' zone','zone.id = aa.zone_id','LEFT');
@@ -219,7 +219,7 @@ class Tm_ti_monthly_activities_area_setup extends Root_Controller
                     }
                 }
             }
-            $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user_info').' u','u.user_id = '.$item_id.' AND u.revision = 1','INNER');
+            $this->db->join('arm_login.'.$this->config->item('table_setup_user_info').' u','u.user_id = '.$item_id.' AND u.revision = 1','INNER');
             $this->db->where('aa.user_id',$item_id);
             $this->db->where('aa.revision',1);
             $result=$this->db->get()->row_array();
@@ -418,7 +418,7 @@ class Tm_ti_monthly_activities_area_setup extends Root_Controller
                     }
                 }
             }
-            $this->db->join('arm_demo_login.'.$this->config->item('table_setup_user_info').' u','u.user_id = '.$item_id.' AND u.revision = 1','INNER');
+            $this->db->join('arm_login.'.$this->config->item('table_setup_user_info').' u','u.user_id = '.$item_id.' AND u.revision = 1','INNER');
             $this->db->where('aa.user_id',$item_id);
             $this->db->where('aa.revision',1);
             $result=$this->db->get()->row_array();
