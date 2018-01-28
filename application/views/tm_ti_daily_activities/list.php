@@ -120,10 +120,11 @@ $CI->load->view('action_buttons',array('action_buttons'=>$action_buttons));
                 altrows: true,
                 //rowsheight: 80,
                 autorowheight: true,
+                autoheight: true,
                 columns: [
-                    { text: '<?php echo $CI->lang->line('LABEL_STARTING_TIME'); ?>',dataField: 'date_started',filtertype: 'list',width:'200',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_STARTING_TIME'); ?>',dataField: 'date_started',width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS_STARTING'); ?>',dataField: 'remarks_started',rendered:tooltiprenderer},
-                    { text: '<?php echo $CI->lang->line('LABEL_REPORTING_TIME'); ?>',dataField: 'date_reported',filtertype: 'list',width:'200',rendered:tooltiprenderer},
+                    { text: '<?php echo $CI->lang->line('LABEL_REPORTING_TIME'); ?>',dataField: 'date_reported',width:'200',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_REMARKS_REPORTING'); ?>', dataField: 'remarks_reported',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ZSC_COMMENT'); ?>', dataField: 'zsc_comment',rendered:tooltiprenderer},
                     { text: '<?php echo $CI->lang->line('LABEL_ATTENDANCE_STATUS'); ?>', dataField: 'attendance',filtertype: 'list',width:'100',rendered:tooltiprenderer}
