@@ -94,25 +94,26 @@ class Tm_ti_daily_attendance extends Root_Controller
         $this->db->select('daily_activities.*');
         $this->db->select('aa.user_id');
         $this->db->select('t.name territory_name');
-        $this->db->join($this->config->item('table_system_assigned_area').' aa','aa.user_id = daily_activities.user_started','INNER');
+        $this->db->join($this->config->item('table_system_assigned_area').' aa','aa.user_id = daily_activities.user_started AND aa.revision=1','INNER');
         $this->db->join($this->config->item('table_setup_location_territories').' t','t.id = aa.territory_id','LEFT');
         if($user->user_group!=1 && $user->user_group!=2)
         {
             if($this->locations['division_id']>0)
             {
                 $this->db->where('aa.division_id',$this->locations['division_id']);
-                $this->db->where('aa.user_id!=',$user->user_id);
+                //$this->db->where('aa.user_id!=',$user->user_id);
                 if($this->locations['zone_id']>0)
                 {
                     $this->db->where('aa.zone_id',$this->locations['zone_id']);
-                    $this->db->where('aa.user_id!=',$user->user_id);
+                    //$this->db->where('aa.user_id!=',$user->user_id);
                     if($this->locations['territory_id']>0)
                     {
                         $this->db->where('aa.territory_id',$this->locations['territory_id']);
-                        $this->db->where('aa.user_id!=',$user->user_id);
+                        //
                     }
                 }
             }
+            $this->db->where('aa.user_id!=',$user->user_id);
         }
         $this->db->where('daily_activities.status!=',$this->config->item('system_status_delete'));
         $this->db->order_by('daily_activities.id DESC');
