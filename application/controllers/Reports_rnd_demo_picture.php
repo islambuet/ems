@@ -43,7 +43,7 @@ class Reports_rnd_demo_picture extends Root_Controller
         {
             $data['title']="Search";
             $ajax['status']=true;
-            $data['years']=Query_helper::get_info($this->config->item('table_tm_farmers'),array('Distinct(year)'),array());
+            $data['years']=Query_helper::get_info($this->config->item('table_tm_rnd_demo_setup'),array('Distinct(year)'),array());
 
 
             $data['crops']=array();
